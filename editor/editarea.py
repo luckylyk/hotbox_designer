@@ -1,16 +1,16 @@
 
-from PyQt5 import QtCore, QtGui, QtWidgets
+from PySide2 import QtCore, QtGui, QtWidgets
 
-from interactive import Manipulator, SelectionSquare
-from geometry import Transform, snap, get_combined_rects
-from painting import draw_editor, draw_editor_center
-from managers import Selection, get_selection_mode
-from utils import get_cursor
+from hotbox_designer.interactive import Manipulator, SelectionSquare
+from hotbox_designer.geometry import Transform, snap, get_combined_rects
+from hotbox_designer.painting import draw_editor, draw_editor_center
+from hotbox_designer.managers import Selection, get_selection_mode
+from hotbox_designer.utils import get_cursor
 
 
 class ShapeEditArea(QtWidgets.QWidget):
-    selectedShapesChanged = QtCore.pyqtSignal()
-    centerMoved = QtCore.pyqtSignal(int, int)
+    selectedShapesChanged = QtCore.Signal()
+    centerMoved = QtCore.Signal(int, int)
 
     def __init__(self, options, parent=None):
         super(ShapeEditArea, self).__init__(parent)

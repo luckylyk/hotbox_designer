@@ -4,7 +4,6 @@ class Selection():
         self.mode = 'replace'
 
     def set(self, shapes):
-        print(self.mode)
         if self.mode == 'add':
             if shapes is None:
                 return
@@ -143,6 +142,8 @@ class UndoManager():
         self._undo_stack.append(self._copier(self._current_state))
         self._current_state = self._copier(data)
         self._modified = True
+        print('MODIFIED', len(self._undo_stack))
+        print( self._current_state)
 
     def set_data_saved(self):
         self._modified = False

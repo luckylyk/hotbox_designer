@@ -1,24 +1,24 @@
-from PyQt5 import QtGui, QtWidgets, QtCore
-from utils import icon
+from PySide2 import QtGui, QtWidgets, QtCore
+from hotbox_designer.utils import icon
 
 class MenuWidget(QtWidgets.QWidget):
-    deleteRequested = QtCore.pyqtSignal()
-    copyRequested = QtCore.pyqtSignal()
-    pasteRequested = QtCore.pyqtSignal()
-    undoRequested = QtCore.pyqtSignal()
-    redoRequested = QtCore.pyqtSignal()
-    sizeChanged = QtCore.pyqtSignal()
-    useSnapToggled = QtCore.pyqtSignal(bool)
-    snapValuesChanged = QtCore.pyqtSignal()
-    editCenterToggled = QtCore.pyqtSignal(bool)
-    centerValuesChanged = QtCore.pyqtSignal(int, int)
-    addButtonRequested = QtCore.pyqtSignal()
-    addTextRequested = QtCore.pyqtSignal()
-    addBackgroundRequested = QtCore.pyqtSignal()
-    onBottomRequested = QtCore.pyqtSignal()
-    moveDownRequested = QtCore.pyqtSignal()
-    moveUpRequested = QtCore.pyqtSignal()
-    onTopRequested = QtCore.pyqtSignal()
+    deleteRequested = QtCore.Signal()
+    copyRequested = QtCore.Signal()
+    pasteRequested = QtCore.Signal()
+    undoRequested = QtCore.Signal()
+    redoRequested = QtCore.Signal()
+    sizeChanged = QtCore.Signal()
+    useSnapToggled = QtCore.Signal(bool)
+    snapValuesChanged = QtCore.Signal()
+    editCenterToggled = QtCore.Signal(bool)
+    centerValuesChanged = QtCore.Signal(int, int)
+    addButtonRequested = QtCore.Signal()
+    addTextRequested = QtCore.Signal()
+    addBackgroundRequested = QtCore.Signal()
+    onBottomRequested = QtCore.Signal()
+    moveDownRequested = QtCore.Signal()
+    moveUpRequested = QtCore.Signal()
+    onTopRequested = QtCore.Signal()
 
     def __init__(self, parent=None):
         super(MenuWidget, self).__init__(parent=parent)

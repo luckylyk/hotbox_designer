@@ -1,0 +1,168 @@
+from PySide2 import QtGui, QtCore, QtWidgets
+from .utils import icon
+from .colorwheel import ColorDialog
+
+
+TOGGLER_STYLESHEET = (
+    'background: rgb(0, 0, 0, 75); text-align: left; font: bold')
+
+
+class BoolCombo(QtWidgets.QComboBox):
+    valueSet = QtCore.Signal(bool)
+
+    def __init__(self, state=True, parent=None):
+        super(BoolCombo, self).__init__(parent)
+        self.addItem('True')
+        self.addItem('False')
+        self.setCurrentText(str(state))
+        self.currentIndexChanged.connect(self.current_index_changed)
+
+    def state(self):
+        return self.currentText() == 'True'
+
+    def current_index_changed(self):
+        self.valueSet.emit(self.state())
+
+
+class BrowseEdit(QtWidgets.QWidget):
+    valueSet = QtCore.Signal(str)
+
+    def __init__(self, parent=None):
+        super(BrowseEdit, self).__init__(parent)
+
+        self.text = QtWidgets.QLineEdit()
+        self.text.returnPressed.connect(self.apply)
+        self.button = QtWidgets.QPushButton('B')
+        self.button.setFixedSize(21, 21)
+        self.button.released.connect(self.browse)
+
+        self.layout = QtWidgets.QHBoxLayout(self)
+        self.layout.setContentsMargins(0, 0, 0, 0)
+        self.layout.setSpacing(0)
+        self.layout.addWidget(self.text)
+        self.layout.addWidget(self.button)
+
+        self._value = self.value()
+
+    def browse(self):
+        dialog = QtWidgets.QFileDialog.getOpenFileName(self, 'select image')
+        self.text.setText(dialog[0])
+        self.apply()
+
+    def apply(self):
+        self.valueSet.emit(self.text.text())
+
+    def value(self):
+        value = self.text.text()
+        return value if value != '' else None
+
+    def set_value(self, value):
+        self.text.setText(value)
+
+
+class WidgetToggler(QtWidgets.QPushButton):
+    def __init__(self, label, widget, parent=None):
+        super(WidgetToggler, self).__init__(parent)
+        self.setStyleSheet(TOGGLER_STYLESHEET)
+        self.setText(' v ' + label)
+        self.widget = widget
+        self.setCheckable(True)
+        self.setChecked(True)
+        self.toggled.connect(self._call_toggled)
+
+    def _call_toggled(self, state):
+        if state is True:
+            self.widget.show()
+            self.setText(self.text().replace('>', 'v'))
+        else:
+            self.widget.hide()
+            self.setText(self.text().replace('v', '>'))
+
+
+class ColorEdit(QtWidgets.QWidget):
+    valueSet = QtCore.Signal(str)
+
+    def __init__(self, parent=None):
+        super(ColorEdit, self).__init__(parent)
+
+        self.text = QtWidgets.QLineEdit()
+        self.text.returnPressed.connect(self.apply)
+        self.button = QtWidgets.QPushButton(icon('picker.png'), '')
+        self.button.setFixedSize(21, 21)
+        self.button.released.connect(self.pick_color)
+
+        self.layout = QtWidgets.QHBoxLayout(self)
+        self.layout.setContentsMargins(0, 0, 0, 0)
+        self.layout.setSpacing(0)
+        self.layout.addWidget(self.text)
+        self.layout.addWidget(self.button)
+
+        self._value = self.value()
+
+    def focusInEvent(self, event):
+        self._value = self.value()
+        return super(ColorEdit, self).focusInEvent(event)
+
+    def focusOutEvent(self, event):
+        self.apply()
+        return super(ColorEdit, self).focusOutEvent(event)
+
+    def pick_color(self):
+        color = self.text.text() if self.text.text() else None
+        dialog = ColorDialog(color)
+        result = dialog.exec_()
+        if result == QtWidgets.QDialog.Accepted:
+            self.text.setText(dialog.colorname())
+            self.apply()
+
+    def apply(self):
+        if self._value != self.value():
+            self.valueSet.emit(self.value())
+        self._value = self.value()
+
+    def value(self):
+        value = self.text.text()
+        return value if value != '' else None
+
+    def set_color(self, color):
+        self.text.setText(color)
+
+
+class FloatEdit(QtWidgets.QLineEdit):
+    valueSet = QtCore.Signal(float)
+
+    def __init__(self, minimum=None, maximum=None, parent=None):
+        super(FloatEdit, self).__init__(parent)
+        self.validator = QtGui.QDoubleValidator()
+        if minimum is not None:
+            self.validator.setBottom(minimum)
+        if maximum is not None:
+            self.validator.setTop(maximum)
+        self.setValidator(self.validator)
+        self._value = self.value()
+        self.returnPressed.connect(self.apply)
+
+    def focusInEvent(self, event):
+        self._value = self.value()
+        return super(FloatEdit, self).focusInEvent(event)
+
+    def focusOutEvent(self, event):
+        self.apply()
+        return super(FloatEdit, self).focusOutEvent(event)
+
+    def apply(self):
+        if self._value != self.value():
+            self.valueSet.emit(self.value())
+        self._value = self.value()
+
+    def value(self):
+        if self.text() == '':
+            return None
+        return float(self.text().replace(',', '.'))
+
+
+class Title(QtWidgets.QLabel):
+    def __init__(self, title, parent=None):
+        super(Title, self).__init__(parent)
+        self.setStyleSheet('background: rgb(0, 0, 0, 25)')
+        self.setText('<b>&nbsp;&nbsp;&nbsp;' + title)

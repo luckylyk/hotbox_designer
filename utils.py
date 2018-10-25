@@ -1,5 +1,5 @@
 import os
-from PyQt5 import QtGui
+from PySide2 import QtGui
 
 
 def move_elements_to_array_end(array, elements):

@@ -1,4 +1,4 @@
-from PyQt5 import QtCore
+from PySide2 import QtCore
 
 VALIGNS = {
     'top': QtCore.Qt.AlignTop,

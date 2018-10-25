@@ -1,15 +1,15 @@
 
 from functools import partial
-from PyQt5 import QtWidgets
+from PySide2 import QtWidgets
 
-import templates
-from editarea import ShapeEditArea
-from menu import MenuWidget
-from attributes import AttributeEditor
-from managers import CopyManager, UndoManager, copy_hotbox_data
-from interactive import Shape
-from geometry import get_combined_rects
-from utils import (
+from . import templates
+from .editarea import ShapeEditArea
+from .menu import MenuWidget
+from .attributes import AttributeEditor
+from hotbox_designer.managers import CopyManager, UndoManager, copy_hotbox_data
+from hotbox_designer.interactive import Shape
+from hotbox_designer.geometry import get_combined_rects
+from hotbox_designer.utils import (
     move_elements_to_array_end, move_elements_to_array_begin,
     move_up_array_elements, move_down_array_elements)
 
@@ -71,11 +71,15 @@ class HotboxEditor(QtWidgets.QWidget):
 
     def undo(self):
         self.undo_manager.undo()
-        self.set_hotbox_data(self.undo_manager.data)
+        data = self.undo_manager.data
+        print(data)
+        self.set_hotbox_data(data)
 
     def redo(self):
         self.undo_manager.redo()
-        self.set_hotbox_data(self.undo_manager.data)
+        data = self.undo_manager.data
+        print(data)
+        self.set_hotbox_data(data)
 
     def use_snap(self, state):
         snap = self.menu.snap_values() if state else None

@@ -1,6 +1,6 @@
 import math
-from PyQt5 import QtWidgets, QtGui, QtCore
-from utils import get_cursor
+from PySide2 import QtWidgets, QtGui, QtCore
+from hotbox_designer.utils import get_cursor
 
 
 class ColorDialog(QtWidgets.QDialog):
@@ -41,7 +41,7 @@ CONICAL_GRADIENT = (
 
 
 class ColorWheel(QtWidgets.QWidget):
-    currentColorChanged = QtCore.pyqtSignal(QtGui.QColor)
+    currentColorChanged = QtCore.Signal(QtGui.QColor)
 
     def __init__(self, parent=None):
         super(ColorWheel, self).__init__(parent)

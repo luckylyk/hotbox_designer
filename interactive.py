@@ -1,9 +1,9 @@
-from PyQt5 import QtCore, QtGui
-from geometry import (
+from PySide2 import QtCore, QtGui
+from .geometry import (
     DIRECTIONS, get_topleft_rect, get_bottomleft_rect, get_topright_rect,
     get_bottomright_rect, get_left_side_rect, get_right_side_rect,
     get_top_side_rect, get_bottom_side_rect, proportional_rect)
-from painting import (
+from .painting import (
     draw_selection_square, draw_manipulator, get_hovered_path, draw_shape)
 
 
@@ -128,6 +128,28 @@ class Shape():
         if self.options['shape'] == 'round':
             return proportional_rect(self.rect.toRect(), 70)
         return self.rect.toRect()
+
+    def execute(self, left=False, right=False):
+        if left:
+            if self.options['action.left']:
+                exec(self.options['action.left.command'])
+        elif right:
+            if self.options['action.right']:
+                exec(self.options['action.right.command'])
+
+    def is_interactive(self):
+        return any([self.options['action.right'], self.options['action.left']])
+
+    def autoclose(self, left=False, right=False):
+        if left is True and right is False:
+            return self.options['action.left.close']
+        elif left is False and right is True:
+            return self.options['action.right.close']
+        elif left is True and right is True:
+            r_close = self.options['action.right.close']
+            l_close = self.options['action.left.close']
+            return  r_close or l_close
+        return False
 
     def synchronize_image(self):
         self.pixmap = QtGui.QPixmap(self.options['image.path'])
