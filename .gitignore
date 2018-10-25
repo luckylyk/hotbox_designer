@@ -21,3 +21,7 @@ $RECYCLE.BIN/
 # =========================
 # Operating System Files
 # =========================
+*.pyc
+__pycache__
+.vscode/.ropeproject/config.py
+.vscode/
