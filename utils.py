@@ -1,4 +1,5 @@
 import os
+import json
 from PySide2 import QtGui
 
 
@@ -40,3 +41,15 @@ def icon(filename):
 
 def get_cursor(widget):
     return widget.mapFromGlobal(QtGui.QCursor.pos())
+
+
+def load_hotboxes(filename):
+    if not os.path.exists(filename):
+        return []
+    with open(filename, 'r') as f:
+        return json.load(f)
+
+
+def save_hotboxes(filename, hotboxes):
+    with open(filename, 'r') as f:
+        json.dump(f, hotboxes, indent=2)

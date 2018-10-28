@@ -2,10 +2,10 @@
 from functools import partial
 from PySide2 import QtWidgets
 
-from . import templates
 from .editarea import ShapeEditArea
 from .menu import MenuWidget
 from .attributes import AttributeEditor
+from hotbox_designer import templates
 from hotbox_designer.managers import CopyManager, UndoManager, copy_hotbox_data
 from hotbox_designer.interactive import Shape
 from hotbox_designer.geometry import get_combined_rects
