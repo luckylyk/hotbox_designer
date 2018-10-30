@@ -10,6 +10,7 @@ from hotbox_designer.utils import get_cursor
 
 class ShapeEditArea(QtWidgets.QWidget):
     selectedShapesChanged = QtCore.Signal()
+    increaseUndoStackRequested = QtCore.Signal()
     centerMoved = QtCore.Signal(int, int)
 
     def __init__(self, options, parent=None):
@@ -28,6 +29,7 @@ class ShapeEditArea(QtWidgets.QWidget):
         self.clicked = False
         self.handeling = False
         self.edit_center_mode = False
+        self.need_undo_on_release = False
 
         self.ctrl_pressed = False
         self.shit_pressed = False
@@ -42,6 +44,7 @@ class ShapeEditArea(QtWidgets.QWidget):
             else:
                 x, y = cursor.x(), cursor.y()
             self.centerMoved.emit(x, y)
+            self.increase_undo_on_release = True
             self.repaint()
             return
 
@@ -64,6 +67,7 @@ class ShapeEditArea(QtWidgets.QWidget):
         for shape in self.shapes:
             shape.synchronize_rect()
             shape.synchronize_image()
+        self.need_undo_on_release = True
         self.selectedShapesChanged.emit()
         self.repaint()
 
@@ -117,6 +121,10 @@ class ShapeEditArea(QtWidgets.QWidget):
                 self.manipulator.set_rect(get_combined_rects(rects))
                 self.selectedShapesChanged.emit()
         self.selection_square.release()
+
+        if self.increase_undo_on_release:
+            self.increaseUndoStackRequested.emit()
+            self.increase_undo_on_release = False
 
         self.clicked = False
         self.handeling = False

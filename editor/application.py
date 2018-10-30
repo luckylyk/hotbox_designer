@@ -1,6 +1,6 @@
 
 from functools import partial
-from PySide2 import QtWidgets
+from PySide2 import QtWidgets, QtCore, QtGui
 
 from .editarea import ShapeEditArea
 from .menu import MenuWidget
@@ -14,14 +14,21 @@ from hotbox_designer.utils import (
     move_up_array_elements, move_down_array_elements)
 
 
-class HotboxEditor(QtWidgets.QWidget):
-    def __init__(self, options, parent=None):
-        super(HotboxEditor, self).__init__(parent)
-        self.options = options
+def set_shortcut(keysquence, parent, method):
+    shortcut = QtWidgets.QShortcut(QtGui.QKeySequence(keysquence), parent)
+    shortcut.activated.connect(method)
 
-        self.shape_editor = ShapeEditArea(options)
+
+class HotboxEditor(QtWidgets.QWidget):
+    def __init__(self, hotbox, parent=None):
+        super(HotboxEditor, self).__init__(parent, QtCore.Qt.Window)
+        self.options = hotbox['general']
+
+        self.shape_editor = ShapeEditArea(self.options)
         self.shape_editor.selectedShapesChanged.connect(self.selection_changed)
         self.shape_editor.centerMoved.connect(self.move_center)
+        method = self.set_data_modified
+        self.shape_editor.increaseUndoStackRequested.connect(method)
 
         self.undo_manager = UndoManager(self.hotbox_data(), copy_hotbox_data)
 
@@ -32,8 +39,10 @@ class HotboxEditor(QtWidgets.QWidget):
         self.menu.useSnapToggled.connect(self.use_snap)
         self.menu.snapValuesChanged.connect(self.snap_value_changed)
         self.menu.centerValuesChanged.connect(self.move_center)
-        self.menu.set_size_values(options['width'], options['height'])
-        self.menu.set_center_values(options['centerx'], options['centery'])
+        width, height = self.options['width'], self.options['height']
+        self.menu.set_size_values(width, height)
+        x, y = self.options['centerx'], self.options['centery']
+        self.menu.set_center_values(x, y)
         self.menu.undoRequested.connect(self.undo)
         self.menu.redoRequested.connect(self.redo)
         method = partial(self.create_shape, templates.SQUARE_BUTTON)
@@ -50,6 +59,12 @@ class HotboxEditor(QtWidgets.QWidget):
         self.menu.onTopRequested.connect(method)
         method = self.set_selection_on_bottom
         self.menu.onBottomRequested.connect(method)
+
+        set_shortcut("Ctrl+Z", self.shape_editor, self.undo)
+        set_shortcut("Ctrl+Y", self.shape_editor, self.redo)
+        set_shortcut("Ctrl+C", self.shape_editor, self.copy)
+        set_shortcut("Ctrl+V", self.shape_editor, self.paste)
+        set_shortcut("del", self.shape_editor, self.delete_selection)
 
         self.attribute_editor = AttributeEditor()
         self.attribute_editor.optionSet.connect(self.option_set)
@@ -69,17 +84,24 @@ class HotboxEditor(QtWidgets.QWidget):
         self.vlayout.addWidget(self.menu)
         self.vlayout.addLayout(self.hlayout)
 
+    def copy(self):
+        pass
+
+    def paste(self):
+        pass
+
     def undo(self):
         self.undo_manager.undo()
         data = self.undo_manager.data
-        print(data)
         self.set_hotbox_data(data)
 
     def redo(self):
         self.undo_manager.redo()
         data = self.undo_manager.data
-        print(data)
         self.set_hotbox_data(data)
+
+    def set_data_modified(self):
+        self.undo_manager.set_data_modified(self.hotbox_data())
 
     def use_snap(self, state):
         snap = self.menu.snap_values() if state else None
@@ -88,7 +110,7 @@ class HotboxEditor(QtWidgets.QWidget):
 
     def snap_value_changed(self):
         self.shape_editor.transform.snap = self.menu.snap_values()
-        self.undo_manager.set_data_modified(self.hotbox_data())
+        self.set_data_modified()
         self.shape_editor.repaint()
 
     def edit_center_mode_changed(self, state):
@@ -99,12 +121,12 @@ class HotboxEditor(QtWidgets.QWidget):
         for shape in self.shape_editor.selection:
             shape.options[option] = value
         self.shape_editor.repaint()
-        self.undo_manager.set_data_modified(self.hotbox_data())
+        self.set_data_modified()
 
     def editor_size_changed(self):
         size = self.menu.get_size()
         self.shape_editor.setFixedSize(size)
-        self.undo_manager.set_data_modified(self.hotbox_data())
+        self.set_data_modified()
 
     def move_center(self, x, y):
         self.options['centerx'] = x
@@ -152,7 +174,7 @@ class HotboxEditor(QtWidgets.QWidget):
         else:
             self.shape_editor.shapes.append(shape)
         self.shape_editor.repaint()
-        self.undo_manager.set_data_modified(self.hotbox_data())
+        self.set_data_modified()
 
     def image_modified(self):
         for shape in self.shape_editor.selection:
@@ -164,21 +186,21 @@ class HotboxEditor(QtWidgets.QWidget):
         elements = self.shape_editor.selection
         move_down_array_elements(array, elements)
         self.shape_editor.repaint()
-        self.undo_manager.set_data_modified(self.hotbox_data())
+        self.set_data_modified()
 
     def set_selection_move_up(self):
         array = self.shape_editor.shapes
         elements = self.shape_editor.selection
         move_up_array_elements(array, elements)
         self.shape_editor.repaint()
-        self.undo_manager.set_data_modified(self.hotbox_data())
+        self.set_data_modified()
 
     def set_selection_on_top(self):
         array = self.shape_editor.shapes
         elements = self.shape_editor.selection
         self.shape_editor.shapes = move_elements_to_array_end(array, elements)
         self.shape_editor.repaint()
-        self.undo_manager.set_data_modified(self.hotbox_data())
+        self.set_data_modified()
 
     def set_selection_on_bottom(self):
         array = self.shape_editor.shapes
@@ -186,7 +208,7 @@ class HotboxEditor(QtWidgets.QWidget):
         shapes = move_elements_to_array_begin(array, elements)
         self.shape_editor.shapes = shapes
         self.shape_editor.repaint()
-        self.undo_manager.set_data_modified(self.hotbox_data())
+        self.set_data_modified()
 
     def delete_selection(self):
         for shape in self.shape_editor.selection:
@@ -196,7 +218,7 @@ class HotboxEditor(QtWidgets.QWidget):
         rect = get_combined_rects(rects)
         self.shape_editor.manipulator.set_rect(rect)
         self.shape_editor.repaint()
-        self.undo_manager.set_data_modified(self.hotbox_data())
+        self.set_data_modified()
 
     def hotbox_data(self):
         return {
@@ -205,12 +227,7 @@ class HotboxEditor(QtWidgets.QWidget):
 
     def set_hotbox_data(self, hotbox_data):
         self.shape_editor.options = hotbox_data['general']
-        shapes = []
-        for options in hotbox_data['shapes']:
-            shape = Shape(options)
-            shape.rect.moveCenter(self.shape_editor.rect().center())
-            shape.synchronize_rect()
-            shapes.append(shape)
+        shapes = [Shape(options) for options in hotbox_data['shapes']]
         self.shape_editor.shapes = shapes
         self.shape_editor.manipulator.rect = None
         self.shape_editor.repaint()
