@@ -1,12 +1,29 @@
 
 from functools import partial
 from PySide2 import QtWidgets, QtGui, QtCore
+from hotbox_designer.editor.application import HotboxEditor
 from hotbox_designer.widgets import BoolCombo, Title
 from hotbox_designer.utils import load_hotboxes, save_hotboxes
 from hotbox_designer.templates import get_new_hotbox
 
 
 TRIGGERING_TYPES = 'on click', 'on close', 'both'
+
+PRESS_COMMAND_TEMPLATE = """
+import hotbox_designer
+hotbox_designer.initialize(filename)
+hotbox_designer.show_hotbox('{}')
+"""
+
+RELEASE_COMMAND_TEMPLATE = """
+import hotbox_designer
+hotbox_designer.hide_hotbox('{}')
+"""
+
+def generate_commands(name):
+    return (
+        PRESS_COMMAND_TEMPLATE.format(name),
+        RELEASE_COMMAND_TEMPLATE.format(name))
 
 
 class HotboxManager(QtWidgets.QWidget):
@@ -21,6 +38,7 @@ class HotboxManager(QtWidgets.QWidget):
         self.add_button = QtWidgets.QPushButton('create')
         self.add_button.released.connect(self._call_create)
         self.edit_button = QtWidgets.QPushButton('edit')
+        self.edit_button.released.connect(self._call_edit)
         self.remove_button = QtWidgets.QPushButton('remove')
         self.remove_button.released.connect(self._call_remove)
         self.buttons = QtWidgets.QHBoxLayout()
@@ -55,6 +73,14 @@ class HotboxManager(QtWidgets.QWidget):
             self.edit.setEnabled(True)
         else:
             self.edit.setEnabled(False)
+
+    def _call_edit(self):
+        hotbox_data = self.get_selected_hotbox()
+        if hotbox_data is None:
+            return
+        editor = HotboxEditor(hotbox_data, parent=self.context.get_parent())
+        editor.set_hotbox_data(hotbox_data)
+        editor.show()
 
     def _call_create(self):
         self.table_model.layoutAboutToBeChanged.emit()

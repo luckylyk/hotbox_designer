@@ -56,7 +56,7 @@ TEST = {
 
 class HotboxReader(QtWidgets.QWidget):
     def __init__(self, hotbox_data, parent=None):
-        super(HotboxReader, self).__init__(parent)
+        super(HotboxReader, self).__init__(parent, QtCore.Qt.Window)
         self.setWindowFlags(QtCore.Qt.FramelessWindowHint)
         self.setAttribute(QtCore.Qt.WA_TranslucentBackground)
         self.setMouseTracking(True)
