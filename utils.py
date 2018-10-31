@@ -34,7 +34,6 @@ def move_down_array_elements(array, elements):
 
 
 ICONDIR = os.path.dirname(__file__)
-# ICONDIR = '//nwave/data/users/lionelb/hotbox/'
 def icon(filename):
     return QtGui.QIcon(os.path.join(ICONDIR, 'icons', filename))
 
@@ -51,5 +50,5 @@ def load_hotboxes(filename):
 
 
 def save_hotboxes(filename, hotboxes):
-    with open(filename, 'r') as f:
-        json.dump(f, hotboxes, indent=2)
+    with open(filename, 'w') as f:
+        json.dump(hotboxes, f, indent=2)

@@ -41,8 +41,10 @@ class MayaContext(AbstractContext):
     def is_active_in_software(hotbox):
         from maya import cmds
         alt = hotbox['general']['alt']
-        ctrl = hotbox['general']['ctrl']
+        ctrl = hotbox['general']['control']
         touch = hotbox['general']['touch']
+        if not touch:
+            return False
         current_command_set = cmds.hotkey(
             touch,
             query=True,
@@ -56,10 +58,28 @@ class MayaContext(AbstractContext):
         from maya import cmds
         name = hotbox['general']['name']
         alt = hotbox['general']['alt']
-        ctrl = hotbox['general']['ctrl']
+        ctrl = hotbox['general']['control']
         touch = hotbox['general']['touch']
-        command = cmds.nameCommand(name + '_show', command=press_command)
-        cmds.hotkey(touch, altModifier=alt, ctrlModifier=ctrl, name=command)
-        command = cmds.nameCommand(name + '_show', command=press_command)
+
+        command = cmds.nameCommand(
+            name + '_show',
+            annotation='command who show hotbox: ' + name,
+            command=press_command)
+
         cmds.hotkey(
-            touch, altModifier=alt, ctrlModifier=ctrl, releaseName=command)
+            keyShortcut=touch,
+            altModifier=alt,
+            ctrlModifier=ctrl,
+            name=command)
+
+        command = cmds.nameCommand(
+            name + '_hide',
+            annotation='command who hide hotbox: ' + name,
+            command=press_command)
+
+        cmds.hotkey(
+            keyShortcut=touch,
+            altModifier=alt,
+            ctrlModifier=ctrl,
+            releaseName=command)
+

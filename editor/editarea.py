@@ -29,7 +29,7 @@ class ShapeEditArea(QtWidgets.QWidget):
         self.clicked = False
         self.handeling = False
         self.edit_center_mode = False
-        self.need_undo_on_release = False
+        self.increase_undo_on_release = False
 
         self.ctrl_pressed = False
         self.shit_pressed = False

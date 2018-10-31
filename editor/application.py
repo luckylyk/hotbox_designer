@@ -20,6 +20,8 @@ def set_shortcut(keysquence, parent, method):
 
 
 class HotboxEditor(QtWidgets.QWidget):
+    hotboxDataModified = QtCore.Signal(object)
+
     def __init__(self, hotbox, parent=None):
         super(HotboxEditor, self).__init__(parent, QtCore.Qt.Window)
         self.options = hotbox['general']
@@ -102,6 +104,7 @@ class HotboxEditor(QtWidgets.QWidget):
 
     def set_data_modified(self):
         self.undo_manager.set_data_modified(self.hotbox_data())
+        self.hotboxDataModified.emit(self.hotbox_data())
 
     def use_snap(self, state):
         snap = self.menu.snap_values() if state else None
@@ -226,7 +229,8 @@ class HotboxEditor(QtWidgets.QWidget):
             'shapes': [shape.options for shape in self.shape_editor.shapes]}
 
     def set_hotbox_data(self, hotbox_data):
-        self.shape_editor.options = hotbox_data['general']
+        self.options = hotbox_data['general']
+        self.shape_editor.options = self.options
         shapes = [Shape(options) for options in hotbox_data['shapes']]
         self.shape_editor.shapes = shapes
         self.shape_editor.manipulator.rect = None

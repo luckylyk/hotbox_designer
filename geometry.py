@@ -59,7 +59,7 @@ def get_left_side_rect(rect):
     top = rect.top() + (rect.height() / 2.0)
     return QtCore.QRectF(
         rect.left() - (POINT_RADIUS / 2.0) - POINT_OFFSET,
-        top - (POINT_RADIUS / 2.0) - POINT_OFFSET,
+        top - (POINT_RADIUS / 2.0),
         POINT_RADIUS, POINT_RADIUS)
 
 
@@ -69,7 +69,7 @@ def get_right_side_rect(rect):
     top = rect.top() + (rect.height() / 2.0)
     return QtCore.QRectF(
         rect.right() + (POINT_RADIUS / 2.0) - POINT_OFFSET,
-        top - (POINT_RADIUS / 2.0) - POINT_OFFSET,
+        top - (POINT_RADIUS / 2.0) ,
         POINT_RADIUS, POINT_RADIUS)
 
 
@@ -77,7 +77,7 @@ def get_top_side_rect(rect):
     if not rect:
         return None
     return QtCore.QRectF(
-        rect.left() + (rect.width() / 2.0),
+        rect.left() + (rect.width() / 2.0) - (POINT_RADIUS / 2.0),
         rect.top() - (POINT_RADIUS / 2.0) - POINT_OFFSET,
         POINT_RADIUS, POINT_RADIUS)
 
@@ -86,7 +86,7 @@ def get_bottom_side_rect(rect):
     if not rect:
         return None
     return QtCore.QRectF(
-        rect.left() + (rect.width() / 2.0),
+        rect.left() + (rect.width() / 2.0) - (POINT_RADIUS / 2.0),
         rect.bottom() + (POINT_RADIUS / 2.0) - POINT_OFFSET,
         POINT_RADIUS, POINT_RADIUS)
 
