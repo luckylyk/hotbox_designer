@@ -1,38 +1,58 @@
 
 from functools import partial
 from PySide2 import QtWidgets, QtGui, QtCore
+
+import hotbox_designer
 from hotbox_designer.editor.application import HotboxEditor
 from hotbox_designer.widgets import BoolCombo, Title
-from hotbox_designer.utils import load_hotboxes, save_hotboxes
-from hotbox_designer.templates import get_new_hotbox
+from hotbox_designer.templates import HOTBOX
 
 
-TRIGGERING_TYPES = 'on click', 'on close', 'both'
-
-PRESS_COMMAND_TEMPLATE = """
-import hotbox_designer
-hotbox_designer.initialize(filename)
+PRESS_COMMAND_TEMPLATE = """import hotbox_designer
+from hotbox_designer import sofwares
+software = softwares.Maya()
+hotbox_designer.initialize(software)
 hotbox_designer.show_hotbox('{}')
 """
 
-RELEASE_COMMAND_TEMPLATE = """
-import hotbox_designer
+RELEASE_COMMAND_TEMPLATE = """import hotbox_designer
 hotbox_designer.hide_hotbox('{}')
 """
 
-def generate_commands(name):
-    return (
-        PRESS_COMMAND_TEMPLATE.format(name),
-        RELEASE_COMMAND_TEMPLATE.format(name))
+
+def get_new_hotbox(hotboxes):
+    options =  HOTBOX.copy()
+    options.update({'name': get_valid_name(hotboxes)})
+    return {
+        'general': options,
+        'shapes': []
+    }
+
+DEFAULT_NAME = 'MyHotbox_{}'
+TRIGGERING_TYPES = 'on click', 'on close', 'both'
+
+
+def get_valid_name(hotboxes, proposal=None):
+    names = [hotbox['general']['name'] for hotbox in hotboxes]
+    index = 0
+    name = proposal or DEFAULT_NAME.format(str(index).zfill(2))
+    while name in names:
+        if proposal:
+            name = proposal + "_" + str(index).zfill(2)
+        else:
+            name = DEFAULT_NAME.format(str(index).zfill(2))
+        index += 1
+    return name
 
 
 class HotboxManager(QtWidgets.QWidget):
     def __init__(self, context):
-        super(HotboxManager, self).__init__(context.parent, QtCore.Qt.Tool)
+        parent = context.main_window
+        super(HotboxManager, self).__init__(parent, QtCore.Qt.Tool)
         self.context = context
         self.hotbox_editor = None
-        hotboxes = load_hotboxes(self.context.file)
-        self.table_model = HotboxTableModel(context, hotboxes)
+        hotboxes_data = hotbox_designer.load_data(self.context.file)
+        self.table_model = HotboxTableModel(hotboxes_data)
         self.table_view = HotboxTableView()
         self.table_view.set_model(self.table_model)
         self.table_view.selectedRowChanged.connect(self._selected_row_changed)
@@ -43,25 +63,48 @@ class HotboxManager(QtWidgets.QWidget):
         self.edit_button.released.connect(self._call_edit)
         self.remove_button = QtWidgets.QPushButton('remove')
         self.remove_button.released.connect(self._call_remove)
-        self.buttons = QtWidgets.QHBoxLayout()
-        self.buttons.setContentsMargins(0, 0, 0, 0)
-        self.buttons.addWidget(self.add_button)
-        self.buttons.addWidget(self.edit_button)
-        self.buttons.addWidget(self.remove_button)
+        self.reinitialize = QtWidgets.QPushButton('reinitialize hotboxes')
+        self.reinitialize.released.connect(self._call_reinitialize)
+
+        self.hbuttons = QtWidgets.QHBoxLayout()
+        self.hbuttons.setContentsMargins(0, 0, 0, 0)
+        self.hbuttons.addWidget(self.add_button)
+        self.hbuttons.addWidget(self.edit_button)
+        self.hbuttons.addWidget(self.remove_button)
+        self.vbuttons = QtWidgets.QVBoxLayout()
+        self.vbuttons.setContentsMargins(0, 0, 0, 0)
+        self.vbuttons.addLayout(self.hbuttons)
+        self.vbuttons.addWidget(self.reinitialize)
+
         self.table_layout = QtWidgets.QVBoxLayout()
         self.table_layout.setContentsMargins(0, 0, 0, 0)
         self.table_layout.setSpacing(0)
         self.table_layout.addWidget(self.table_view)
-        self.table_layout.addLayout(self.buttons)
+        self.table_layout.addLayout(self.vbuttons)
 
         self.edit = HotboxGeneralSettingWidget()
         self.edit.optionSet.connect(self._call_option_set)
-        self.edit.applyRequested.connect(self._call_apply_hotbox)
         self.edit.setEnabled(False)
+        self.press_command = QtWidgets.QPushButton('show on press command')
+        self.press_command.released.connect(self._call_press_command)
+        self.release_command = QtWidgets.QPushButton('show on release command')
+        self.release_command.released.connect(self._call_release_command)
 
-        self.layout = QtWidgets.QHBoxLayout(self)
-        self.layout.addLayout(self.table_layout)
-        self.layout.addWidget(self.edit)
+        self.edit_layout = QtWidgets.QVBoxLayout()
+        self.edit_layout.setContentsMargins(0, 0, 0, 0)
+        self.edit_layout.setSpacing(0)
+        self.edit_layout.addWidget(self.edit)
+        self.edit_layout.addStretch(1)
+        self.edit_layout.addWidget(self.press_command)
+        self.edit_layout.addWidget(self.release_command)
+
+        self.hlayout = QtWidgets.QHBoxLayout()
+        self.hlayout.setContentsMargins(0, 0, 0, 0)
+        self.hlayout.addLayout(self.table_layout)
+        self.hlayout.addLayout(self.edit_layout)
+
+        self.layout = QtWidgets.QVBoxLayout(self)
+        self.layout.addLayout(self.hlayout)
 
     def get_selected_hotbox(self):
         row = self.table_view.get_selected_row()
@@ -70,7 +113,7 @@ class HotboxManager(QtWidgets.QWidget):
         return self.table_model.hotboxes[row]
 
     def save_hotboxes(self, *useless):
-        save_hotboxes(self.context.file, self.table_model.hotboxes)
+        hotbox_designer.save_data(self.context.file, self.table_model.hotboxes)
 
     def _selected_row_changed(self):
         hotbox = self.get_selected_hotbox()
@@ -80,17 +123,12 @@ class HotboxManager(QtWidgets.QWidget):
         else:
             self.edit.setEnabled(False)
 
-    def _call_apply_hotbox(self):
-        hotbox_data = self.get_selected_hotbox()
-        press_command, release_command = generate_commands(hotbox_data)
-        self.context.activate_hotbox_in_software(
-            hotbox_data, press_command, release_command)
-
     def _call_edit(self):
         hotbox_data = self.get_selected_hotbox()
         if hotbox_data is None:
             return
-        self.hotbox_editor = HotboxEditor(hotbox_data, parent=self.context.get_parent())
+        parent = self.context.main_window
+        self.hotbox_editor = HotboxEditor(hotbox_data, parent=parent)
         self.hotbox_editor.set_hotbox_data(hotbox_data)
         row = self.table_view.get_selected_row()
         method = partial(self.table_model.set_hotbox, row)
@@ -100,8 +138,9 @@ class HotboxManager(QtWidgets.QWidget):
         self.hotbox_editor.show()
 
     def _call_create(self):
+        hotbox = get_new_hotbox(self.table_model.hotboxes)
         self.table_model.layoutAboutToBeChanged.emit()
-        self.table_model.hotboxes.append(get_new_hotbox())
+        self.table_model.hotboxes.append(hotbox)
         self.table_model.layoutChanged.emit()
         self.save_hotboxes()
 
@@ -125,9 +164,29 @@ class HotboxManager(QtWidgets.QWidget):
         self.table_model.layoutChanged.emit()
         self.save_hotboxes()
 
+    def _call_reinitialize(self):
+        hotbox_designer.initialize(self.context)
+
+    def _call_press_command(self):
+        hotbox = self.get_selected_hotbox()
+        if not hotbox:
+            return
+        command = PRESS_COMMAND_TEMPLATE.format(hotbox['general']['name'])
+        CommandDisplayDialog(command, self).exec_()
+
+    def _call_release_command(self):
+        hotbox = self.get_selected_hotbox()
+        if not hotbox:
+            return
+        command = RELEASE_COMMAND_TEMPLATE.format(hotbox['general']['name'])
+        CommandDisplayDialog(command, self).exec_()
+
     def _call_option_set(self, option, value):
         self.table_model.layoutAboutToBeChanged.emit()
         hotbox = self.get_selected_hotbox()
+        if option == 'name':
+            value = get_valid_name(self.table_model.hotboxes, value)
+
         if hotbox is not None:
             hotbox['general'][option] = value
         self.table_model.layoutChanged.emit()
@@ -144,6 +203,7 @@ class HotboxTableView(QtWidgets.QTableView):
         vheader.setSectionResizeMode(vheader.ResizeToContents)
         hheader = self.horizontalHeader()
         hheader.setStretchLastSection(True)
+        hheader.hide()
         self.setAlternatingRowColors(True)
         self.setWordWrap(True)
         self.setShowGrid(False)
@@ -166,26 +226,17 @@ class HotboxTableView(QtWidgets.QTableView):
         return rows[0]
 
 
-
 class HotboxTableModel(QtCore.QAbstractTableModel):
-    HEADERS = 'name', 'shortcut'
 
-    def __init__(self, context, hotboxes, parent=None):
+    def __init__(self, hotboxes, parent=None):
         super(HotboxTableModel, self).__init__(parent=None)
         self.hotboxes = hotboxes
-        self.context = context
 
     def columnCount(self, _):
-        return len(self.HEADERS)
+        return 1
 
     def rowCount(self, _):
         return len(self.hotboxes)
-
-    def headerData(self, index, orientation, role):
-        if orientation == QtCore.Qt.Vertical:
-            return
-        if role == QtCore.Qt.DisplayRole:
-            return self.HEADERS[index]
 
     def set_hotbox(self, row, hotbox):
         self.layoutAboutToBeChanged.emit()
@@ -194,24 +245,9 @@ class HotboxTableModel(QtCore.QAbstractTableModel):
     def data(self, index, role):
         row, col = index.row(), index.column()
         hotbox = self.hotboxes[row]
-        if role == QtCore.Qt.BackgroundRole:
-            if not self.context.is_active_in_software(hotbox):
-                return QtGui.QColor(255, 0, 0, 25)
         if role == QtCore.Qt.DisplayRole:
             if col == 0:
                 return hotbox['general']['name']
-            elif col == 1:
-                return get_keysequance_displayname(hotbox)
-
-
-def get_keysequance_displayname(hotbox):
-    text = ''
-    if hotbox['general']['alt']:
-        text += 'alt + '
-    if hotbox['general']['control']:
-        text += 'ctrl + '
-    text += hotbox['general']['touch']
-    return text
 
 
 class HotboxGeneralSettingWidget(QtWidgets.QWidget):
@@ -228,35 +264,18 @@ class HotboxGeneralSettingWidget(QtWidgets.QWidget):
         self.triggering.currentIndexChanged.connect(self._triggering_changed)
         self.aiming = BoolCombo(False)
         self.aiming.valueSet.connect(partial(self.optionSet.emit, 'aiming'))
-        self.touch = TouchEdit()
-        self.touch.textEdited.connect(self._touch_changed)
-        self.alt = BoolCombo(False)
-        self.alt.valueSet.connect(partial(self.optionSet.emit, 'alt'))
-        self.control = BoolCombo(False)
-        self.control.valueSet.connect(partial(self.optionSet.emit, 'control'))
-        self.apply = QtWidgets.QPushButton('apply')
-        self.apply.released.connect(self.applyRequested.emit)
 
-        self.flayout = QtWidgets.QFormLayout()
-        self.flayout.setContentsMargins(0, 0, 0, 0)
-        self.flayout.setSpacing(0)
-        self.flayout.setHorizontalSpacing(5)
-        self.flayout.addRow(Title('Options'))
-        self.flayout.addItem(QtWidgets.QSpacerItem(0, 8))
-        self.flayout.addRow('name', self.name)
-        self.flayout.addItem(QtWidgets.QSpacerItem(0, 8))
-        self.flayout.addRow('triggering', self.triggering)
-        self.flayout.addRow('aiming', self.aiming)
-        self.flayout.addItem(QtWidgets.QSpacerItem(0, 8))
-        self.flayout.addRow('touch', self.touch)
-        self.flayout.addRow('alt', self.alt)
-        self.flayout.addRow('control', self.control)
-
-        self.layout = QtWidgets.QVBoxLayout(self)
+        self.layout = QtWidgets.QFormLayout(self)
         self.layout.setContentsMargins(0, 0, 0, 0)
-        self.layout.addLayout(self.flayout)
-        self.layout.addStretch(1)
-        self.layout.addWidget(self.apply)
+        self.layout.setSpacing(0)
+        self.layout.setHorizontalSpacing(5)
+        self.layout.addRow(Title('Options'))
+        self.layout.addItem(QtWidgets.QSpacerItem(0, 8))
+        self.layout.addRow('name', self.name)
+        self.layout.addItem(QtWidgets.QSpacerItem(0, 8))
+        self.layout.addRow('triggering', self.triggering)
+        self.layout.addRow('aiming', self.aiming)
+
 
     def _triggering_changed(self, _):
         self.optionSet.emit('triggering', self.triggering.currentText())
@@ -268,9 +287,26 @@ class HotboxGeneralSettingWidget(QtWidgets.QWidget):
         self.name.setText(hotbox_settings['name'])
         self.triggering.setCurrentText(hotbox_settings['triggering'])
         self.aiming.setCurrentText(str(hotbox_settings['aiming']))
-        self.touch.setText(hotbox_settings['touch'])
-        self.alt.setCurrentText(str(hotbox_settings['alt']))
-        self.control.setCurrentText(str(hotbox_settings['control']))
+
+
+class CommandDisplayDialog(QtWidgets.QDialog):
+    def __init__(self, command, parent=None):
+        super(CommandDisplayDialog, self).__init__(parent)
+        self.setWindowTitle("Command")
+        self.text = QtWidgets.QTextEdit()
+        self.text.setReadOnly(True)
+        self.text.setPlainText(command)
+        self.ok = QtWidgets.QPushButton('ok')
+        self.ok.released.connect(self.accept)
+
+        self.button_layout = QtWidgets.QHBoxLayout()
+        self.button_layout.setContentsMargins(0, 0, 0, 0)
+        self.button_layout.addStretch(1)
+        self.button_layout.addWidget(self.ok)
+
+        self.layout = QtWidgets.QVBoxLayout(self)
+        self.layout.addWidget(self.text)
+        self.layout.addLayout(self.button_layout)
 
 
 class TouchEdit(QtWidgets.QLineEdit):

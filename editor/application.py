@@ -5,18 +5,16 @@ from PySide2 import QtWidgets, QtCore, QtGui
 from .editarea import ShapeEditArea
 from .menu import MenuWidget
 from .attributes import AttributeEditor
+
 from hotbox_designer import templates
-from hotbox_designer.managers import CopyManager, UndoManager, copy_hotbox_data
 from hotbox_designer.interactive import Shape
 from hotbox_designer.geometry import get_combined_rects
+from hotbox_designer.data_managers import (
+    CopyManager, UndoManager, copy_hotbox_data)
 from hotbox_designer.utils import (
     move_elements_to_array_end, move_elements_to_array_begin,
-    move_up_array_elements, move_down_array_elements)
+    move_up_array_elements, move_down_array_elements, set_shortcut)
 
-
-def set_shortcut(keysquence, parent, method):
-    shortcut = QtWidgets.QShortcut(QtGui.QKeySequence(keysquence), parent)
-    shortcut.activated.connect(method)
 
 
 class HotboxEditor(QtWidgets.QWidget):
@@ -24,6 +22,7 @@ class HotboxEditor(QtWidgets.QWidget):
 
     def __init__(self, hotbox, parent=None):
         super(HotboxEditor, self).__init__(parent, QtCore.Qt.Window)
+        self.setWindowTitle("Hotbox editor")
         self.options = hotbox['general']
 
         self.shape_editor = ShapeEditArea(self.options)

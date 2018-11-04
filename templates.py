@@ -116,21 +116,11 @@ BACKGROUND = {
 
 
 HOTBOX = {
-    'name': 'my hotbox',
-    'touch': '',
+    'name': '',
     'triggering': 'click', # or passive
     'aiming': False,
-    'alt': True,
-    'control': False,
     'centerx': 450,
     'centery': 300,
     'width': 900,
     'height': 600
 }
-
-
-def get_new_hotbox():
-    return {
-        'general': HOTBOX.copy(),
-        'shapes': []
-    }

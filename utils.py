@@ -1,6 +1,6 @@
 import os
 import json
-from PySide2 import QtGui
+from PySide2 import QtGui, QtWidgets
 
 
 def move_elements_to_array_end(array, elements):
@@ -42,13 +42,6 @@ def get_cursor(widget):
     return widget.mapFromGlobal(QtGui.QCursor.pos())
 
 
-def load_hotboxes(filename):
-    if not os.path.exists(filename):
-        return []
-    with open(filename, 'r') as f:
-        return json.load(f)
-
-
-def save_hotboxes(filename, hotboxes):
-    with open(filename, 'w') as f:
-        json.dump(hotboxes, f, indent=2)
+def set_shortcut(keysquence, parent, method):
+    shortcut = QtWidgets.QShortcut(QtGui.QKeySequence(keysquence), parent)
+    shortcut.activated.connect(method)

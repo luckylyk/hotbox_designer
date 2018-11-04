@@ -8,12 +8,17 @@ from hotbox_designer.utils import get_cursor
 
 class HotboxReader(QtWidgets.QWidget):
     def __init__(self, hotbox_data, parent=None):
-        super(HotboxReader, self).__init__(parent, QtCore.Qt.Window)
-        self.setWindowFlags(QtCore.Qt.FramelessWindowHint)
+        super(HotboxReader, self).__init__(parent)
+        flags = (
+            QtCore.Qt.Tool | QtCore.Qt.WindowStaysOnTopHint |
+            QtCore.Qt.FramelessWindowHint)
+
+        self.setWindowFlags(flags)
         self.setAttribute(QtCore.Qt.WA_TranslucentBackground)
         self.setMouseTracking(True)
 
         settings = hotbox_data['general']
+        self.triggering = settings['triggering'] 
         self.center = QtCore.QPoint(settings['centerx'], settings['centery'])
         self.setFixedSize(settings['width'], settings['height'])
         self.shapes = [Shape(data) for data in hotbox_data['shapes']]
@@ -48,13 +53,17 @@ class HotboxReader(QtWidgets.QWidget):
                     shape.clicked = False
         self.repaint()
 
-    def mouseReleaseEvent(self, event):
+    def execute_hovered_shape(self):
         for shape in self.shapes:
             if shape.is_interactive() and shape.hovered:
                 shape.execute(left=self.left_clicked, right=self.right_clicked)
                 close = shape.autoclose(
                     left=self.left_clicked, right=self.right_clicked)
                 break
+
+    def mouseReleaseEvent(self, event):
+        close = True
+        self.execute_hovered_shape()
         if event.button() == QtCore.Qt.RightButton:
             self.right_clicked = False
         elif event.button() == QtCore.Qt.LeftButton:
@@ -81,9 +90,7 @@ class HotboxReader(QtWidgets.QWidget):
         super(HotboxReader, self).show()
         self.move(QtGui.QCursor.pos() - self.center)
 
-
-if __name__ == '__main__':
-    app = QtWidgets.QApplication([])
-    window = HotboxReader(TEST)
-    window.show()
-    app.exec_()
+    def hide(self):
+        if self.triggering == 'passive':
+            self.execute_hovered_shape()
+        super(HotboxReader, self).__init__()

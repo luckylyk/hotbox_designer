@@ -1,5 +1,6 @@
 from functools import partial
 from PySide2 import QtCore, QtWidgets, QtGui
+
 from hotbox_designer.colorwheel import ColorDialog
 from hotbox_designer.convert import VALIGNS, HALIGNS
 from hotbox_designer.utils import icon
