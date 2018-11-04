@@ -2,7 +2,6 @@ import os
 import json
 from functools import partial
 from hotbox_designer.reader import HotboxReader
-from hotbox_designer.utils import set_shortcut
 
 
 hotboxes = {}

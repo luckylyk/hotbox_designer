@@ -93,4 +93,4 @@ class HotboxReader(QtWidgets.QWidget):
     def hide(self):
         if self.triggering == 'passive':
             self.execute_hovered_shape()
-        super(HotboxReader, self).__init__()
+        super(HotboxReader, self).hide()
