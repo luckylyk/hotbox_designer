@@ -117,7 +117,7 @@ BACKGROUND = {
 
 HOTBOX = {
     'name': '',
-    'triggering': 'click', # or passive
+    'triggering': ('on close', 'on click', 'both'),
     'aiming': False,
     'centerx': 450,
     'centery': 300,

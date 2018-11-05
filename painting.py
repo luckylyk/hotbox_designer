@@ -106,7 +106,7 @@ def draw_shape(painter, shape):
     font.setPixelSize(options['text.size'])
     painter.setFont(font)
     text = options['text.content']
-    painter.drawText(QtCore.QRectF(content_rect), flags, text) #, option=option)
+    painter.drawText(QtCore.QRectF(content_rect), flags, text)
 
 
 def draw_selection_square(painter, rect):
@@ -142,6 +142,14 @@ def draw_manipulator(painter, manipulator, cursor):
     painter.setPen(pen)
     painter.setBrush(QtGui.QBrush(QtGui.QColor(0, 0, 0, 0)))
     painter.drawRect(manipulator.rect)
+
+
+def draw_aiming(painter, center, target):
+    pen = QtGui.QPen(QtGui.QColor(35, 35, 35))
+    pen.setWidth(3)
+    painter.setPen(pen)
+    painter.setBrush(QtGui.QColor(0, 0, 0, 0))
+    painter.drawLine(center, target)
 
 
 def get_hovered_path(rect):

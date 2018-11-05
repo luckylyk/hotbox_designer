@@ -132,7 +132,9 @@ class ColorWheel(QtWidgets.QWidget):
         pen.setWidth(3)
         painter.setPen(pen)
 
-        painter.drawLine(*self._get_points_by_angle())
+        painter.drawLine(
+            get_point_on_line(self._angle, 37),
+            get_point_on_line(self._angle, 46))
 
         pen.setWidth(5)
         pen.setCapStyle(QtCore.Qt.RoundCap)
@@ -192,16 +194,6 @@ class ColorWheel(QtWidgets.QWidget):
         b = round(b * y_factor)
 
         return QtGui.QColor(r, g, b)
-
-    def _get_points_by_angle(self):
-        angle = math.radians(self._angle)
-        x = 50 + 37 * math.cos(float(angle))
-        y = 50 + 37 * math.sin(float(angle))
-        point_a = QtCore.QPoint(x, y)
-        x = 50 + 46 * math.cos(float(angle))
-        y = 50 + 46 * math.sin(float(angle))
-        point_b = QtCore.QPoint(x, y)
-        return (point_a, point_b)
 
     def set_current_color(self, color):
         [r, g, b] = color.getRgb()[:3]
@@ -277,6 +269,11 @@ def get_color_from_degree(degree):
 
     return r, g, b
 
+def get_point_on_line(angle, ray):
+        x = 50 + ray * math.cos(float(angle))
+        y = 50 + ray * math.sin(float(angle))
+        return QtCore.QPoint(x, y)
+
 
 def get_quarter(a, b, c):
     quarter = None
@@ -302,7 +299,6 @@ def get_angle_c(a, b, c):
 
 
 def get_absolute_angle_c(a, b, c):
-    # triangle = QTriangleRectangle(a=a, b=b, c=c)
     quarter = get_quarter(a, b, c)
     try:
         angle_c = get_angle_c(a, b, c)

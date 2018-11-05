@@ -21,12 +21,11 @@ hotbox_designer.hide_hotbox('{}')
 
 
 def get_new_hotbox(hotboxes):
-    options =  HOTBOX.copy()
+    options = HOTBOX.copy()
     options.update({'name': get_valid_name(hotboxes)})
     return {
         'general': options,
-        'shapes': []
-    }
+        'shapes': []}
 
 DEFAULT_NAME = 'MyHotbox_{}'
 TRIGGERING_TYPES = 'on click', 'on close', 'both'
@@ -47,9 +46,9 @@ def get_valid_name(hotboxes, proposal=None):
 
 class HotboxManager(QtWidgets.QWidget):
     def __init__(self, context):
-        self.setWindowTitle('Hotbox Designer')
         parent = context.main_window
         super(HotboxManager, self).__init__(parent, QtCore.Qt.Tool)
+        self.setWindowTitle('Hotbox Designer')
         self.context = context
         self.hotbox_editor = None
         hotboxes_data = hotbox_designer.load_data(self.context.file)
@@ -166,7 +165,7 @@ class HotboxManager(QtWidgets.QWidget):
         self.save_hotboxes()
 
     def _call_reinitialize(self):
-        hotbox_designer.initialize(self.context)
+        hotbox_designer.load_hotboxes(self.context)
 
     def _call_press_command(self):
         hotbox = self.get_selected_hotbox()
@@ -276,7 +275,6 @@ class HotboxGeneralSettingWidget(QtWidgets.QWidget):
         self.layout.addItem(QtWidgets.QSpacerItem(0, 8))
         self.layout.addRow('triggering', self.triggering)
         self.layout.addRow('aiming', self.aiming)
-
 
     def _triggering_changed(self, _):
         self.optionSet.emit('triggering', self.triggering.currentText())
