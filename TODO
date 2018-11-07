@@ -2,13 +2,21 @@
     - Write readme.md
     - Write documentation
 
-    - Copy Paste in editor
+    FEATURES
     - Improve aiming system
-
-    - Debug auto-save issue
-    - Debug delete
-    - Fixe right clic issue
-
-    - create software context for
+    - Create software context for
         Nuke
         Blender
+
+    FEATURES documentation
+    - Copy Paste in editor
+
+    TO FIXE
+    - undo stack
+    - color wheel (revert old version)
+
+    FIXED
+    - Debug delete
+    - Fixe right clic issue
+    - Fixe language selection
+    - Debug auto-save issue

@@ -9,8 +9,7 @@ from .attributes import AttributeEditor
 from hotbox_designer import templates
 from hotbox_designer.interactive import Shape
 from hotbox_designer.geometry import get_combined_rects
-from hotbox_designer.data_managers import (
-    CopyManager, UndoManager, copy_hotbox_data)
+from hotbox_designer.data_managers import UndoManager, copy_hotbox_data
 from hotbox_designer.utils import (
     move_elements_to_array_end, move_elements_to_array_begin,
     move_up_array_elements, move_down_array_elements, set_shortcut)
@@ -24,6 +23,7 @@ class HotboxEditor(QtWidgets.QWidget):
         super(HotboxEditor, self).__init__(parent, QtCore.Qt.Window)
         self.setWindowTitle("Hotbox editor")
         self.options = hotbox['general']
+        self.clipboard = []
 
         self.shape_editor = ShapeEditArea(self.options)
         self.shape_editor.selectedShapesChanged.connect(self.selection_changed)
@@ -34,6 +34,8 @@ class HotboxEditor(QtWidgets.QWidget):
         self.undo_manager = UndoManager(self.hotbox_data(), copy_hotbox_data)
 
         self.menu = MenuWidget()
+        self.menu.copyRequested.connect(self.copy)
+        self.menu.pasteRequested.connect(self.paste)
         self.menu.deleteRequested.connect(self.delete_selection)
         self.menu.sizeChanged.connect(self.editor_size_changed)
         self.menu.editCenterToggled.connect(self.edit_center_mode_changed)
@@ -86,10 +88,23 @@ class HotboxEditor(QtWidgets.QWidget):
         self.vlayout.addLayout(self.hlayout)
 
     def copy(self):
-        pass
+        self.clipboard = [
+            s.options.copy() for s in self.shape_editor.selection]
 
     def paste(self):
-        pass
+        shape_datas = self.hotbox_data()['shapes'][:] + self.clipboard
+        hotbox_data = {
+            'general': self.options,
+            'shapes': shape_datas}
+        self.set_hotbox_data(hotbox_data)
+        self.undo_manager.set_data_modified(hotbox_data)
+        self.hotboxDataModified.emit(hotbox_data)
+
+        # select new shapes
+        shapes = self.shape_editor.shapes [-len(self.clipboard):]
+        self.shape_editor.selection.replace(shapes)
+        self.shape_editor.update_selection()
+        self.shape_editor.repaint()
 
     def undo(self):
         self.undo_manager.undo()
@@ -102,6 +117,7 @@ class HotboxEditor(QtWidgets.QWidget):
         self.set_hotbox_data(data)
 
     def set_data_modified(self):
+        print 'data modified'
         self.undo_manager.set_data_modified(self.hotbox_data())
         self.hotboxDataModified.emit(self.hotbox_data())
 
@@ -120,6 +136,7 @@ class HotboxEditor(QtWidgets.QWidget):
         self.shape_editor.repaint()
 
     def option_set(self, option, value):
+        print (option, value)
         for shape in self.shape_editor.selection:
             shape.options[option] = value
         self.shape_editor.repaint()
@@ -213,7 +230,7 @@ class HotboxEditor(QtWidgets.QWidget):
         self.set_data_modified()
 
     def delete_selection(self):
-        for shape in self.shape_editor.selection:
+        for shape in reversed(self.shape_editor.selection.shapes):
             self.shape_editor.shapes.remove(shape)
             self.shape_editor.selection.remove(shape)
         rects = [shape.rect for shape in self.shape_editor.selection]

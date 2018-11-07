@@ -45,6 +45,7 @@ def get_valid_name(hotboxes, proposal=None):
 
 
 class HotboxManager(QtWidgets.QWidget):
+
     def __init__(self, context):
         parent = context.main_window
         super(HotboxManager, self).__init__(parent, QtCore.Qt.Tool)

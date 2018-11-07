@@ -68,11 +68,13 @@ class AttributeEditor(QtWidgets.QWidget):
         self.setFixedWidth(self.sizeHint().width() * 1.075)
 
     def set_options(self, options):
+        self.blockSignals(True)
         self.shape.set_options(options)
         self.image.set_options(options)
         self.appearence.set_options(options)
         self.text.set_options(options)
         self.action.set_options(options)
+        self.blockSignals(False)
 
     def image_modified(self, option, value):
         self.optionSet.emit(option, value)
@@ -344,12 +346,12 @@ class ActionSettings(QtWidgets.QWidget):
         self._lsave.released.connect(partial(self.save_command, 'left'))
 
         self._ractive = BoolCombo(False)
-        method = partial(self.optionSet.emit, 'action.left')
+        method = partial(self.optionSet.emit, 'action.right')
         self._ractive.valueSet.connect(method)
         self._ractive.valueSet.connect(self.set_right_enabled)
 
         self._rclose = BoolCombo(False)
-        method = partial(self.optionSet.emit, 'action.left.close')
+        method = partial(self.optionSet.emit, 'action.right.close')
         self._rclose.valueSet.connect(method)
 
         self._rlanguage = QtWidgets.QComboBox()
@@ -381,7 +383,7 @@ class ActionSettings(QtWidgets.QWidget):
             if not isinstance(label, Title):
                 label.setFixedWidth(LEFT_CELL_WIDTH)
 
-    def language_changed(self, side):
+    def language_changed(self, side, *useless):
         option = 'action.' + side + '.language'
         combo = self._llanguage if side == 'left' else self.rlanguage
         self.optionSet.emit(option, combo.currentText())

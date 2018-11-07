@@ -67,7 +67,7 @@ class ShapeEditArea(QtWidgets.QWidget):
         for shape in self.shapes:
             shape.synchronize_rect()
             shape.synchronize_image()
-        self.need_undo_on_release = True
+        self.increase_undo_on_release = True
         self.selectedShapesChanged.emit()
         self.repaint()
 
@@ -107,9 +107,7 @@ class ShapeEditArea(QtWidgets.QWidget):
         shape = self.clicked_shape
         if not self.handeling:
             self.selection.set([shape] if shape else None)
-            rects = [shape.rect for shape in self.selection]
-            self.manipulator.set_rect(get_combined_rects(rects))
-            self.selectedShapesChanged.emit()
+            self.update_selection()
 
         if self.selection_square.handeling:
             shapes = [
@@ -157,6 +155,11 @@ class ShapeEditArea(QtWidgets.QWidget):
             ctrl=self.ctrl_pressed)
 
         self.repaint()
+
+    def update_selection(self):
+        rects = [shape.rect for shape in self.selection]
+        self.manipulator.set_rect(get_combined_rects(rects))
+        self.selectedShapesChanged.emit()
 
     def paintEvent(self, _):
         painter = QtGui.QPainter()
