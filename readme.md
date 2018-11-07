@@ -4,7 +4,8 @@ author: Lionel Brouyère
 Python plug-in for CGI Softwares.
 It provide a really simple way to design fully custom hotbox menus.
 ### Installation
-- For maya
+- Autodesk Maya
+
 place the "hotbox_designer" folder into the maya script folder
 
 | os | path |
