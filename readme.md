@@ -31,6 +31,6 @@ its a simple ui who let manage multiple hotboxes and save them
 ![N|Solid](https://raw.githubusercontent.com/luckylyk/hotbox_designer/master/documentation/manager.jpg)
 - the editor
 this is the hotbox design part. It look like a simple version of QtDesigner
-![N|Solid](https://raw.githubusercontent.com/luckylyk/hotbox_designer/master/documentation/editor.jpg)
+![N|Solid](https://raw.githubusercontent.com/luckylyk/hotbox_designer/master/documentation/heditor.jpg)
 - the reader
 this contains the final hotbox widget
