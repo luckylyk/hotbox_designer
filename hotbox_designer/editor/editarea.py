@@ -177,3 +177,63 @@ class ShapeEditArea(QtWidgets.QWidget):
         if self.edit_center_mode is True:
             point = self.options['centerx'], self.options['centery']
             draw_editor_center(painter, self.rect(), point)
+
+
+class Selection():
+    def __init__(self):
+        self.shapes = []
+        self.mode = 'replace'
+
+    def set(self, shapes):
+        if self.mode == 'add':
+            if shapes is None:
+                return
+            return self.add(shapes)
+        elif self.mode == 'replace':
+            if shapes is None:
+                return self.clear()
+            return self.replace(shapes)
+        elif self.mode == 'invert':
+            if shapes is None:
+                return
+            return self.invert(shapes)
+        elif self.mode == 'remove':
+            if shapes is None:
+                return
+            for shape in shapes:
+                if shape in self.shapes:
+                    self.remove(shape)
+
+    def replace(self, shapes):
+        self.shapes = shapes
+
+    def add(self, shapes):
+        self.shapes.extend(shapes)
+
+    def remove(self, shape):
+        self.shapes.remove(shape)
+
+    def invert(self, shapes):
+        for shape in shapes:
+            if shape not in self.shapes:
+                self.add([shape])
+            else:
+                self.remove(shape)
+
+    def clear(self):
+        self.shapes = []
+
+    def __iter__(self):
+        return self.shapes.__iter__()
+
+
+def get_selection_mode(ctrl, shift):
+    if not ctrl and not shift:
+        return 'replace'
+    elif ctrl and shift:
+        return 'invert'
+    elif ctrl and not shift:
+        return 'add'
+    elif not ctrl and shift:
+        return 'remove'
+

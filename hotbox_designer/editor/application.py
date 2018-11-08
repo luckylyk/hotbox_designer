@@ -31,7 +31,7 @@ class HotboxEditor(QtWidgets.QWidget):
         method = self.set_data_modified
         self.shape_editor.increaseUndoStackRequested.connect(method)
 
-        self.undo_manager = UndoManager(self.hotbox_data(), copy_hotbox_data)
+        self.undo_manager = UndoManager(self.hotbox_data())
 
         self.menu = MenuWidget()
         self.menu.copyRequested.connect(self.copy)
@@ -92,14 +92,14 @@ class HotboxEditor(QtWidgets.QWidget):
             s.options.copy() for s in self.shape_editor.selection]
 
     def paste(self):
-        shape_datas = self.hotbox_data()['shapes'][:] + self.clipboard
+        clipboad_copy = [s.copy() for s in self.clipboard]
+        shape_datas = self.hotbox_data()['shapes'][:] + clipboad_copy
         hotbox_data = {
             'general': self.options,
             'shapes': shape_datas}
         self.set_hotbox_data(hotbox_data)
         self.undo_manager.set_data_modified(hotbox_data)
         self.hotboxDataModified.emit(hotbox_data)
-
         # select new shapes
         shapes = self.shape_editor.shapes [-len(self.clipboard):]
         self.shape_editor.selection.replace(shapes)
@@ -107,17 +107,20 @@ class HotboxEditor(QtWidgets.QWidget):
         self.shape_editor.repaint()
 
     def undo(self):
-        self.undo_manager.undo()
+        result = self.undo_manager.undo()
+        if result is False:
+            return
         data = self.undo_manager.data
         self.set_hotbox_data(data)
+        self.hotboxDataModified.emit(self.hotbox_data())
 
     def redo(self):
         self.undo_manager.redo()
         data = self.undo_manager.data
         self.set_hotbox_data(data)
+        self.hotboxDataModified.emit(self.hotbox_data())
 
     def set_data_modified(self):
-        print 'data modified'
         self.undo_manager.set_data_modified(self.hotbox_data())
         self.hotboxDataModified.emit(self.hotbox_data())
 
@@ -145,6 +148,8 @@ class HotboxEditor(QtWidgets.QWidget):
     def editor_size_changed(self):
         size = self.menu.get_size()
         self.shape_editor.setFixedSize(size)
+        self.options['width'] = size.width()
+        self.options['height'] = size.height()
         self.set_data_modified()
 
     def move_center(self, x, y):
@@ -244,13 +249,71 @@ class HotboxEditor(QtWidgets.QWidget):
             'general': self.options,
             'shapes': [shape.options for shape in self.shape_editor.shapes]}
 
-    def set_hotbox_data(self, hotbox_data):
+    def set_hotbox_data(self, hotbox_data, reset_stacks=False):
         self.options = hotbox_data['general']
         self.shape_editor.options = self.options
         shapes = [Shape(options) for options in hotbox_data['shapes']]
         self.shape_editor.shapes = shapes
         self.shape_editor.manipulator.rect = None
         self.shape_editor.repaint()
+        if reset_stacks is True:
+            self.undo_manager.reset_stacks()
+
+
+class UndoManager():
+    def __init__(self, data):
+        self._current_state = data
+        self._modified = False
+        self._undo_stack = []
+        self._redo_stack = []
+
+    @property
+    def data(self):
+        return copy_hotbox_data(self._current_state)
+
+    def undo(self):
+        if not self._undo_stack:
+            print ('no undostack')
+            return False
+        self._redo_stack.append(copy_hotbox_data(self._current_state))
+        self._current_state = copy_hotbox_data(self._undo_stack[-1])
+        del self._undo_stack[-1]
+        return True
+
+    def redo(self):
+        if not self._redo_stack:
+            return False
+
+        self._undo_stack.append(copy_hotbox_data(self._current_state))
+        self._current_state = copy_hotbox_data(self._redo_stack[-1])
+        del self._redo_stack[-1]
+        return True
+
+    def set_data_modified(self, data):
+        self._redo_stack = []
+        self._undo_stack.append(copy_hotbox_data(self._current_state))
+        self._current_state = copy_hotbox_data(data)
+        self._modified = True
+        print 'undo manager', len(self._undo_stack)
+
+    def set_data_saved(self):
+        self._modified = False
+
+    @property
+    def data_saved(self):
+        return not self._modified
+
+    def reset_stacks(self):
+        self._undo_stack = []
+        self._redo_stack = []
+        print ('undo reset')
+
+
+def copy_hotbox_data(data):
+    copied = {}
+    copied['general'] = data['general'].copy()
+    copied['shapes'] = [shape.copy() for shape in data['shapes']]
+    return copied
 
 
 if __name__ == "__main__":

@@ -1,22 +1,23 @@
 
-    - Write readme.md
-    - Write documentation
+    - Write documentation in modules
 
-    FEATURES
+    FEATURES TODO
     - Improve aiming system
+    - Swithable auto-save/manual-save
     - Create software context for
         Nuke
         Blender
 
-    FEATURES documentation
+    FEATURES DONE
     - Copy Paste in editor
 
-    TO FIXE
-    - undo stack
-    - color wheel (revert old version)
+    TOFIXE
+    - nothing for the moment
 
     FIXED
     - Debug delete
     - Fixe right clic issue
     - Fixe language selection
     - Debug auto-save issue
+    - color wheel
+    - undo stack

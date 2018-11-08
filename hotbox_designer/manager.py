@@ -130,7 +130,7 @@ class HotboxManager(QtWidgets.QWidget):
             return
         parent = self.context.main_window
         self.hotbox_editor = HotboxEditor(hotbox_data, parent=parent)
-        self.hotbox_editor.set_hotbox_data(hotbox_data)
+        self.hotbox_editor.set_hotbox_data(hotbox_data, reset_stacks=True)
         row = self.table_view.get_selected_row()
         method = partial(self.table_model.set_hotbox, row)
         self.hotbox_editor.hotboxDataModified.connect(method)

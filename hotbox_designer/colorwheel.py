@@ -38,6 +38,9 @@ CONICAL_GRADIENT = (
     (0.66, (255, 255, 0)),
     (0.83, (0, 255, 0)),
     (1.0, (0, 255, 255)))
+TRANSPARENT = 0, 0, 0, 0
+BLACK = 'black'
+WHITE = 'white'
 
 
 class ColorWheel(QtWidgets.QWidget):
@@ -47,7 +50,7 @@ class ColorWheel(QtWidgets.QWidget):
         super(ColorWheel, self).__init__(parent)
         self._is_clicked = False
         self._rect = QtCore.QRect(25, 25, 50, 50)
-        self._current_color = QtGui.QColor(255, 255, 255)
+        self._current_color = QtGui.QColor(WHITE)
         self._color_point = QtCore.QPoint(150, 50)
         self._current_tool = None
         self._angle = 180
@@ -60,16 +63,16 @@ class ColorWheel(QtWidgets.QWidget):
         for pos, (r, g, b) in CONICAL_GRADIENT:
             self._conicalGradient.setColorAt(pos, QtGui.QColor(r, g, b))
 
-        self._vertical_gradient = QtGui.QLinearGradient(
-            0, self._rect.top(),
-            0, self._rect.top() + self._rect.height())
-        self._vertical_gradient.setColorAt(0.0, QtGui.QColor(0, 0, 0, 0))
-        self._vertical_gradient.setColorAt(1.0, QtGui.QColor(0, 0, 0))
+        top = self._rect.top()
+        bottom = self._rect.top() + self._rect.height()
+        self._vertical_gradient = QtGui.QLinearGradient(0, top, 0, bottom)
+        self._vertical_gradient.setColorAt(0.0, QtGui.QColor(*TRANSPARENT))
+        self._vertical_gradient.setColorAt(1.0, QtGui.QColor(BLACK))
 
-        self._horizontal_gradient = QtGui.QLinearGradient(
-            self._rect.left(), 0,
-            self._rect.left() + self._rect.width(), 0)
-        self._horizontal_gradient.setColorAt(0.0, QtGui.QColor(255, 255, 255))
+        left = self._rect.left()
+        right = self._rect.left() + self._rect.width()
+        self._horizontal_gradient = QtGui.QLinearGradient(left, 0, right, 0)
+        self._horizontal_gradient.setColorAt(0.0, QtGui.QColor(WHITE))
 
     def paintEvent(self, _):
         painter = QtGui.QPainter()
@@ -92,10 +95,10 @@ class ColorWheel(QtWidgets.QWidget):
         if self._current_tool == 'rect':
             self.color_point = event.pos()
         else:
-            self._angle = get_absolute_angle_c(
-                a=QtCore.QPoint(event.pos().x(), self._get_center().y()),
-                b=event.pos(),
-                c=self._get_center())
+            center = self._get_center()
+            a = QtCore.QPoint(event.pos().x(), center.y())
+            self._angle = get_absolute_angle_c(a=a, b=event.pos(), c=center)
+
         self.repaint()
         self.currentColorChanged.emit(self.current_color())
 
@@ -132,9 +135,10 @@ class ColorWheel(QtWidgets.QWidget):
         pen.setWidth(3)
         painter.setPen(pen)
 
+        angle = math.radians(self._angle)
         painter.drawLine(
-            get_point_on_line(self._angle, 37),
-            get_point_on_line(self._angle, 46))
+            get_point_on_line(angle, 37),
+            get_point_on_line(angle, 46))
 
         pen.setWidth(5)
         pen.setCapStyle(QtCore.Qt.RoundCap)
@@ -165,22 +169,17 @@ class ColorWheel(QtWidgets.QWidget):
 
     def _get_current_wheel_color(self):
         degree = 360 - self._angle
-        return QtGui.QColor(*get_color_from_degree(degree))
-
-    def _get_rect_relative(self, point):
-        x = point.x() - self._rect.left()
-        y = point.y() - self._rect.top()
-        return QtCore.QPoint(x, y)
+        return QtGui.QColor(*degree_to_color(degree))
 
     def _get_center(self):
         return QtCore.QPoint(self.width() / 2, self.height() / 2)
 
     def current_color(self):
-        point = self._get_rect_relative(self.color_point)
+        point = get_relative_point(self._rect, self.color_point)
         x_factor = 1.0 - (float(point.x()) / self._rect.width())
         y_factor = 1.0 - (float(point.y()) / self._rect.height())
 
-        r, g, b, a = self._get_current_wheel_color().getRgb()
+        r, g, b, _ = self._get_current_wheel_color().getRgb()
 
         # fade to white
         differences = 255.0 - r, 255.0 - g, 255.0 - b
@@ -214,7 +213,13 @@ class ColorWheel(QtWidgets.QWidget):
         self.repaint()
 
 
-def get_color_from_degree(degree):
+def get_relative_point(rect, point):
+        x = point.x() - rect.left()
+        y = point.y() - rect.top()
+        return QtCore.QPoint(x, y)
+
+
+def degree_to_color(degree):
     if degree is None:
         return None
     degree = degree / 360.0
@@ -266,13 +271,13 @@ def get_color_from_degree(degree):
         b = 0
     b = b if b <= 255 else 255
     b = b if b >= 0 else 0
-
     return r, g, b
 
+
 def get_point_on_line(angle, ray):
-        x = 50 + ray * math.cos(float(angle))
-        y = 50 + ray * math.sin(float(angle))
-        return QtCore.QPoint(x, y)
+    x = 50 + ray * math.cos(float(angle))
+    y = 50 + ray * math.sin(float(angle))
+    return QtCore.QPoint(x, y)
 
 
 def get_quarter(a, b, c):
