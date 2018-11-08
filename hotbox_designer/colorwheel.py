@@ -2,6 +2,18 @@ import math
 from PySide2 import QtWidgets, QtGui, QtCore
 from hotbox_designer.utils import get_cursor
 
+CONICAL_GRADIENT = (
+    (0.0, (0, 255, 255)),
+    (0.16, (0, 0, 255)),
+    (0.33, (255, 0, 255)),
+    (0.5, (255, 0, 0)),
+    (0.66, (255, 255, 0)),
+    (0.83, (0, 255, 0)),
+    (1.0, (0, 255, 255)))
+TRANSPARENT = 0, 0, 0, 0
+BLACK = 'black'
+WHITE = 'white'
+
 
 class ColorDialog(QtWidgets.QDialog):
     def __init__(self, hexacolor, parent=None):
@@ -29,18 +41,6 @@ class ColorDialog(QtWidgets.QDialog):
         self.move(point)
         result = super(ColorDialog, self).exec_()
         return result
-
-CONICAL_GRADIENT = (
-    (0.0, (0, 255, 255)),
-    (0.16, (0, 0, 255)),
-    (0.33, (255, 0, 255)),
-    (0.5, (255, 0, 0)),
-    (0.66, (255, 255, 0)),
-    (0.83, (0, 255, 0)),
-    (1.0, (0, 255, 255)))
-TRANSPARENT = 0, 0, 0, 0
-BLACK = 'black'
-WHITE = 'white'
 
 
 class ColorWheel(QtWidgets.QWidget):

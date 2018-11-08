@@ -3,6 +3,7 @@
 
     FEATURES TODO
     - Improve aiming system
+    - Allow python command for the button dynamic label
     - Swithable auto-save/manual-save
     - Create software context for
         Nuke

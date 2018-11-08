@@ -10,15 +10,16 @@ from hotbox_designer.ressources import TEMPLATES
 from hotbox_designer.utils import copy_hotbox_data
 
 
-PRESS_COMMAND_TEMPLATE = """import hotbox_designer
-from hotbox_designer import sofwares
-software = softwares.Maya()
-hotbox_designer.initialize(software)
-hotbox_designer.show_hotbox('{}')
+PRESS_COMMAND_TEMPLATE = """\
+import hotbox_designer
+from hotbox_designer import softwares
+hotbox_designer.initialize(softwares.Maya())
+hotbox_designer.show('{}')
 """
 
-RELEASE_COMMAND_TEMPLATE = """import hotbox_designer
-hotbox_designer.hide_hotbox('{}')
+RELEASE_COMMAND_TEMPLATE = """\
+import hotbox_designer
+hotbox_designer.hide('{}')
 """
 
 
