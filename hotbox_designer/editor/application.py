@@ -9,11 +9,10 @@ from .attributes import AttributeEditor
 from hotbox_designer import templates
 from hotbox_designer.interactive import Shape
 from hotbox_designer.geometry import get_combined_rects
-from hotbox_designer.data_managers import UndoManager, copy_hotbox_data
 from hotbox_designer.utils import (
     move_elements_to_array_end, move_elements_to_array_begin,
-    move_up_array_elements, move_down_array_elements, set_shortcut)
-
+    move_up_array_elements, move_down_array_elements, set_shortcut,
+    copy_hotbox_data)
 
 
 class HotboxEditor(QtWidgets.QWidget):
@@ -68,6 +67,8 @@ class HotboxEditor(QtWidgets.QWidget):
         set_shortcut("Ctrl+C", self.shape_editor, self.copy)
         set_shortcut("Ctrl+V", self.shape_editor, self.paste)
         set_shortcut("del", self.shape_editor, self.delete_selection)
+        method = self.shape_editor.selection.clear
+        set_shortcut("Ctrl+D", self.shape_editor, method)
 
         self.attribute_editor = AttributeEditor()
         self.attribute_editor.optionSet.connect(self.option_set)
@@ -139,7 +140,6 @@ class HotboxEditor(QtWidgets.QWidget):
         self.shape_editor.repaint()
 
     def option_set(self, option, value):
-        print (option, value)
         for shape in self.shape_editor.selection:
             shape.options[option] = value
         self.shape_editor.repaint()
@@ -157,6 +157,7 @@ class HotboxEditor(QtWidgets.QWidget):
         self.options['centery'] = y
         self.menu.set_center_values(x, y)
         self.shape_editor.repaint()
+        self.set_data_modified()
 
     def rect_modified(self, option, value):
         shapes = self.shape_editor.selection
@@ -294,7 +295,6 @@ class UndoManager():
         self._undo_stack.append(copy_hotbox_data(self._current_state))
         self._current_state = copy_hotbox_data(data)
         self._modified = True
-        print 'undo manager', len(self._undo_stack)
 
     def set_data_saved(self):
         self._modified = False
@@ -306,14 +306,6 @@ class UndoManager():
     def reset_stacks(self):
         self._undo_stack = []
         self._redo_stack = []
-        print ('undo reset')
-
-
-def copy_hotbox_data(data):
-    copied = {}
-    copied['general'] = data['general'].copy()
-    copied['shapes'] = [shape.copy() for shape in data['shapes']]
-    return copied
 
 
 if __name__ == "__main__":

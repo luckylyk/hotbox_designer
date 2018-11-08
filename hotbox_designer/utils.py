@@ -33,6 +33,13 @@ def move_down_array_elements(array, elements):
         array.insert(index - 1, shape)
 
 
+def copy_hotbox_data(data):
+    copied = {}
+    copied['general'] = data['general'].copy()
+    copied['shapes'] = [shape.copy() for shape in data['shapes']]
+    return copied
+
+
 ICONDIR = os.path.dirname(__file__)
 def icon(filename):
     return QtGui.QIcon(os.path.join(ICONDIR, 'icons', filename))

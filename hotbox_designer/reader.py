@@ -29,7 +29,8 @@ class HotboxReader(QtWidgets.QWidget):
         self.center = QtCore.QPoint(settings['centerx'], settings['centery'])
         self.setFixedSize(settings['width'], settings['height'])
         self.shapes = [Shape(data) for data in hotbox_data['shapes']]
-        self.interactive_shapes =  [s for s in self.shapes if s.is_interactive()]
+        self.interactive_shapes = [
+            s for s in self.shapes if s.is_interactive()]
 
         self.left_clicked = False
         self.right_clicked = False

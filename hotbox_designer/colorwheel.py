@@ -131,7 +131,7 @@ class ColorWheel(QtWidgets.QWidget):
         painter.setBrush(self._vertical_gradient)
         painter.drawRect(self._rect)
 
-        pen.setColor(QtGui.QColor('#000000'))
+        pen.setColor(QtGui.QColor(BLACK))
         pen.setWidth(3)
         painter.setPen(pen)
 
@@ -178,7 +178,6 @@ class ColorWheel(QtWidgets.QWidget):
         point = get_relative_point(self._rect, self.color_point)
         x_factor = 1.0 - (float(point.x()) / self._rect.width())
         y_factor = 1.0 - (float(point.y()) / self._rect.height())
-
         r, g, b, _ = self._get_current_wheel_color().getRgb()
 
         # fade to white
@@ -214,9 +213,9 @@ class ColorWheel(QtWidgets.QWidget):
 
 
 def get_relative_point(rect, point):
-        x = point.x() - rect.left()
-        y = point.y() - rect.top()
-        return QtCore.QPoint(x, y)
+    x = point.x() - rect.left()
+    y = point.y() - rect.top()
+    return QtCore.QPoint(x, y)
 
 
 def degree_to_color(degree):
