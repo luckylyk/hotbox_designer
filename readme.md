@@ -1,6 +1,7 @@
 # Hotbox Designer 
 author: Lionel Brouyère
-https://vimeo.com/user1609926/review/299771986/8616800ab6#
+
+https://vimeo.com/299771986
 ### Description
 Python plug-in for CGI Softwares.
 It provide a really simple way to design fully custom hotbox menus.
