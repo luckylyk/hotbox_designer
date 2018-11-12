@@ -14,8 +14,7 @@
     - Copy Paste in editor
 
     TOFIXE
-    - mel exec_
-    - Remove the editor window modality
+    - nothing currently
 
     FIXED
     - Debug delete
@@ -26,3 +25,5 @@
     - undo stack
     - close exec_
     - remove 'on close' and rename 'both' as triggering method
+    - mel exec_
+    - Remove the editor window modality
