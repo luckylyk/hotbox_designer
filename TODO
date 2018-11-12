@@ -2,6 +2,7 @@
     - Write documentation in modules
 
     FEATURES TODO
+    - Add shape outliner (as listview)
     - Put transparency value in % or between 0 and 1 instead of a 255 values
     - Tool tip for buttons
     - Improve item selection ergonomy in editor
@@ -18,7 +19,6 @@
     - Export / Import System
 
     TO FIX
-    - transparency seems slow on some computers, check why
     - Undo stack
 
     FIXED

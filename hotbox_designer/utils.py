@@ -41,6 +41,8 @@ def copy_hotbox_data(data):
 
 
 ICONDIR = os.path.dirname(__file__)
+
+
 def icon(filename):
     return QtGui.QIcon(os.path.join(ICONDIR, 'icons', filename))
 
