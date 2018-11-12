@@ -5,6 +5,7 @@ from .geometry import (
     get_top_side_rect, get_bottom_side_rect, proportional_rect)
 from .painting import (
     draw_selection_square, draw_manipulator, get_hovered_path, draw_shape)
+from .execution import execute_code
 
 
 class SelectionSquare():
@@ -130,12 +131,13 @@ class Shape():
         return self.rect.toRect()
 
     def execute(self, left=False, right=False):
-        if left:
-            if self.options['action.left']:
-                exec(self.options['action.left.command'])
-        elif right:
-            if self.options['action.right']:
-                exec(self.options['action.right.command'])
+	side = 'left' if left else 'right' if right else None
+        if not side or not self.options['action.' + side]:
+            return
+	code = self.options['action.{}.command'.format(side)]
+        language = self.options['action.{}.language'.format(side)]
+        execute_code(language, code)
+
 
     def is_interactive(self):
         return any([self.options['action.right'], self.options['action.left']])
