@@ -2,6 +2,7 @@
     - Write documentation in modules
 
     FEATURES TODO
+    - Improve item selection in editor
     - Swithable auto-save/manual-save
     - Improve aiming system
     - Allow python command for the button dynamic label
