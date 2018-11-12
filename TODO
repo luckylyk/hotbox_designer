@@ -2,20 +2,23 @@
     - Write documentation in modules
 
     FEATURES TODO
-    - Improve item selection in editor
+    - Put transparency value in % or between 0 and 1 instead of a 255 values
+    - Tool tip for buttons
+    - Improve item selection ergonomy in editor
     - Swithable auto-save/manual-save
     - Improve aiming system
     - Allow python command for the button dynamic label
-    - Export / Import System
     - Create software context for
         Nuke
         Blender
 
     FEATURES DONE
     - Copy Paste in editor
+    - Export / Import System
 
-    TOFIXE
-    - nothing currently
+    TO FIX
+    - transparency seems slow on some computers, check why
+    - Undo stack
 
     FIXED
     - Debug delete
@@ -28,3 +31,5 @@
     - remove 'on close' and rename 'both' as triggering method
     - mel exec_
     - Remove the editor window modality
+    - Image not shown
+    - Ctrl + D

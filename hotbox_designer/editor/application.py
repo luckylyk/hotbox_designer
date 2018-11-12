@@ -67,8 +67,7 @@ class HotboxEditor(QtWidgets.QWidget):
         set_shortcut("Ctrl+C", self.shape_editor, self.copy)
         set_shortcut("Ctrl+V", self.shape_editor, self.paste)
         set_shortcut("del", self.shape_editor, self.delete_selection)
-        method = self.shape_editor.selection.clear
-        set_shortcut("Ctrl+D", self.shape_editor, method)
+        set_shortcut("Ctrl+D", self.shape_editor, self.deselect_all)
 
         self.attribute_editor = AttributeEditor()
         self.attribute_editor.optionSet.connect(self.option_set)
@@ -120,6 +119,11 @@ class HotboxEditor(QtWidgets.QWidget):
         data = self.undo_manager.data
         self.set_hotbox_data(data)
         self.hotboxDataModified.emit(self.hotbox_data())
+
+    def deselect_all(self):
+        self.shape_editor.selection.clear()
+        self.shape_editor.update_selection()
+        self.shape_editor.repaint()
 
     def set_data_modified(self):
         self.undo_manager.set_data_modified(self.hotbox_data())

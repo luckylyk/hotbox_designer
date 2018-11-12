@@ -1,4 +1,6 @@
 
+import json
+import os
 from functools import partial
 from PySide2 import QtWidgets, QtGui, QtCore
 
@@ -70,14 +72,24 @@ class HotboxManager(QtWidgets.QWidget):
         self.reinitialize = QtWidgets.QPushButton('reinitialize hotboxes')
         self.reinitialize.released.connect(self._call_reinitialize)
 
+        self.export = QtWidgets.QPushButton('export')
+        self.export.released.connect(self._call_export)
+        self.import_ = QtWidgets.QPushButton('import')
+        self.import_.released.connect(self._call_import)
+
         self.hbuttons = QtWidgets.QHBoxLayout()
         self.hbuttons.setContentsMargins(0, 0, 0, 0)
         self.hbuttons.addWidget(self.add_button)
         self.hbuttons.addWidget(self.edit_button)
         self.hbuttons.addWidget(self.remove_button)
+        self.hbuttons2 = QtWidgets.QHBoxLayout()
+        self.hbuttons2.setContentsMargins(0, 0, 0, 0)
+        self.hbuttons2.addWidget(self.import_)
+        self.hbuttons2.addWidget(self.export)
         self.vbuttons = QtWidgets.QVBoxLayout()
         self.vbuttons.setContentsMargins(0, 0, 0, 0)
         self.vbuttons.addLayout(self.hbuttons)
+        self.vbuttons.addLayout(self.hbuttons2)
         self.vbuttons.addWidget(self.reinitialize)
 
         self.table_layout = QtWidgets.QVBoxLayout()
@@ -128,7 +140,7 @@ class HotboxManager(QtWidgets.QWidget):
             self.edit.setEnabled(False)
 
     def _call_edit(self):
-	if self.hotbox_editor is not None:
+        if self.hotbox_editor is not None:
             self.hotbox_editor.close()
         hotbox_data = self.get_selected_hotbox()
         if hotbox_data is None:
@@ -200,6 +212,48 @@ class HotboxManager(QtWidgets.QWidget):
             hotbox['general'][option] = value
         self.table_model.layoutChanged.emit()
         self.save_hotboxes()
+
+    def _call_export(self):
+        hotbox = self.get_selected_hotbox()
+        if not hotbox:
+            return
+        export_hotbox(hotbox)
+
+    def _call_import(self):
+        hotbox = import_hotbox()
+        if not hotbox:
+            pass
+        hotboxes = self.table_model.hotboxes
+        name = get_valid_name(hotboxes, hotbox['general']['name'])
+        hotbox['general']['name'] = name
+
+        self.table_model.layoutAboutToBeChanged.emit()
+        self.table_model.hotboxes.append(hotbox)
+        self.table_model.layoutChanged.emit()
+        self.save_hotboxes()
+
+
+def import_hotbox():
+    filenames = QtWidgets.QFileDialog.getOpenFileName(
+        None, caption='Import hotbox',  directory=os.path.expanduser("~"),
+        filter= '*.json')
+    if not filenames:
+        return
+    with open(filenames[0], 'r') as f:
+        return json.load(f)
+
+
+def export_hotbox(hotbox):
+    filenames = QtWidgets.QFileDialog.getSaveFileName(
+        None, caption='Import hotbox',  directory=os.path.expanduser("~"),
+        filter= '*.json')
+    filename = filenames[0]
+    if not filename:
+        return
+    if not filename.lower().endswith('.json'):
+        filename += '.json'
+    with open(filename, 'w') as f:
+        json.dump(hotbox, f)
 
 
 class HotboxTableView(QtWidgets.QTableView):

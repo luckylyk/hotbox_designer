@@ -105,6 +105,7 @@ class Shape():
         self.rect = get_shape_rect_from_options(options)
         self.pixmap = None
         self.image_rect = None
+        self.synchronize_image()
 
     def set_hovered(self, cursor):
         self.hovered = self.rect.contains(cursor)
@@ -131,13 +132,12 @@ class Shape():
         return self.rect.toRect()
 
     def execute(self, left=False, right=False):
-	side = 'left' if left else 'right' if right else None
+        side = 'left' if left else 'right' if right else None
         if not side or not self.options['action.' + side]:
             return
-	code = self.options['action.{}.command'.format(side)]
+        code = self.options['action.{}.command'.format(side)]
         language = self.options['action.{}.language'.format(side)]
         execute_code(language, code)
-
 
     def is_interactive(self):
         return any([self.options['action.right'], self.options['action.left']])
