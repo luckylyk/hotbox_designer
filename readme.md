@@ -1,4 +1,7 @@
-# Hotbox Designer 
+This tool is currently in development and not available in a stable version. 
+
+
+# Hotbox Designer
 author: Lionel Brouyère
 
 https://vimeo.com/299771986
