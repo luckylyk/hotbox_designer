@@ -2,13 +2,11 @@ import sys
 import math
 from PySide2 import QtWidgets, QtCore, QtGui
 from hotbox_designer.interactive import Shape, get_shape_rect_from_options
-from hotbox_designer.painting import draw_shape, draw_aiming
 from hotbox_designer.geometry import proportional_rect
 from hotbox_designer.convert import VALIGNS, HALIGNS
 from hotbox_designer.utils import get_cursor
-
-
-PASSIVE_TRIGGER_TYPE = ['on close', 'both']
+from hotbox_designer.painting import (
+    draw_shape, draw_aiming, draw_aiming_background)
 
 
 class HotboxReader(QtWidgets.QWidget):
@@ -36,6 +34,14 @@ class HotboxReader(QtWidgets.QWidget):
         self.right_clicked = False
 
     def mouseMoveEvent(self, _):
+        shapes = self.interactive_shapes
+        if self.aiming is True:
+            set_closer_shapes_hovered(shapes, get_cursor(self))
+        else:
+            set_shapes_hovered(shapes, get_cursor(self), self.clicked)
+        self.repaint()
+
+    def leaveEvent(self, _):
         shapes = self.interactive_shapes
         if self.aiming is True:
             set_closer_shapes_hovered(shapes, get_cursor(self))
@@ -81,6 +87,12 @@ class HotboxReader(QtWidgets.QWidget):
         painter = QtGui.QPainter()
         painter.begin(self)
         painter.setRenderHint(QtGui.QPainter.Antialiasing)
+        if self.aiming:
+            # this is a workaround because a fully transparent widget doesn't
+            # execute the mouseMove event when the cursor is hover a
+            # transparent of the widget. This draw the reader rect has black
+            # rect with a 1/255 transparency value
+            draw_aiming_background(painter, self.rect())
         for shape in self.shapes:
             shape.draw(painter)
         if self.aiming:
@@ -92,8 +104,8 @@ class HotboxReader(QtWidgets.QWidget):
         self.move(QtGui.QCursor.pos() - self.center)
 
     def hide(self):
-        if self.triggering in PASSIVE_TRIGGER_TYPE:
-            self.execute_hovered_shape()
+        if self.triggering == 'click or close':
+            execute_hovered_shape(self.shapes, left=True)
         super(HotboxReader, self).hide()
 
 

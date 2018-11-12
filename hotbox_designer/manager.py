@@ -31,7 +31,7 @@ def get_new_hotbox(hotboxes):
         'shapes': []}
 
 DEFAULT_NAME = 'MyHotbox_{}'
-TRIGGERING_TYPES = 'on click', 'on close', 'both'
+TRIGGERING_TYPES = 'click only', 'click or close'
 
 
 def get_valid_name(hotboxes, proposal=None):

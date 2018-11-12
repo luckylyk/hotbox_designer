@@ -5,6 +5,7 @@
     - Improve aiming system
     - Allow python command for the button dynamic label
     - Swithable auto-save/manual-save
+    - Export / Import System
     - Create software context for
         Nuke
         Blender
@@ -13,7 +14,7 @@
     - Copy Paste in editor
 
     TOFIXE
-    - nothing for the moment
+    - mel exec_
 
     FIXED
     - Debug delete
@@ -22,3 +23,5 @@
     - Debug auto-save issue
     - color wheel
     - undo stack
+    - close exec_
+    - remove 'on close' and rename 'both' as triggering method

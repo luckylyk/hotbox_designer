@@ -144,6 +144,14 @@ def draw_manipulator(painter, manipulator, cursor):
     painter.drawRect(manipulator.rect)
 
 
+def draw_aiming_background(painter, rect):
+    pen = QtGui.QPen(QtGui.QColor(0, 0, 0, 0))
+    brush = QtGui.QBrush(QtGui.QColor(0, 0, 0, 1))
+    painter.setPen(pen)
+    painter.setBrush(brush)
+    painter.drawRect(rect)
+
+
 def draw_aiming(painter, center, target):
     pen = QtGui.QPen(QtGui.QColor(35, 35, 35))
     pen.setWidth(3)
