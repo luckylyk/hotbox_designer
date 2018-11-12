@@ -128,6 +128,8 @@ class HotboxManager(QtWidgets.QWidget):
             self.edit.setEnabled(False)
 
     def _call_edit(self):
+	if self.hotbox_editor is not None:
+            self.hotbox_editor.close()
         hotbox_data = self.get_selected_hotbox()
         if hotbox_data is None:
             return
@@ -138,7 +140,6 @@ class HotboxManager(QtWidgets.QWidget):
         method = partial(self.table_model.set_hotbox, row)
         self.hotbox_editor.hotboxDataModified.connect(method)
         self.hotbox_editor.hotboxDataModified.connect(self.save_hotboxes)
-        self.hotbox_editor.setWindowModality(QtCore.Qt.ApplicationModal)
         self.hotbox_editor.show()
 
     def _call_create(self):
