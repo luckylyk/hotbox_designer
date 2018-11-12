@@ -2,9 +2,9 @@
     - Write documentation in modules
 
     FEATURES TODO
+    - Swithable auto-save/manual-save
     - Improve aiming system
     - Allow python command for the button dynamic label
-    - Swithable auto-save/manual-save
     - Export / Import System
     - Create software context for
         Nuke
@@ -15,6 +15,7 @@
 
     TOFIXE
     - mel exec_
+    - Remove the editor window modality
 
     FIXED
     - Debug delete
