@@ -1,5 +1,5 @@
 from PySide2 import QtGui, QtWidgets, QtCore
-from hotbox_designer.utils import icon
+from hotbox_designer.qtutils import icon
 
 class MenuWidget(QtWidgets.QWidget):
     deleteRequested = QtCore.Signal()

@@ -2,8 +2,7 @@ from functools import partial
 from PySide2 import QtCore, QtWidgets, QtGui
 
 from hotbox_designer.colorwheel import ColorDialog
-from hotbox_designer.convert import VALIGNS, HALIGNS
-from hotbox_designer.utils import icon
+from hotbox_designer.qtutils import icon, VALIGNS, HALIGNS
 from hotbox_designer.widgets import (
     Title, BoolCombo, WidgetToggler, FloatEdit, BrowseEdit, ColorEdit)
 
@@ -18,8 +17,9 @@ class AttributeEditor(QtWidgets.QWidget):
     rectModified = QtCore.Signal(str, float)
     imageModified = QtCore.Signal()
 
-    def __init__(self, parent=None):
+    def __init__(self, software, parent=None):
         super(AttributeEditor, self).__init__(parent)
+        self.software = software
         self.widget = QtWidgets.QWidget()
 
         self.shape = ShapeSettings()
@@ -40,6 +40,7 @@ class AttributeEditor(QtWidgets.QWidget):
         self.text_toggler = WidgetToggler('Text', self.text)
 
         self.action = ActionSettings()
+        self.action.set_languages(self.software.available_languages)
         self.action.optionSet.connect(self.optionSet.emit)
         self.action_toggler = WidgetToggler('Action', self.action)
 
@@ -337,7 +338,6 @@ class ActionSettings(QtWidgets.QWidget):
         self._lclose.valueSet.connect(method)
 
         self._llanguage = QtWidgets.QComboBox()
-        self._llanguage.addItems(LANGUAGE_AVAILABLE)
         method = partial(self.language_changed, 'left')
         self._llanguage.currentIndexChanged.connect(method)
         self._lcommand = QtWidgets.QTextEdit()
@@ -355,7 +355,6 @@ class ActionSettings(QtWidgets.QWidget):
         self._rclose.valueSet.connect(method)
 
         self._rlanguage = QtWidgets.QComboBox()
-        self._rlanguage.addItems(LANGUAGE_AVAILABLE)
         method = partial(self.language_changed, 'right')
         self._rlanguage.currentIndexChanged.connect(method)
         self._rcommand = QtWidgets.QTextEdit()
@@ -383,9 +382,15 @@ class ActionSettings(QtWidgets.QWidget):
             if not isinstance(label, Title):
                 label.setFixedWidth(LEFT_CELL_WIDTH)
 
+    def set_languages(self, languages):
+        self.blockSignals(True)
+        self._llanguage.addItems(languages)
+        self._rlanguage.addItems(languages)
+        self.blockSignals(False)
+
     def language_changed(self, side, *useless):
         option = 'action.' + side + '.language'
-        combo = self._llanguage if side == 'left' else self.rlanguage
+        combo = self._llanguage if side == 'left' else self._rlanguage
         self.optionSet.emit(option, combo.currentText())
 
     def save_command(self, side):

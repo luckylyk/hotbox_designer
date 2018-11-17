@@ -1,10 +1,11 @@
 import sys
 import math
 from PySide2 import QtWidgets, QtCore, QtGui
+
+import hotbox_designer
 from hotbox_designer.interactive import Shape, get_shape_rect_from_options
 from hotbox_designer.geometry import proportional_rect
-from hotbox_designer.convert import VALIGNS, HALIGNS
-from hotbox_designer.utils import get_cursor
+from hotbox_designer.qtutils import get_cursor, VALIGNS, HALIGNS
 from hotbox_designer.painting import (
     draw_shape, draw_aiming, draw_aiming_background)
 
@@ -24,6 +25,7 @@ class HotboxReader(QtWidgets.QWidget):
         settings = hotbox_data['general']
         self.triggering = settings['triggering']
         self.aiming = settings['aiming']
+        self.is_submenu = settings['submenu']
         self.center = QtCore.QPoint(settings['centerx'], settings['centery'])
         self.setFixedSize(settings['width'], settings['height'])
         self.shapes = [Shape(data) for data in hotbox_data['shapes']]
@@ -106,6 +108,8 @@ class HotboxReader(QtWidgets.QWidget):
     def hide(self):
         if self.triggering == 'click or close':
             execute_hovered_shape(self.shapes, left=True)
+        if self.is_submenu is False:
+            hotbox_designer.hide_submenus()
         super(HotboxReader, self).hide()
 
 

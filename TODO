@@ -2,11 +2,12 @@
     - Write documentation in modules
 
     FEATURES TODO
+    - Make color wheel bigger
     - Add shape outliner (as listview)
     - Put transparency value in % or between 0 and 1 instead of a 255 values
     - Tool tip for buttons
     - Improve item selection ergonomy in editor
-    - Swithable auto-save/manual-save
+    - Switchable auto-save/manual-save
     - Improve aiming system
     - Create better icons
     - Allow python command for the button dynamic label
@@ -15,6 +16,8 @@
         Blender
 
     FEATURES DONE
+    - Retro compatibility data implemented
+    - Submenu management
     - Copy Paste in editor
     - Export / Import System
 

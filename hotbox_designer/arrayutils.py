@@ -1,7 +1,3 @@
-import os
-import json
-from PySide2 import QtGui, QtWidgets
-
 
 def move_elements_to_array_end(array, elements):
     return [e for e in array if e not in elements] + [e for e in elements]
@@ -31,26 +27,3 @@ def move_down_array_elements(array, elements):
             continue
         array.pop(index)
         array.insert(index - 1, shape)
-
-
-def copy_hotbox_data(data):
-    copied = {}
-    copied['general'] = data['general'].copy()
-    copied['shapes'] = [shape.copy() for shape in data['shapes']]
-    return copied
-
-
-ICONDIR = os.path.dirname(__file__)
-
-
-def icon(filename):
-    return QtGui.QIcon(os.path.join(ICONDIR, 'icons', filename))
-
-
-def get_cursor(widget):
-    return widget.mapFromGlobal(QtGui.QCursor.pos())
-
-
-def set_shortcut(keysquence, parent, method):
-    shortcut = QtWidgets.QShortcut(QtGui.QKeySequence(keysquence), parent)
-    shortcut.activated.connect(method)

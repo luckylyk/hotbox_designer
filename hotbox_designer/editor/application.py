@@ -9,28 +9,29 @@ from .attributes import AttributeEditor
 from hotbox_designer import templates
 from hotbox_designer.interactive import Shape
 from hotbox_designer.geometry import get_combined_rects
-from hotbox_designer.utils import (
+from hotbox_designer.qtutils import set_shortcut
+from hotbox_designer.data import copy_hotbox_data
+from hotbox_designer.arrayutils import (
     move_elements_to_array_end, move_elements_to_array_begin,
-    move_up_array_elements, move_down_array_elements, set_shortcut,
-    copy_hotbox_data)
+    move_up_array_elements, move_down_array_elements)
 
 
 class HotboxEditor(QtWidgets.QWidget):
     hotboxDataModified = QtCore.Signal(object)
 
-    def __init__(self, hotbox, parent=None):
+    def __init__(self, hotbox_data, software, parent=None):
         super(HotboxEditor, self).__init__(parent, QtCore.Qt.Window)
         self.setWindowTitle("Hotbox editor")
-        self.options = hotbox['general']
+        self.options = hotbox_data['general']
+        self.software = software
         self.clipboard = []
+        self.undo_manager = UndoManager(hotbox_data)
 
         self.shape_editor = ShapeEditArea(self.options)
         self.shape_editor.selectedShapesChanged.connect(self.selection_changed)
         self.shape_editor.centerMoved.connect(self.move_center)
         method = self.set_data_modified
         self.shape_editor.increaseUndoStackRequested.connect(method)
-
-        self.undo_manager = UndoManager(self.hotbox_data())
 
         self.menu = MenuWidget()
         self.menu.copyRequested.connect(self.copy)
@@ -69,7 +70,7 @@ class HotboxEditor(QtWidgets.QWidget):
         set_shortcut("del", self.shape_editor, self.delete_selection)
         set_shortcut("Ctrl+D", self.shape_editor, self.deselect_all)
 
-        self.attribute_editor = AttributeEditor()
+        self.attribute_editor = AttributeEditor(self.software)
         self.attribute_editor.optionSet.connect(self.option_set)
         self.attribute_editor.rectModified.connect(self.rect_modified)
         self.attribute_editor.imageModified.connect(self.image_modified)
@@ -310,10 +311,3 @@ class UndoManager():
     def reset_stacks(self):
         self._undo_stack = []
         self._redo_stack = []
-
-
-if __name__ == "__main__":
-    app = QtWidgets.QApplication([])
-    widget = HotboxEditor(templates.HOTBOX.copy())
-    widget.show()
-    app.exec_()

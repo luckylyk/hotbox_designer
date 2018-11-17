@@ -1,5 +1,3 @@
-
-
 def execute_code(language, code):
     return EXECUTORS[language](code)
 

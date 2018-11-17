@@ -1,6 +1,6 @@
 from PySide2 import QtCore, QtGui
-from .convert import VALIGNS, HALIGNS
-from .geometry import grow_rect
+from hotbox_designer.qtutils import VALIGNS, HALIGNS
+from hotbox_designer.geometry import grow_rect
 
 
 MANIPULATOR_BORDER = 5

@@ -1,6 +1,6 @@
 import math
 from PySide2 import QtWidgets, QtGui, QtCore
-from hotbox_designer.utils import get_cursor
+from hotbox_designer.qtutils import get_cursor
 
 CONICAL_GRADIENT = (
     (0.0, (0, 255, 255)),

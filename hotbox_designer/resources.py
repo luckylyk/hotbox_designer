@@ -2445,7 +2445,8 @@ TEMPLATES = [
       "touch": "esc", 
       "alt": True, 
       "aiming": False, 
-      "triggering": "click"
+      "triggering": "click", 
+      "submenu": False
     }
   }, 
   {
@@ -3107,7 +3108,8 @@ TEMPLATES = [
       "touch": "e", 
       "alt": True, 
       "aiming": False, 
-      "triggering": "on click"
+      "triggering": "on click", 
+      "submenu": False
     }
   }, 
   {
@@ -3655,7 +3657,8 @@ TEMPLATES = [
       "touch": "", 
       "alt": True, 
       "aiming": False, 
-      "triggering": "click"
+      "triggering": "click",
+      "submenu": True
     }
   }
 ]

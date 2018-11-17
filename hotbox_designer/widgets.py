@@ -1,8 +1,9 @@
 from PySide2 import QtGui, QtCore, QtWidgets
-from .utils import icon
-from .colorwheel import ColorDialog
+from hotbox_designer.qtutils import icon
+from hotbox_designer.colorwheel import ColorDialog
 
 
+# don't use style sheet like that, find better design
 TOGGLER_STYLESHEET = (
     'background: rgb(0, 0, 0, 75); text-align: left; font: bold')
 
@@ -166,3 +167,9 @@ class Title(QtWidgets.QLabel):
         super(Title, self).__init__(parent)
         self.setStyleSheet('background: rgb(0, 0, 0, 25)')
         self.setText('<b>&nbsp;&nbsp;&nbsp;' + title)
+
+
+class TouchEdit(QtWidgets.QLineEdit):
+    def keyPressEvent(self, event):
+        self.setText(QtGui.QKeySequence(event.key()).toString().lower())
+        self.textEdited.emit(self.text())

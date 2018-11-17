@@ -4,7 +4,7 @@ from PySide2 import QtCore, QtGui, QtWidgets
 from hotbox_designer.interactive import Manipulator, SelectionSquare
 from hotbox_designer.geometry import Transform, snap, get_combined_rects
 from hotbox_designer.painting import draw_editor, draw_editor_center
-from hotbox_designer.utils import get_cursor
+from hotbox_designer.qtutils import get_cursor
 
 
 class ShapeEditArea(QtWidgets.QWidget):
