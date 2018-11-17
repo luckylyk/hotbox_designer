@@ -61,10 +61,12 @@ def ensure_old_data_compatible(data):
     return data
 
 
+def load_templates():
     path = os.path.join(os.path.dirname(__file__), 'resources', 'templates')
     files = os.listdir(path)
     templates = []
     for file_ in files:
+        filepath = os.path.join(path, file_)
         with open(filepath, 'r') as f:
             templates.append(json.load(f))
     return templates
