@@ -30,8 +30,8 @@ def hide(name):
 
 def switch(name):
     if hotboxes[name].isVisible():
-        return show(name)
-    return hide(name)
+        return hide(name)
+    return show(name)
 
 
 def hide_submenus():
