@@ -1,11 +1,11 @@
 from PySide2 import QtCore, QtGui
-from .geometry import (
+from hotbox_designer.geometry import (
     DIRECTIONS, get_topleft_rect, get_bottomleft_rect, get_topright_rect,
     get_bottomright_rect, get_left_side_rect, get_right_side_rect,
     get_top_side_rect, get_bottom_side_rect, proportional_rect)
-from .painting import (
+from hotbox_designer.painting import (
     draw_selection_square, draw_manipulator, get_hovered_path, draw_shape)
-from .execution import execute_code
+from hotbox_designer.languages import execute_code
 
 
 class SelectionSquare():
