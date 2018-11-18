@@ -1,10 +1,6 @@
 
 from functools import partial
-from PySide2 import QtWidgets, QtCore, QtGui
-
-from .editarea import ShapeEditArea
-from .menu import MenuWidget
-from .attributes import AttributeEditor
+from PySide2 import QtWidgets, QtCore
 
 from hotbox_designer import templates
 from hotbox_designer.interactive import Shape
@@ -14,6 +10,10 @@ from hotbox_designer.data import copy_hotbox_data
 from hotbox_designer.arrayutils import (
     move_elements_to_array_end, move_elements_to_array_begin,
     move_up_array_elements, move_down_array_elements)
+
+from .editarea import ShapeEditArea
+from .menu import MenuWidget
+from .attributes import AttributeEditor
 
 
 class HotboxEditor(QtWidgets.QWidget):

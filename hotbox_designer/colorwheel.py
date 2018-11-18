@@ -1,6 +1,9 @@
 import math
 from PySide2 import QtWidgets, QtGui, QtCore
 from hotbox_designer.qtutils import get_cursor
+from hotbox_designer.geometry import (
+    get_relative_point, get_point_on_line, get_absolute_angle_c)
+
 
 CONICAL_GRADIENT = (
     (0.0, (0, 255, 255)),
@@ -212,12 +215,6 @@ class ColorWheel(QtWidgets.QWidget):
         self.repaint()
 
 
-def get_relative_point(rect, point):
-    x = point.x() - rect.left()
-    y = point.y() - rect.top()
-    return QtCore.QPoint(x, y)
-
-
 def degree_to_color(degree):
     if degree is None:
         return None
@@ -271,49 +268,3 @@ def degree_to_color(degree):
     b = b if b <= 255 else 255
     b = b if b >= 0 else 0
     return r, g, b
-
-
-def get_point_on_line(angle, ray):
-    x = 50 + ray * math.cos(float(angle))
-    y = 50 + ray * math.sin(float(angle))
-    return QtCore.QPoint(x, y)
-
-
-def get_quarter(a, b, c):
-    quarter = None
-    if b.y() <= a.y() and b.x() < c.x():
-        quarter = 0
-    elif b.y() < a.y() and b.x() >= c.x():
-        quarter = 1
-    elif b.y() >= a.y() and b.x() > c.x():
-        quarter = 2
-    elif b.y() >= a.y() and b.x() <= c.x():
-        quarter = 3
-    return quarter
-
-
-def distance(a, b):
-    x = (b.x() - a.x())**2
-    y = (b.y() - a.y())**2
-    return math.sqrt(abs(x + y))
-
-
-def get_angle_c(a, b, c):
-    return math.degrees(math.atan(distance(a, b) / distance(a, c)))
-
-
-def get_absolute_angle_c(a, b, c):
-    quarter = get_quarter(a, b, c)
-    try:
-        angle_c = get_angle_c(a, b, c)
-    except ZeroDivisionError:
-        return 360 - (90 * quarter)
-
-    if quarter == 0:
-        return round(180.0 + angle_c, 1)
-    elif quarter == 1:
-        return round(270.0 + (90 - angle_c), 1)
-    elif quarter == 2:
-        return round(angle_c, 1)
-    elif quarter == 3:
-        return math.fabs(round(90.0 + (90 - angle_c), 1))

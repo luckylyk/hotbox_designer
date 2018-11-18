@@ -1,13 +1,10 @@
-import sys
-import math
 from PySide2 import QtWidgets, QtCore, QtGui
 
 import hotbox_designer
-from hotbox_designer.interactive import Shape, get_shape_rect_from_options
-from hotbox_designer.geometry import proportional_rect
-from hotbox_designer.qtutils import get_cursor, VALIGNS, HALIGNS
-from hotbox_designer.painting import (
-    draw_shape, draw_aiming, draw_aiming_background)
+from hotbox_designer.interactive import Shape
+from hotbox_designer.qtutils import get_cursor
+from hotbox_designer.painting import draw_aiming, draw_aiming_background
+from hotbox_designer.geometry import distance, segment_cross_rect
 
 
 class HotboxReader(QtWidgets.QWidget):
@@ -38,7 +35,8 @@ class HotboxReader(QtWidgets.QWidget):
     def mouseMoveEvent(self, _):
         shapes = self.interactive_shapes
         if self.aiming is True:
-            set_closer_shapes_hovered(shapes, get_cursor(self))
+            set_crossed_shapes_hovered(
+                self.center, get_cursor(self), shapes, get_cursor(self))
         else:
             set_shapes_hovered(shapes, get_cursor(self), self.clicked)
         self.repaint()
@@ -46,7 +44,8 @@ class HotboxReader(QtWidgets.QWidget):
     def leaveEvent(self, _):
         shapes = self.interactive_shapes
         if self.aiming is True:
-            set_closer_shapes_hovered(shapes, get_cursor(self))
+            set_crossed_shapes_hovered(
+                self.center, get_cursor(self), shapes, get_cursor(self))
         else:
             set_shapes_hovered(shapes, get_cursor(self), self.clicked)
         self.repaint()
@@ -123,19 +122,16 @@ def set_shapes_hovered(shapes, cursor, clicked):
                 shape.clicked = False
 
 
-def set_closer_shapes_hovered(shapes, cursor):
+def set_crossed_shapes_hovered(point1, point2, shapes, cursor):
+    cshapes = [s for s in shapes if segment_cross_rect(point1, point2, s.rect)]
+    if not cshapes:
+        return
     shapedistances = {
         distance(shape.rect.center(), cursor): shape
-        for shape in shapes}
+        for shape in cshapes}
     for shape in shapes:
         shape.hovered = False
     shapedistances[min(shapedistances.keys())].hovered = True
-
-
-def distance(a, b):
-    x = (b.x() - a.x())**2
-    y = (b.y() - a.y())**2
-    return math.sqrt(abs(x + y))
 
 
 def execute_hovered_shape(shapes, left=False, right=False):

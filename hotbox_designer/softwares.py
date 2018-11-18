@@ -7,9 +7,9 @@ FILENAME = 'hotboxes.json'
 
 
 class AbstractSoftware(object):
-    NAME = 'NONE'
 
     def __init__(self):
+        self.name = type(self).__name__
         self.file = self.get_file()
         self.main_window = self.get_main_window()
         self.reader_parent = self.get_reader_parent()
@@ -33,7 +33,6 @@ class AbstractSoftware(object):
 
 
 class Maya(AbstractSoftware):
-    NAME = 'Maya'
 
     @staticmethod
     def get_file():
@@ -56,8 +55,7 @@ class Maya(AbstractSoftware):
         return 'mel', 'python'
 
 
-class Nuke(AbstractContext):
-    NAME = 'Nuke'
+class Nuke(AbstractSoftware):
 
     @staticmethod
     def get_file():

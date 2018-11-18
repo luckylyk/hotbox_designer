@@ -1,6 +1,7 @@
 from PySide2 import QtGui, QtWidgets, QtCore
 from hotbox_designer.qtutils import icon
 
+
 class MenuWidget(QtWidgets.QWidget):
     deleteRequested = QtCore.Signal()
     copyRequested = QtCore.Signal()
@@ -178,4 +179,3 @@ class MenuWidget(QtWidgets.QWidget):
         width = int(self.hbwidth.text()) if self.hbwidth.text() else 1
         height = int(self.hbheight.text()) if self.hbheight.text() else 1
         return QtCore.QSize(width, height)
-

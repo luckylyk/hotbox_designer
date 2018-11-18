@@ -8,18 +8,17 @@
     - Tool tip for buttons
     - Improve item selection ergonomy in editor
     - Switchable auto-save/manual-save
-    - Improve aiming system
     - Create better icons
     - Allow python command for the button dynamic label
-    - Create software context for
-        Nuke
-        Blender
+    - Create software context for Blender
 
     FEATURES DONE
     - Retro compatibility data implemented
     - Submenu management
     - Copy Paste in editor
     - Export / Import System
+    - Improve aiming system
+    - Create software context for Nuke
 
     TO FIX
     - Undo stack

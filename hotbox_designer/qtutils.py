@@ -3,6 +3,14 @@ import json
 from PySide2 import QtGui, QtWidgets, QtCore
 
 
+VALIGNS = {
+    'top': QtCore.Qt.AlignTop,
+    'center': QtCore.Qt.AlignVCenter,
+    'bottom': QtCore.Qt.AlignBottom}
+HALIGNS = {
+    'left': QtCore.Qt.AlignLeft,
+    'center': QtCore.Qt.AlignHCenter,
+    'right': QtCore.Qt.AlignRight}
 ICONDIR = os.path.dirname(__file__)
 
 
@@ -17,13 +25,3 @@ def get_cursor(widget):
 def set_shortcut(keysquence, parent, method):
     shortcut = QtWidgets.QShortcut(QtGui.QKeySequence(keysquence), parent)
     shortcut.activated.connect(method)
-
-
-VALIGNS = {
-    'top': QtCore.Qt.AlignTop,
-    'center': QtCore.Qt.AlignVCenter,
-    'bottom': QtCore.Qt.AlignBottom}
-HALIGNS = {
-    'left': QtCore.Qt.AlignLeft,
-    'center': QtCore.Qt.AlignHCenter,
-    'right': QtCore.Qt.AlignRight}

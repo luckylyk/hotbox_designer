@@ -2,7 +2,7 @@
 import json
 import os
 from functools import partial
-from PySide2 import QtWidgets, QtGui, QtCore
+from PySide2 import QtWidgets, QtCore
 
 import hotbox_designer
 from hotbox_designer import commands
@@ -100,7 +100,7 @@ class HotboxManager(QtWidgets.QWidget):
         if not hotbox:
             return
         command = commands.OPEN_COMMAND.format(
-            software=self.software.NAME,
+            software=self.software.name,
             name=hotbox['general']['name'])
         CommandDisplayDialog(command, self).exec_()
 
@@ -116,7 +116,7 @@ class HotboxManager(QtWidgets.QWidget):
         if not hotbox:
             return
         command = commands.SWITCH_COMMAND.format(
-            software=self.software.NAME,
+            software=self.software.name,
             name=hotbox['general']['name'])
         CommandDisplayDialog(command, self).exec_()
 
