@@ -54,3 +54,23 @@ class Maya(AbstractSoftware):
     @staticmethod
     def get_available_languages():
         return 'mel', 'python'
+
+
+class Nuke(AbstractContext):
+    @staticmethod
+    def get_file():
+        return os.path.join(os.path.expanduser('~/.nuke'), FILENAME)
+
+    @staticmethod
+    def get_main_window():
+        for w in QtWidgets.qApp.topLevelWidgets():
+            if w.inherits('QMainWindow'):
+                return w
+
+    @staticmethod
+    def get_reader_parent():
+        return None
+
+    @staticmethod
+    def get_available_languages():
+        return 'python', 'nuke_tcl', 'nuke_expression'
