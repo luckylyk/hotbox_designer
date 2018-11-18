@@ -47,7 +47,7 @@ TODO
 The application is separated in three parts:
 - the manager
 its a simple ui who let manage multiple hotboxes and save them
-![N|Solid](https://raw.githubusercontent.com/luckylyk/hotbox_designer/master/documentation/manager.jpg)
+![N|Solid](https://raw.githubusercontent.com/luckylyk/hotbox_designer/master/documentation/manager2.jpg)
 - the editor
 this is the hotbox design part. It look like a simple version of QtDesigner
 ![N|Solid](https://raw.githubusercontent.com/luckylyk/hotbox_designer/master/documentation/heditor.jpg)
