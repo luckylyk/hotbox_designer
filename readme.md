@@ -2,7 +2,9 @@ This tool is currently in development and not available in a stable version.
 
 
 # Hotbox Designer
-author: Lionel Brouyère
+credits :
+main coder: Lionel Brouyère
+contributors: Vincent Girès
 
 tester: David Vincze
 
