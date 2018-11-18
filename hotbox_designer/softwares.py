@@ -57,6 +57,8 @@ class Maya(AbstractSoftware):
 
 
 class Nuke(AbstractContext):
+    NAME = 'Nuke'
+
     @staticmethod
     def get_file():
         return os.path.join(os.path.expanduser('~/.nuke'), FILENAME)
