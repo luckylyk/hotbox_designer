@@ -2,14 +2,15 @@
     - Write documentation in modules
 
     FEATURES TODO
+    - implement a hotbox referencing system for studio environment
     - Make color wheel bigger
     - Add shape outliner (as listview)
     - Put transparency value in % or between 0 and 1 instead of a 255 values
     - Tool tip for buttons
-    - Improve item selection ergonomy in editor
     - Switchable auto-save/manual-save
     - Create better icons
     - Allow python command for the button dynamic label
+    - Non-transparent windows flags
     - Create software context for Blender
 
     FEATURES DONE
@@ -19,6 +20,8 @@
     - Export / Import System
     - Improve aiming system
     - Create software context for Nuke
+    - Ctrl + D in editor
+    - Improve item selection ergonomy in editor
 
     TO FIX
     - Undo stack
@@ -35,4 +38,3 @@
     - mel exec_
     - Remove the editor window modality
     - Image not shown
-    - Ctrl + D
