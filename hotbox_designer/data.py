@@ -55,7 +55,7 @@ def ensure_old_data_compatible(data):
     This function contain all the data structure history to convertion
     """
     try:
-        del ['submenu']
+        del data['submenu']
     except:
         pass
     try:
