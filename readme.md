@@ -20,6 +20,7 @@ It provide simple tools to create visually a hotbox menus, simply manage them an
 | Blender | in progress |
 | 3dsMax | planned |
 | Natron | planned (as soon as Natron support PySide2 or PyQt5) |
+| Houdini | planned |
 
 For each software who provide python and support PySide2/PyQt5, the implementation should be easy.
 
