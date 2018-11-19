@@ -55,9 +55,13 @@ def ensure_old_data_compatible(data):
     This function contain all the data structure history to convertion
     """
     try:
-        data['submenu']
+        del ['submenu']
+    except:
+        pass
+    try:
+        data['general']['submenu']
     except KeyError:
-        data['submenu'] = False
+        data['general']['submenu'] = False
     return data
 
 
