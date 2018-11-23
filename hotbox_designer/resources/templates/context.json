@@ -536,7 +536,7 @@
     ], 
     "general": {
         "control": false, 
-        "name": "Context Menu", 
+        "name": "Context_Menu", 
         "height": 275, 
         "width": 150, 
         "centerx": 80, 

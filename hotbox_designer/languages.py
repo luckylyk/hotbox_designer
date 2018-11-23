@@ -1,3 +1,10 @@
+
+PYTHON = 'python'
+MEL = 'mel'
+NUKE_TCL = 'nuke tcl'
+NUKE_EXPRESSION = 'nuke expression'
+
+
 def execute_code(language, code):
     return EXECUTORS[language](code)
 
@@ -22,8 +29,8 @@ def execute_nuke_expression(code):
 
 
 EXECUTORS = {
-    'python': execute_python,
-    'mel': execute_mel,
-    'nuke_tcl': execute_nuke_tcl,
-    'nuke_expression': execute_nuke_expression
+    PYTHON: execute_python,
+    MEL: execute_mel,
+    NUKE_TCL: execute_nuke_tcl,
+    NUKE_EXPRESSION: execute_nuke_expression
 }

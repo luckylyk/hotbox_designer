@@ -165,6 +165,7 @@ class FloatEdit(QtWidgets.QLineEdit):
 class Title(QtWidgets.QLabel):
     def __init__(self, title, parent=None):
         super(Title, self).__init__(parent)
+        self.setFixedHeight(20)
         self.setStyleSheet('background: rgb(0, 0, 0, 25)')
         self.setText('<b>&nbsp;&nbsp;&nbsp;' + title)
 

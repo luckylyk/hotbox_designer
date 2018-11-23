@@ -238,8 +238,7 @@ def get_selection_mode(ctrl, shift):
         return 'replace'
     elif ctrl and shift:
         return 'invert'
-    elif ctrl and not shift:
+    elif shift and not ctrl:
         return 'add'
-    elif not ctrl and shift:
+    elif ctrl and not shift:
         return 'remove'
-

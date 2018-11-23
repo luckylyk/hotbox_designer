@@ -19,11 +19,11 @@ from .attributes import AttributeEditor
 class HotboxEditor(QtWidgets.QWidget):
     hotboxDataModified = QtCore.Signal(object)
 
-    def __init__(self, hotbox_data, software, parent=None):
+    def __init__(self, hotbox_data, application, parent=None):
         super(HotboxEditor, self).__init__(parent, QtCore.Qt.Window)
         self.setWindowTitle("Hotbox editor")
         self.options = hotbox_data['general']
-        self.software = software
+        self.application = application
         self.clipboard = []
         self.undo_manager = UndoManager(hotbox_data)
 
@@ -70,7 +70,7 @@ class HotboxEditor(QtWidgets.QWidget):
         set_shortcut("del", self.shape_editor, self.delete_selection)
         set_shortcut("Ctrl+D", self.shape_editor, self.deselect_all)
 
-        self.attribute_editor = AttributeEditor(self.software)
+        self.attribute_editor = AttributeEditor(self.application)
         self.attribute_editor.optionSet.connect(self.option_set)
         self.attribute_editor.rectModified.connect(self.rect_modified)
         self.attribute_editor.imageModified.connect(self.image_modified)

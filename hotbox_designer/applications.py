@@ -1,22 +1,26 @@
 import os
-from PySide2 import QtWidgets
 import shiboken2
+from PySide2 import QtWidgets
+from hotbox_designer.languages import MEL, PYTHON, NUKE_TCL, NUKE_EXPRESSION
 
 
-FILENAME = 'hotboxes.json'
+HOTBOXES_FILENAME = 'hotboxes.json'
+SHARED_HOTBOXES_FILENAME = 'shared_hotboxes.json'
 
 
-class AbstractSoftware(object):
+class AbstractApplication(object):
 
     def __init__(self):
         self.name = type(self).__name__
-        self.file = self.get_file()
+        folder = self.get_data_folder()
+        self.local_file = os.path.join(folder, HOTBOXES_FILENAME)
+        self.shared_file = os.path.join(folder, SHARED_HOTBOXES_FILENAME)
         self.main_window = self.get_main_window()
         self.reader_parent = self.get_reader_parent()
         self.available_languages = self.get_available_languages()
 
     @staticmethod
-    def get_file():
+    def get_data_folder():
         raise NotImplementedError
 
     @staticmethod
@@ -32,12 +36,12 @@ class AbstractSoftware(object):
         raise NotImplementedError
 
 
-class Maya(AbstractSoftware):
+class Maya(AbstractApplication):
 
     @staticmethod
-    def get_file():
+    def get_data_folder():
         from maya import cmds
-        return os.path.join(cmds.internalVar(userPrefDir=True), FILENAME)
+        return cmds.internalVar(userPrefDir=True)
 
     @staticmethod
     def get_main_window():
@@ -52,20 +56,20 @@ class Maya(AbstractSoftware):
 
     @staticmethod
     def get_available_languages():
-        return 'mel', 'python'
+        return MEL, PYTHON
 
 
-class Nuke(AbstractSoftware):
+class Nuke(AbstractApplication):
 
     @staticmethod
-    def get_file():
-        return os.path.join(os.path.expanduser('~/.nuke'), FILENAME)
+    def get_data_folder():
+        return os.path.expanduser('~/.nuke')
 
     @staticmethod
     def get_main_window():
-        for w in QtWidgets.qApp.topLevelWidgets():
-            if w.inherits('QMainWindow'):
-                return w
+        for widget in QtWidgets.qApp.topLevelWidgets():
+            if widget.inherits('QMainWindow'):
+                return widget
 
     @staticmethod
     def get_reader_parent():
@@ -73,4 +77,4 @@ class Nuke(AbstractSoftware):
 
     @staticmethod
     def get_available_languages():
-        return 'python', 'nuke_tcl', 'nuke_expression'
+        return PYTHON, NUKE_TCL, NUKE_EXPRESSION

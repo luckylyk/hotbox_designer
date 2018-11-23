@@ -17,9 +17,9 @@ class AttributeEditor(QtWidgets.QWidget):
     rectModified = QtCore.Signal(str, float)
     imageModified = QtCore.Signal()
 
-    def __init__(self, software, parent=None):
+    def __init__(self, application, parent=None):
         super(AttributeEditor, self).__init__(parent)
-        self.software = software
+        self.application = application
         self.widget = QtWidgets.QWidget()
 
         self.shape = ShapeSettings()
@@ -40,7 +40,7 @@ class AttributeEditor(QtWidgets.QWidget):
         self.text_toggler = WidgetToggler('Text', self.text)
 
         self.action = ActionSettings()
-        self.action.set_languages(self.software.available_languages)
+        self.action.set_languages(self.application.available_languages)
         self.action.optionSet.connect(self.optionSet.emit)
         self.action_toggler = WidgetToggler('Action', self.action)
 

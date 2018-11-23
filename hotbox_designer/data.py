@@ -6,6 +6,12 @@ from hotbox_designer.templates import HOTBOX
 
 DEFAULT_NAME = 'MyHotbox_{}'
 TRIGGERING_TYPES = 'click only', 'click or close'
+HOTBOX_REPRESENTATION = """\
+<b>Name </b>{name}<br>
+<b>Submenu </b>{submenu}<br>
+<b>Triggering </b>{triggering}<br>
+<b>Aiming </b>{aiming}<br>
+"""
 
 
 def get_new_hotbox(hotboxes):
@@ -30,14 +36,18 @@ def get_valid_name(hotboxes, proposal=None):
 
 
 def load_hotboxes_datas(filename):
-    if not os.path.exists(filename):
-        return []
-    with open(filename, 'r') as f:
-        datas = json.load(f)
+    datas = load_json(filename, default=[])
     return [ensure_old_data_compatible(data) for data in datas]
 
 
-def save_hotboxes_datas(filename, hotboxes_data):
+def load_json(filename, default=None):
+    if not os.path.exists(filename):
+        return default
+    with open(filename, 'r') as f:
+        return json.load(f)
+
+
+def save_datas(filename, hotboxes_data):
     with open(filename, 'w') as f:
         json.dump(hotboxes_data, f, indent=2)
 
@@ -74,3 +84,11 @@ def load_templates():
         with open(filepath, 'r') as f:
             templates.append(json.load(f))
     return templates
+
+
+def hotbox_data_to_html(data):
+    return HOTBOX_REPRESENTATION.format(
+        name=data['general']['name'],
+        submenu=data['general']['submenu'],
+        triggering=data['general']['triggering'],
+        aiming=data['general']['aiming'])
