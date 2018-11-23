@@ -2,6 +2,7 @@
     - Write documentation in modules and Api examples and TD Documentation
 
     FEATURES TODO
+    - add a shortcut setter
     - think about a solution for name clashes issues
     - manage relative image path
     - compatible with PySide 1 for old maya and natron
