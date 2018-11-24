@@ -214,7 +214,7 @@ class Selection():
         self.shapes = shapes
 
     def add(self, shapes):
-        self.shapes.extend(shapes)
+        self.shapes.extend([s for s in shapes if s not in self])
 
     def remove(self, shape):
         self.shapes.remove(shape)

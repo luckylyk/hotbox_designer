@@ -2,34 +2,34 @@
     - Write documentation in modules and Api examples and TD Documentation
 
     FEATURES TODO
-    - add a shortcut setter
-    - think about a solution for name clashes issues
-    - manage relative image path
-    - compatible with PySide 1 for old maya and natron
-    - add a reader widget for API usages
-    - add ctrl + i to invert selection
-    - put edit area in a qscrollarea
-    - Make color wheel bigger
-    - Add shape outliner (as listview)
-    - Put transparency value in % or between 0 and 1 instead of a 255 values
-    - Tool tip for buttons
-    - Switchable auto-save/manual-save
-    - Create better icons
-    - Allow python command for the button dynamic label
-    - Non-transparent windows flags
-    - Create software context for Blender, 3dsMax and Houdini
+    - manager: add a shortcut setter
+    - manager: think about a solution for name clashes issues
+    - manager: manage relative image path
+    - misc: compatible with PySide 1 for old maya and natron
+    - api: add a reader widget for API usages
+    - editor: put edit area in a qscrollarea
+    - editor: Make color wheel bigger
+    - editor: Add shape outliner (as listview)
+    - misc: Put transparency value in % or between 0 and 1 instead of a 255 values
+    - misc: Tool tip for buttons
+    - editor: Switchable auto-save/manual-save
+    - misc: Create better icons
+    - misc: Allow python command for the button dynamic label
+    - misc: Create software context for Blender, 3dsMax and Houdini
 
     FEATURES DONE
-    - invert Ctrl and Shift for selection behavior
-    - implement a hotbox referencing system for studio environment
-    - Retro compatibility data implemented
-    - Submenu management
-    - Copy Paste in editor
-    - Export / Import System
-    - Improve aiming system
-    - Create software context for Nuke
-    - Ctrl + D in editor
-    - Improve item selection ergonomy in editor
+    - editor: add ctrl + a to select all
+    - editor: add ctrl + i to invert selection
+    - editor: invert Ctrl and Shift for selection behavior
+    - manager: implement a hotbox referencing system for studio environment
+    - misc: Retro compatibility data implemented
+    - manager: Submenu management
+    - editor: Copy Paste in editor
+    - manager: Export / Import System
+    - reader: Improve aiming system
+    - misc: Create software context for Nuke
+    - editor: Ctrl + D in editor
+    - editor: Improve item selection ergonomy in editor
 
     TO FIX
     - Undo stack

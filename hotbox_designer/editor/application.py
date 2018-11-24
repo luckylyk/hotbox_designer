@@ -69,6 +69,8 @@ class HotboxEditor(QtWidgets.QWidget):
         set_shortcut("Ctrl+V", self.shape_editor, self.paste)
         set_shortcut("del", self.shape_editor, self.delete_selection)
         set_shortcut("Ctrl+D", self.shape_editor, self.deselect_all)
+        set_shortcut("Ctrl+A", self.shape_editor, self.select_all)
+        set_shortcut("Ctrl+I", self.shape_editor, self.invert_selection)
 
         self.attribute_editor = AttributeEditor(self.application)
         self.attribute_editor.optionSet.connect(self.option_set)
@@ -123,6 +125,16 @@ class HotboxEditor(QtWidgets.QWidget):
 
     def deselect_all(self):
         self.shape_editor.selection.clear()
+        self.shape_editor.update_selection()
+        self.shape_editor.repaint()
+
+    def select_all(self):
+        self.shape_editor.selection.add(self.shape_editor.shapes)
+        self.shape_editor.update_selection()
+        self.shape_editor.repaint()
+
+    def invert_selection(self):
+        self.shape_editor.selection.invert(self.shape_editor.shapes)
         self.shape_editor.update_selection()
         self.shape_editor.repaint()
 

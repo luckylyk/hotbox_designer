@@ -29,6 +29,7 @@ def load_hotboxes(application):
     file_ = application.shared_file
     hotboxes_datas += [
         ensure_old_data_compatible(load_json(f)) for f in load_json(file_)]
+
     for hotboxes_data in hotboxes_datas:
         name = hotboxes_data['general']['name']
         reader = HotboxReader(hotboxes_data, parent=None)
