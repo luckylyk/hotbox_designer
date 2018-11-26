@@ -6,12 +6,12 @@ from PySide2 import QtWidgets, QtCore
 
 import hotbox_designer
 from hotbox_designer.commands import OPEN_COMMAND, CLOSE_COMMAND, SWITCH_COMMAND
-from hotbox_designer.editor.application import HotboxEditor
+from hotbox_designer.designer.application import HotboxEditor
 from hotbox_designer.widgets import BoolCombo, Title
 from hotbox_designer.qtutils import icon
 from hotbox_designer.dialog import (
     import_hotbox, export_hotbox, import_hotbox_link, CreateHotboxDialog,
-    CommandDisplayDialog)
+    CommandDisplayDialog, HotkeySetter)
 from hotbox_designer.data import (
     get_valid_name, TRIGGERING_TYPES, save_datas, load_hotboxes_datas,
     hotbox_data_to_html, load_json)
@@ -23,7 +23,7 @@ class HotboxManager(QtWidgets.QWidget):
         super(HotboxManager, self).__init__(parent, QtCore.Qt.Tool)
         self.setWindowTitle('Hotbox Designer')
         self.application = application
-        self.hotbox_editor = None
+        self.hotbox_designer = None
 
         hotboxes_data = load_hotboxes_datas(self.application.local_file)
         self.personnal_model = HotboxPersonalTableModel(hotboxes_data)
@@ -44,6 +44,9 @@ class HotboxManager(QtWidgets.QWidget):
         self.toolbar.importRequested.connect(self._call_import)
         self.toolbar.exportRequested.connect(self._call_export)
         self.toolbar.reloadRequested.connect(self._call_reload)
+        self.toolbar.setHotkeyRequested.connect(self._call_set_hotkey)
+        setter_enabled = bool(application.available_set_hotkey_modes)
+        self.toolbar.hotkeyset.setEnabled(setter_enabled)
 
         self.edit = HotboxGeneralSettingWidget()
         self.edit.optionSet.connect(self._call_option_set)
@@ -167,17 +170,17 @@ class HotboxManager(QtWidgets.QWidget):
         if hotbox_data is None:
             return
 
-        if self.hotbox_editor is not None:
-            self.hotbox_editor.close()
+        if self.hotbox_designer is not None:
+            self.hotbox_designer.close()
 
-        self.hotbox_editor = HotboxEditor(
+        self.hotbox_designer = HotboxEditor(
             hotbox_data, 
             self.application,
             parent=self.application.main_window)
         method = self.hotbox_data_modified
-        self.hotbox_editor.hotboxDataModified.connect(method)
-        self.hotbox_editor.set_hotbox_data(hotbox_data, reset_stacks=True)
-        self.hotbox_editor.show()
+        self.hotbox_designer.hotboxDataModified.connect(method)
+        self.hotbox_designer.set_hotbox_data(hotbox_data, reset_stacks=True)
+        self.hotbox_designer.show()
 
     def _call_create(self):
         dialog = CreateHotboxDialog(self.personnal_model.hotboxes, self)
@@ -200,6 +203,8 @@ class HotboxManager(QtWidgets.QWidget):
 
     def _call_unlink(self):
         index = self.shared_view.get_selected_row()
+        if not index:
+            return
         self.shared_model.remove_link(index)
         self.save_hotboxes()
         self.toolbar.reload.setEnabled(True)
@@ -239,6 +244,23 @@ class HotboxManager(QtWidgets.QWidget):
         self.personnal_model.layoutChanged.emit()
         self.save_hotboxes()
 
+    def _call_set_hotkey(self):
+        hotbox = self.get_selected_hotbox()
+        if not hotbox:
+            return
+        modes = self.application.available_set_hotkey_modes
+        dialog = HotkeySetter(modes)
+        result = dialog.exec_()
+        if result == QtWidgets.QDialog.Rejected:
+            return
+        self.application.set_hotkey(
+            mode=dialog.mode(),
+            sequence=dialog.get_key_sequence(),
+            open_cmd=OPEN_COMMAND.format(name=hotbox['general']['name']),
+            close_cmd=CLOSE_COMMAND.format(name=hotbox['general']['name']),
+            switch_cmd=SWITCH_COMMAND.format(name=hotbox['general']['name']))
+
+
     def _call_export(self):
         hotbox = self.get_selected_hotbox()
         if not hotbox:
@@ -267,8 +289,8 @@ class HotboxManagerToolbar(QtWidgets.QToolBar):
     unlinkRequested = QtCore.Signal()
     importRequested = QtCore.Signal()
     exportRequested = QtCore.Signal()
+    setHotkeyRequested = QtCore.Signal()
     reloadRequested = QtCore.Signal()
-    removeReferenceRequested = QtCore.Signal()
 
     def __init__(self, parent=None):
         super(HotboxManagerToolbar, self).__init__(parent)
@@ -294,6 +316,9 @@ class HotboxManagerToolbar(QtWidgets.QToolBar):
         self.export = QtWidgets.QAction(icon('manager-export.png'), '', self)
         self.export.setToolTip('Export hotbox')
         self.export.triggered.connect(self.exportRequested.emit)
+        self.hotkeyset = QtWidgets.QAction(icon('touch.png'), '', self)
+        self.hotkeyset.setToolTip('Set hotkey')
+        self.hotkeyset.triggered.connect(self.setHotkeyRequested.emit)
         self.reload = QtWidgets.QAction(icon('reload.png'), '', self)
         self.reload.setToolTip('Reload hotboxes')
         self.reload.triggered.connect(self.reloadRequested.emit)
@@ -307,6 +332,8 @@ class HotboxManagerToolbar(QtWidgets.QToolBar):
         self.addSeparator()
         self.addAction(self.import_)
         self.addAction(self.export)
+        self.addSeparator()
+        self.addAction(self.hotkeyset)
         self.addSeparator()
         self.addAction(self.reload)
 

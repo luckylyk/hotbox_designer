@@ -2,9 +2,9 @@
     - Write documentation in modules and Api examples and TD Documentation
 
     FEATURES TODO
-    - manager: add a shortcut setter
+    - manager: add a "no hotbox selected" dialog
     - manager: think about a solution for name clashes issues
-    - manager: manage relative image path
+    - manager: manage relative image path or mass repath image on import
     - misc: compatible with PySide 1 for old maya and natron
     - api: add a reader widget for API usages
     - editor: put edit area in a qscrollarea
@@ -18,6 +18,7 @@
     - misc: Create software context for Blender, 3dsMax and Houdini
 
     FEATURES DONE
+    - manager: add a shortcut setter
     - editor: add ctrl + a to select all
     - editor: add ctrl + i to invert selection
     - editor: invert Ctrl and Shift for selection behavior

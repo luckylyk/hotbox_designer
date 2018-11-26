@@ -4,6 +4,7 @@ from PySide2 import QtWidgets
 from hotbox_designer.data import (
     get_new_hotbox, get_valid_name, copy_hotbox_data, load_templates,
     ensure_old_data_compatible)
+from hotbox_designer.widgets import TouchEdit, BoolCombo
 
 
 def import_hotbox():
@@ -36,7 +37,6 @@ def export_hotbox(hotbox):
         filename += '.json'
     with open(filename, 'w') as f:
         json.dump(hotbox, f)
-
 
 
 class CreateHotboxDialog(QtWidgets.QDialog):
@@ -120,3 +120,48 @@ class CommandDisplayDialog(QtWidgets.QDialog):
         self.layout = QtWidgets.QVBoxLayout(self)
         self.layout.addWidget(self.text)
         self.layout.addLayout(self.button_layout)
+
+
+class HotkeySetter(QtWidgets.QDialog):
+    def __init__(self, modes, parent=None):
+        super(HotkeySetter, self).__init__(parent)
+        self.setWindowTitle("Set hotkey")
+        self.ctrl = BoolCombo(False)
+        self.alt = BoolCombo(False)
+        self.touch = TouchEdit()
+        self.hotkeytype = QtWidgets.QComboBox()
+        self.hotkeytype.addItems(modes)
+
+        self.options_layout = QtWidgets.QFormLayout()
+        self.options_layout.setContentsMargins(0, 0, 0, 0)
+        self.options_layout.addRow("Ctrl", self.ctrl)
+        self.options_layout.addRow("Alt", self.alt)
+        self.options_layout.addRow("Touch", self.touch)
+        self.options_layout.addRow("Hotkey event", self.hotkeytype)
+
+        self.ok = QtWidgets.QPushButton("ok")
+        self.ok.released.connect(self.accept)
+        self.cancel = QtWidgets.QPushButton("cancel")
+        self.cancel.released.connect(self.reject)
+
+        self.button_layout = QtWidgets.QHBoxLayout()
+        self.button_layout.setContentsMargins(0, 0, 0, 0)
+        self.button_layout.addStretch(1)
+        self.button_layout.addWidget(self.ok)
+        self.button_layout.addWidget(self.cancel)
+
+        self.layout = QtWidgets.QVBoxLayout(self)
+        self.layout.addLayout(self.options_layout)
+        self.layout.addLayout(self.button_layout)
+
+    def get_key_sequence(self):
+        sequence = ''
+        if self.ctrl.state() is True:
+            sequence += "Ctrl+"
+        if self.alt.state() is True:
+            sequence += "Alt+"
+        sequence += self.touch.text()
+        return sequence
+
+    def mode(self):
+        return self.hotkeytype.currentText()

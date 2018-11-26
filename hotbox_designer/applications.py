@@ -6,6 +6,8 @@ from hotbox_designer.languages import MEL, PYTHON, NUKE_TCL, NUKE_EXPRESSION
 
 HOTBOXES_FILENAME = 'hotboxes.json'
 SHARED_HOTBOXES_FILENAME = 'shared_hotboxes.json'
+SETMODE_PRESS_RELEASE = 'open on press and close on release'
+SETMODE_SWITCH_ON_PRESS = 'switch on press'
 
 
 class AbstractApplication(object):
@@ -18,6 +20,7 @@ class AbstractApplication(object):
         self.main_window = self.get_main_window()
         self.reader_parent = self.get_reader_parent()
         self.available_languages = self.get_available_languages()
+        self.available_set_hotkey_modes = self.get_available_set_hotkey_modes()
 
     @staticmethod
     def get_data_folder():
@@ -33,6 +36,13 @@ class AbstractApplication(object):
 
     @staticmethod
     def get_available_languages():
+        raise NotImplementedError
+
+    @staticmethod
+    def get_available_set_hotkey_modes():
+        raise NotImplementedError
+
+    def set_hotkey(self, mode, sequence, open_cmd, close_cmd, switch_cmd):
         raise NotImplementedError
 
 
@@ -58,6 +68,45 @@ class Maya(AbstractApplication):
     def get_available_languages():
         return MEL, PYTHON
 
+    @staticmethod
+    def get_available_set_hotkey_modes():
+        return SETMODE_PRESS_RELEASE, SETMODE_SWITCH_ON_PRESS
+
+    def set_hotkey(self, mode, sequence, open_cmd, close_cmd, switch_cmd):
+        from maya import cmds
+        use_alt = 'Alt' in sequence
+        use_ctrl = 'Ctrl' in sequence
+        touch = sequence.split("+")[-1]
+        if mode == SETMODE_PRESS_RELEASE:
+            cmds.nameCommand(
+                'show hotbox',
+                annotation='show hotbox',
+                command=open_cmd)
+            cmds.hotkey(
+                keyShortcut=touch,
+                altModifier=use_alt,
+                ctrlModifier=use_ctrl,
+                name='openhotbox')
+            cmds.nameCommand(
+                'close hotbox',
+                annotation='close hotbox',
+                command=close_cmd)
+            cmds.hotkey(
+                keyShortcut=touch,
+                altModifier=use_alt,
+                ctrlModifier=use_ctrl,
+                name='closehotbox')
+        else:
+            cmds.nameCommand(
+                'switch hotbox',
+                annotation='switch hotbox',
+                command=switch_cmd)
+            cmds.hotkey(
+                keyShortcut=touch,
+                altModifier=use_alt,
+                ctrlModifier=use_ctrl,
+                name='switchhotbox')
+
 
 class Nuke(AbstractApplication):
 
@@ -78,3 +127,15 @@ class Nuke(AbstractApplication):
     @staticmethod
     def get_available_languages():
         return PYTHON, NUKE_TCL, NUKE_EXPRESSION
+
+    @staticmethod
+    def get_available_set_hotkey_modes():
+        return SETMODE_SWITCH_ON_PRESS
+
+    def set_hotkey(self, mode, sequence, open_cmd, close_cmd, switch_cmd):
+        from hotbox_designer.qtutils import set_shortcut
+        from functools import partial
+        set_shortcut(sequence, self.main_window, partial(execute, switch_cmd))
+
+def execute(command):
+    exec(command)

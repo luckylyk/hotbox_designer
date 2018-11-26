@@ -13,14 +13,14 @@ Python plug-in for CGI Softwares.
 It provide simple tools to create visually a hotbox menus, simply manage them and use them in the main software.
 
 ### Implementation
-| Software | implementation state | application as string |
-| ------ | ------ | ------ |
-| Autodesk Maya | done | 'maya' |
-| Foundry Nuke | done | 'nuke'|
-| Blender | in progress | undefined |
-| 3dsMax | planned | undefined |
-| Natron | planned | undefined |
-| Houdini | planned | undefined |
+| Software      | Implementation state | Application as string | Hotkey setter   |
+| ------        | ------               | ------                | -----           |
+| Autodesk Maya | done                 | 'maya'                | wip (to test)   |
+| Foundry Nuke  | done                 | 'nuke'                | wip (to test)   |
+| Blender       | in progress          | undefined             | Not available   |
+| 3dsMax        | planned              | undefined             | Not available   |
+| Natron        | planned              | undefined             | Not available   |
+| Houdini       | planned              | undefined             | Not available   |
 
 For each software who provide python and support PySide2/PyQt5, the implementation should be easy.
 
