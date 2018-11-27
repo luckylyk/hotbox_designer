@@ -79,6 +79,12 @@ class Maya(AbstractApplication):
 
     def set_hotkey(self, mode, sequence, open_cmd, close_cmd, switch_cmd):
         from maya import cmds
+        current_hotkey_set =  cmds.hotkeySet(current=True, query=True)
+        if current_hotkey_set == 'Maya_Default':
+            # TODO: replace "raise" with QMessageBox
+            msg = 'create a custom hotkey set, the current one is locked'
+            raise Exception(msg)
+            
         use_alt = 'Alt' in sequence
         use_ctrl = 'Ctrl' in sequence
         touch = sequence.split("+")[-1]
