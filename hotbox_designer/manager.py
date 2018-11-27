@@ -174,7 +174,7 @@ class HotboxManager(QtWidgets.QWidget):
             self.hotbox_designer.close()
 
         self.hotbox_designer = HotboxEditor(
-            hotbox_data, 
+            hotbox_data,
             self.application,
             parent=self.application.main_window)
         method = self.hotbox_data_modified
@@ -242,6 +242,7 @@ class HotboxManager(QtWidgets.QWidget):
         if hotbox is not None:
             hotbox['general'][option] = value
         self.personnal_model.layoutChanged.emit()
+        self.toolbar.reload.setEnabled(True)
         self.save_hotboxes()
 
     def _call_set_hotkey(self):
@@ -265,7 +266,6 @@ class HotboxManager(QtWidgets.QWidget):
             open_cmd=open_cmd,
             close_cmd=CLOSE_COMMAND.format(name=hotbox['general']['name']),
             switch_cmd=switch_cmd)
-
 
     def _call_export(self):
         hotbox = self.get_selected_hotbox()
