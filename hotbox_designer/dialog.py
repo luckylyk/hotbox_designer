@@ -7,6 +7,15 @@ from hotbox_designer.data import (
 from hotbox_designer.widgets import TouchEdit, BoolCombo
 
 
+def warning(title, message, parent=None):
+    return QtWidgets.QMessageBox.warning(
+        parent,
+        title,
+        message,
+        QtWidgets.QMessageBox.Ok,
+        QtWidgets.QMessageBox.Ok)
+
+
 def import_hotbox():
     filenames = QtWidgets.QFileDialog.getOpenFileName(
         None, caption='Import hotbox', directory=os.path.expanduser("~"),
