@@ -1,5 +1,6 @@
 import os
 from PySide2 import QtWidgets
+from hotbox_designer.dialog import warning
 from hotbox_designer.languages import (
     MEL, PYTHON, NUKE_TCL, NUKE_EXPRESSION, HSCRIPT)
 
@@ -81,9 +82,8 @@ class Maya(AbstractApplication):
         from maya import cmds
         current_hotkey_set =  cmds.hotkeySet(current=True, query=True)
         if current_hotkey_set == 'Maya_Default':
-            # TODO: replace "raise" with QMessageBox
             msg = 'create a custom hotkey set, the current one is locked'
-            raise Exception(msg)
+            return warning('Hotbox designer', msg)
             
         use_alt = 'Alt' in sequence
         use_ctrl = 'Ctrl' in sequence
@@ -119,7 +119,11 @@ class Maya(AbstractApplication):
 
 
 def format_command_for_mel(command):
-    '''TODO add docstring
+    '''
+    cause cmds.nameCommand fail to set python command, this method
+    embed the given command to a mel command callin "python" function.
+    It put everylines in a single one cause mel is not supporting multi-lines
+    strings. Hopefully Autodesk gonna fixe this soon.
     '''
     command = command.replace("\n", ";")
     command = 'python("{}")'.format(command)
