@@ -1,6 +1,4 @@
 from PySide2 import QtWidgets, QtCore, QtGui
-
-import hotbox_designer
 from hotbox_designer.interactive import Shape
 from hotbox_designer.qtutils import get_cursor
 from hotbox_designer.painting import draw_aiming, draw_aiming_background
@@ -8,6 +6,8 @@ from hotbox_designer.geometry import distance, segment_cross_rect
 
 
 class HotboxReader(QtWidgets.QWidget):
+    hideSubmenusRequested = QtCore.Signal()
+
     def __init__(self, hotbox_data, parent=None):
         super(HotboxReader, self).__init__(parent)
         flags = (
@@ -108,7 +108,7 @@ class HotboxReader(QtWidgets.QWidget):
         if self.triggering == 'click or close':
             execute_hovered_shape(self.shapes, left=True)
         if self.is_submenu is False:
-            hotbox_designer.hide_submenus()
+            self.hideSubmenusRequested.emit()
         super(HotboxReader, self).hide()
 
 
