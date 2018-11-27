@@ -33,6 +33,7 @@ def load_hotboxes(application):
     for hotboxes_data in hotboxes_datas:
         name = hotboxes_data['general']['name']
         reader = HotboxReader(hotboxes_data, parent=None)
+        reader.hideSubmenusRequested.connect(hide_submenus)
         hotboxes[name] = reader
 
 
@@ -54,4 +55,3 @@ def hide_submenus():
     for name in hotboxes:
         if hotboxes[name].is_submenu:
             hide(name)
-
