@@ -251,14 +251,20 @@ class HotboxManager(QtWidgets.QWidget):
         modes = self.application.available_set_hotkey_modes
         dialog = HotkeySetter(modes)
         result = dialog.exec_()
+        open_cmd = OPEN_COMMAND.format(
+            name=hotbox['general']['name'],
+            application=self.application.name)
+        switch_cmd = SWITCH_COMMAND.format(
+            name=hotbox['general']['name'],
+            application=self.application.name)
         if result == QtWidgets.QDialog.Rejected:
             return
         self.application.set_hotkey(
             mode=dialog.mode(),
             sequence=dialog.get_key_sequence(),
-            open_cmd=OPEN_COMMAND.format(name=hotbox['general']['name']),
+            open_cmd=open_cmd,
             close_cmd=CLOSE_COMMAND.format(name=hotbox['general']['name']),
-            switch_cmd=SWITCH_COMMAND.format(name=hotbox['general']['name']))
+            switch_cmd=switch_cmd)
 
 
     def _call_export(self):
