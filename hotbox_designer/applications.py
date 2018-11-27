@@ -87,6 +87,7 @@ class Maya(AbstractApplication):
             
         use_alt = 'Alt' in sequence
         use_ctrl = 'Ctrl' in sequence
+        use_shift = 'Shift' in sequence
         touch = sequence.split("+")[-1]
         if mode == SETMODE_PRESS_RELEASE:
             cmds.nameCommand(
@@ -103,6 +104,7 @@ class Maya(AbstractApplication):
                 keyShortcut=touch,
                 altModifier=use_alt,
                 ctrlModifier=use_ctrl,
+                shiftModifier=use_shift,
                 name='showHotbox',
                 releaseName='closeHotbox')
         else:
@@ -115,6 +117,7 @@ class Maya(AbstractApplication):
                 keyShortcut=touch,
                 altModifier=use_alt,
                 ctrlModifier=use_ctrl,
+                shiftModifier=use_shift,
                 name='switchHotbox')
 
 

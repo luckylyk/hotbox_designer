@@ -203,8 +203,8 @@ class HotboxManager(QtWidgets.QWidget):
 
     def _call_unlink(self):
         index = self.shared_view.get_selected_row()
-        if not index:
-            return
+        if index is None:
+            return warning('Hotbox designer', 'No hotbox selected')
         self.shared_model.remove_link(index)
         self.save_hotboxes()
         self.toolbar.reload.setEnabled(True)

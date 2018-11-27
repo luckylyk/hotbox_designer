@@ -137,14 +137,17 @@ class HotkeySetter(QtWidgets.QDialog):
         self.setWindowTitle("Set hotkey")
         self.ctrl = BoolCombo(False)
         self.alt = BoolCombo(False)
+        self.shift = BoolCombo(False)
         self.touch = TouchEdit()
         self.hotkeytype = QtWidgets.QComboBox()
         self.hotkeytype.addItems(modes)
 
         self.options_layout = QtWidgets.QFormLayout()
         self.options_layout.setContentsMargins(0, 0, 0, 0)
+        self.options_layout.setVerticalSpacing(0)
         self.options_layout.addRow("Ctrl", self.ctrl)
         self.options_layout.addRow("Alt", self.alt)
+        self.options_layout.addRow("Shift", self.shift)
         self.options_layout.addRow("Touch", self.touch)
         self.options_layout.addRow("Hotkey event", self.hotkeytype)
 
@@ -169,6 +172,8 @@ class HotkeySetter(QtWidgets.QDialog):
             sequence += "Ctrl+"
         if self.alt.state() is True:
             sequence += "Alt+"
+        if self.shift.state() is True:
+            sequence += "Shift+"
         sequence += self.touch.text()
         return sequence
 
