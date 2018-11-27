@@ -3,12 +3,12 @@ import json
 from hotbox_designer.reader import HotboxReader
 from hotbox_designer.manager import HotboxManager
 from hotbox_designer.data import load_hotboxes_datas, load_json, ensure_old_data_compatible
-from hotbox_designer.applications import Nuke, Maya
+from hotbox_designer.applications import Nuke, Maya, Houdini
 
 
 hotboxes = {}
 hotbox_manager = None
-APPLICATIONS = {'maya': Maya, 'nuke': Nuke}
+APPLICATIONS = {'maya': Maya, 'nuke': Nuke, 'houdini': Houdini}
 
 
 def launch_manager(application):

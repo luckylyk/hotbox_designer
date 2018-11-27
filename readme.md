@@ -13,14 +13,14 @@ Python plug-in for CGI Softwares.
 It provide simple tools to create visually a hotbox menus, simply manage them and use them in the main software.
 
 ### Implementation
-| Software      | Implementation state | Application as string | Hotkey setter   |
-| ------        | ------               | ------                | -----           |
-| Autodesk Maya | done                 | 'maya'                | wip (to test)   |
-| Foundry Nuke  | done                 | 'nuke'                | wip (to test)   |
-| Blender       | in progress          | undefined             | Not available   |
-| 3dsMax        | planned              | undefined             | Not available   |
-| Natron        | planned              | undefined             | Not available   |
-| Houdini       | planned              | undefined             | Not available   |
+| Software       | Implementation state | Application as string | Hotkey setter   |
+| ------         | ------               | ------                | -----           |
+| Autodesk Maya  | done                 | 'maya'                | wip (to test)   |
+| Foundry Nuke   | done                 | 'nuke'                | wip (to test)   |
+| Blender        | in progress          | undefined             | Not available   |
+| Autodesk 3dsMax| planned              | undefined             | Not available   |
+| Natron         | planned              | undefined             | Not available   |
+| SideFX Houdini | done                 | 'houdini'             | Not available   |
 
 For each software who provide python and support PySide2/PyQt5, the implementation should be easy.
 
@@ -29,19 +29,22 @@ For each software who provide python and support PySide2/PyQt5, the implementati
 
 place the "hotbox_designer" folder into the maya script folder
 
-| os | path |
-| ------ | ------ |
-| linux | ~/< username >/maya |
-| windows | \Users\<username>\Documents\maya |
+| os       | path                                          |
+| ------   | ------                                        |
+| linux    | ~/< username >/maya                           |
+| windows  | \Users\<username>\Documents\maya              |
 | mac os x | ~<username>/Library/Preferences/Autodesk/maya |
 
 #### Nuke
 Place the _"hotbox_designer"_ folder into _~/.nuke_<br />
 
+#### Houdini
+soon
+
 ### Launch command
 ```python
 import hotbox_designer
-hotbox_designer.launch_manager('application name as string')
+hotbox_designer.launch_manager('maya') # or any other available application name as string
 ```
 
 ### Tools

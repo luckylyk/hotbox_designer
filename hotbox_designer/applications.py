@@ -1,13 +1,17 @@
 import os
-import shiboken2
 from PySide2 import QtWidgets
-from hotbox_designer.languages import MEL, PYTHON, NUKE_TCL, NUKE_EXPRESSION
+from hotbox_designer.languages import (
+    MEL, PYTHON, NUKE_TCL, NUKE_EXPRESSION, HSCRIPT)
 
 
 HOTBOXES_FILENAME = 'hotboxes.json'
 SHARED_HOTBOXES_FILENAME = 'shared_hotboxes.json'
 SETMODE_PRESS_RELEASE = 'open on press and close on release'
 SETMODE_SWITCH_ON_PRESS = 'switch on press'
+
+
+def execute(command):
+    exec(command)
 
 
 class AbstractApplication(object):
@@ -56,6 +60,7 @@ class Maya(AbstractApplication):
     @staticmethod
     def get_main_window():
         import maya.OpenMayaUI as omui
+        import shiboken2
         main_window = omui.MQtUtil.mainWindow()
         if main_window is not None:
             return shiboken2.wrapInstance(long(main_window), QtWidgets.QWidget)
@@ -137,5 +142,31 @@ class Nuke(AbstractApplication):
         from functools import partial
         set_shortcut(sequence, self.main_window, partial(execute, switch_cmd))
 
-def execute(command):
-    exec(command)
+
+class Houdini(AbstractApplication):
+
+    @staticmethod
+    def get_data_folder():
+        return os.path.expanduser('~/houdini17.0')
+
+    @staticmethod
+    def get_main_window():
+        import hou
+        return hou.qt.mainWindow()
+
+    @staticmethod
+    def get_reader_parent():
+        return None
+
+    @staticmethod
+    def get_available_languages():
+        return PYTHON, HSCRIPT
+
+    @staticmethod
+    def get_available_set_hotkey_modes():
+        return None
+
+    def set_hotkey(self, mode, sequence, open_cmd, close_cmd, switch_cmd):
+        from hotbox_designer.qtutils import set_shortcut
+        from functools import partial
+        set_shortcut(sequence, self.main_window, partial(execute, switch_cmd))
