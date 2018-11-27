@@ -11,7 +11,7 @@ from hotbox_designer.widgets import BoolCombo, Title
 from hotbox_designer.qtutils import icon
 from hotbox_designer.dialog import (
     import_hotbox, export_hotbox, import_hotbox_link, CreateHotboxDialog,
-    CommandDisplayDialog, HotkeySetter)
+    CommandDisplayDialog, HotkeySetter, warning)
 from hotbox_designer.data import (
     get_valid_name, TRIGGERING_TYPES, save_datas, load_hotboxes_datas,
     hotbox_data_to_html, load_json)
@@ -140,7 +140,7 @@ class HotboxManager(QtWidgets.QWidget):
     def _call_open_command(self):
         hotbox = self.get_selected_hotbox()
         if not hotbox:
-            return
+            return warning('Hotbox designer', 'No hotbox selected')
         command = OPEN_COMMAND.format(
             application=self.application.name,
             name=hotbox['general']['name'])
@@ -149,14 +149,14 @@ class HotboxManager(QtWidgets.QWidget):
     def _call_close_command(self):
         hotbox = self.get_selected_hotbox()
         if not hotbox:
-            return
+            return warning('Hotbox designer', 'No hotbox selected')
         command = CLOSE_COMMAND.format(name=hotbox['general']['name'])
         CommandDisplayDialog(command, self).exec_()
 
     def _call_switch_command(self):
         hotbox = self.get_selected_hotbox()
         if not hotbox:
-            return
+            return warning('Hotbox designer', 'No hotbox selected')
         command = SWITCH_COMMAND.format(
             application=self.application.name,
             name=hotbox['general']['name'])
@@ -168,7 +168,7 @@ class HotboxManager(QtWidgets.QWidget):
 
         hotbox_data = self.get_selected_hotbox()
         if hotbox_data is None:
-            return
+            return warning('Hotbox designer', 'No hotbox selected')
 
         if self.hotbox_designer is not None:
             self.hotbox_designer.close()
@@ -212,7 +212,7 @@ class HotboxManager(QtWidgets.QWidget):
     def _call_remove(self):
         hotbox = self.get_selected_hotbox()
         if hotbox is None:
-            return
+            return warning('Hotbox designer', 'No hotbox selected')
 
         areyousure = QtWidgets.QMessageBox.question(
             self,
@@ -248,7 +248,7 @@ class HotboxManager(QtWidgets.QWidget):
     def _call_set_hotkey(self):
         hotbox = self.get_selected_hotbox()
         if not hotbox:
-            return
+            return warning('Hotbox designer', 'No hotbox selected')
         modes = self.application.available_set_hotkey_modes
         dialog = HotkeySetter(modes)
         result = dialog.exec_()
@@ -270,13 +270,13 @@ class HotboxManager(QtWidgets.QWidget):
     def _call_export(self):
         hotbox = self.get_selected_hotbox()
         if not hotbox:
-            return
+            return warning('Hotbox designer', 'No hotbox selected')
         export_hotbox(hotbox)
 
     def _call_import(self):
         hotbox = import_hotbox()
         if not hotbox:
-            return
+            return warning('Hotbox designer', 'No hotbox selected')
         hotboxes = self.personnal_model.hotboxes
         name = get_valid_name(hotboxes, hotbox['general']['name'])
         hotbox['general']['name'] = name
