@@ -84,33 +84,40 @@ class Maya(AbstractApplication):
         touch = sequence.split("+")[-1]
         if mode == SETMODE_PRESS_RELEASE:
             cmds.nameCommand(
-                'show hotbox',
+                'showHotbox',
                 annotation='show hotbox',
-                command=open_cmd)
-            cmds.hotkey(
-                keyShortcut=touch,
-                altModifier=use_alt,
-                ctrlModifier=use_ctrl,
-                name='openhotbox')
+                command=format_command_for_mel(open_cmd),
+                sourceType="python")
             cmds.nameCommand(
-                'close hotbox',
+                'closeHotbox',
                 annotation='close hotbox',
-                command=close_cmd)
+                command=format_command_for_mel(close_cmd),
+                sourceType="python")
             cmds.hotkey(
                 keyShortcut=touch,
                 altModifier=use_alt,
                 ctrlModifier=use_ctrl,
-                name='closehotbox')
+                name='showHotbox',
+                releaseName='closeHotbox')
         else:
             cmds.nameCommand(
-                'switch hotbox',
+                'switchHotbox',
                 annotation='switch hotbox',
-                command=switch_cmd)
+                command=format_command_for_mel(switch_cmd),
+                sourceType="python")
             cmds.hotkey(
                 keyShortcut=touch,
                 altModifier=use_alt,
                 ctrlModifier=use_ctrl,
-                name='switchhotbox')
+                name='switchHotbox')
+
+
+def format_command_for_mel(command):
+    '''TODO add docstring
+    '''
+    command = command.replace("\n", ";")
+    command = 'python("{}")'.format(command)
+    return command
 
 
 class Nuke(AbstractApplication):
