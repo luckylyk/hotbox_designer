@@ -4,32 +4,32 @@ from PySide2 import QtGui, QtCore
 
 TEXT_STYLES = {
     'keyword': {
-        'color': QtCore.Qt.white,
+        'color': 'white',
         'bold': True,
         'italic': False
     },
     'number': {
-        'color': QtCore.Qt.cyan,
+        'color': 'cyan',
         'bold': False,
         'italic': False
     },
     'comment': {
-        'color': QtCore.Qt.red,
+        'color': (0.7, 0.5, 0.5),
         'bold': False,
         'italic': False
     },
     'function': {
-        'color': QtCore.Qt.green,
+        'color': '#ff0571',
         'bold': False,
         'italic': True
     },
     'string': {
-        'color': QtCore.Qt.yellow,
+        'color': 'yellow',
         'bold': False,
         'italic': False
     },
     'boolean': {
-        'color': QtCore.Qt.darkYellow,
+        'color': '#a18852',
         'bold': True,
         'italic': False
     }
@@ -38,7 +38,13 @@ TEXT_STYLES = {
 
 def create_textcharformat(color, bold=False, italic=False):
     format = QtGui.QTextCharFormat()
-    format.setForeground(color)
+    qcolor = QtGui.QColor()
+    if isinstance(color, str):
+        qcolor.setNamedColor(color)
+    else:
+        r, g, b = color
+        qcolor.setRgbF(r, g, b)
+    format.setForeground(qcolor)
     if bold:
         format.setFontWeight(QtGui.QFont.Bold)
     if italic:
