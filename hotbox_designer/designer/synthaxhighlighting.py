@@ -28,6 +28,11 @@ TEXT_STYLES = {
         'bold': False,
         'italic': False
     },
+    'boolean': {
+        'color': QtCore.Qt.darkYellow,
+        'bold': True,
+        'italic': False
+    }
 }
 
 
@@ -43,11 +48,12 @@ def create_textcharformat(color, bold=False, italic=False):
 
 class PythonHighlighter(QtGui.QSyntaxHighlighter):
     PATTERNS = {
-        'keyword': r'|'.join(keyword.kwlist),
+        'keyword': r'\b|'.join(keyword.kwlist),
         'number': r'\b[+-]?[0-9]+[lL]?\b',
         'comment': r'#[^\n]*',
         'function': r'\b[A-Za-z0-9_]+(?=\()',
-        'string': r'".*"|\'.*\''
+        'string': r'".*"|\'.*\'',
+        'boolean': r'\bTrue\b|\bFalse\b'
     }
 
     def __init__(self, parent=None):
