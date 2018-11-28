@@ -2,37 +2,66 @@ import keyword
 from PySide2 import QtGui, QtCore
 
 
+TEXT_STYLES = {
+    'keyword': {
+        'color': QtCore.Qt.white,
+        'bold': True,
+        'italic': False
+    },
+    'number': {
+        'color': QtCore.Qt.cyan,
+        'bold': False,
+        'italic': False
+    },
+    'comment': {
+        'color': QtCore.Qt.red,
+        'bold': False,
+        'italic': False
+    },
+    'function': {
+        'color': QtCore.Qt.green,
+        'bold': False,
+        'italic': True
+    },
+    'string': {
+        'color': QtCore.Qt.yellow,
+        'bold': False,
+        'italic': False
+    },
+}
+
+
+def create_textcharformat(color, bold=False, italic=False):
+    format = QtGui.QTextCharFormat()
+    format.setForeground(color)
+    if bold:
+        format.setFontWeight(QtGui.QFont.Bold)
+    if italic:
+        format.setFontItalic(True)
+    return format
+
+
 class PythonHighlighter(QtGui.QSyntaxHighlighter):
+    PATTERNS = {
+        'keyword': r'|'.join(keyword.kwlist),
+        'number': r'\b[+-]?[0-9]+[lL]?\b',
+        'comment': r'#[^\n]*',
+        'function': r'\b[A-Za-z0-9_]+(?=\()',
+        'string': r'".*"|\'.*\''
+    }
+
     def __init__(self, parent=None):
         super(PythonHighlighter, self).__init__(parent)
         self.rules = []
-
-        keywords = keyword.kwlist
-        number_pattern = r'\b[+-]?[0-9]+[lL]?\b'
-        comment_pattern = r'#[^\n]*'
-        function_pattern = r'\b[A-Za-z0-9_]+(?=\()'
-
-        keyword_format = QtGui.QTextCharFormat()
-        keyword_format.setForeground(QtCore.Qt.white)
-        keyword_format.setFontWeight(QtGui.QFont.Bold)
-        self.rules.extend([
-            (QtCore.QRegExp(word), keyword_format) for word in keywords])
-
-        number_format = QtGui.QTextCharFormat()
-        number_format.setForeground(QtCore.Qt.cyan)
-        self.rules.append(
-            (QtCore.QRegExp(number_pattern), number_format))
-
-        comment_format = QtGui.QTextCharFormat()
-        comment_format.setForeground(QtCore.Qt.lightGray)
-        self.rules.append(
-            (QtCore.QRegExp(comment_pattern), comment_format))
-
-        function_format = QtGui.QTextCharFormat()
-        function_format.setFontItalic(True)
-        function_format.setForeground(QtCore.Qt.yellow)
-        self.rules.append(
-            (QtCore.QRegExp(function_pattern), function_format))
+        for name, properties in TEXT_STYLES.items():
+            if name not in self.PATTERNS:
+                continue
+            text_format = create_textcharformat(
+                color=properties['color'],
+                bold=properties['bold'],
+                italic=properties['italic'])
+            self.rules.append(
+                (QtCore.QRegExp(self.PATTERNS[name]), text_format))
 
     def highlightBlock(self, text):
         for pattern, format in self.rules:
