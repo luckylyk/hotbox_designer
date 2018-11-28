@@ -5,6 +5,7 @@ from hotbox_designer.colorwheel import ColorDialog
 from hotbox_designer.qtutils import icon, VALIGNS, HALIGNS
 from hotbox_designer.widgets import (
     Title, BoolCombo, WidgetToggler, FloatEdit, BrowseEdit, ColorEdit)
+from hotbox_designer.designer.synthaxhighlighting import PythonHighlighter
 
 
 LEFT_CELL_WIDTH = 80
@@ -277,7 +278,7 @@ class AppearenceSettings(QtWidgets.QWidget):
         values = list({option['border'] for option in options})
         value = str(values[0]) if len(values) == 1 else None
         self.border.setCurrentText(value)
-    
+
         values = list({option['borderwidth.normal'] for option in options})
         value = str(values[0]) if len(values) == 1 else None
         self.borderwidth_normal.setText(value)
@@ -340,7 +341,7 @@ class ActionSettings(QtWidgets.QWidget):
         self._llanguage = QtWidgets.QComboBox()
         method = partial(self.language_changed, 'left')
         self._llanguage.currentIndexChanged.connect(method)
-        self._lcommand = QtWidgets.QTextEdit()
+        self._lcommand = QtWidgets.QPlainTextEdit()
         self._lcommand.setFixedHeight(100)
         self._lsave = QtWidgets.QPushButton('save command')
         self._lsave.released.connect(partial(self.save_command, 'left'))
@@ -357,7 +358,7 @@ class ActionSettings(QtWidgets.QWidget):
         self._rlanguage = QtWidgets.QComboBox()
         method = partial(self.language_changed, 'right')
         self._rlanguage.currentIndexChanged.connect(method)
-        self._rcommand = QtWidgets.QTextEdit()
+        self._rcommand = QtWidgets.QPlainTextEdit()
         self._rcommand.setFixedHeight(100)
         self._rsave = QtWidgets.QPushButton('save command')
         self._rsave.released.connect(partial(self.save_command, 'right'))
@@ -381,6 +382,11 @@ class ActionSettings(QtWidgets.QWidget):
         for label in self.findChildren(QtWidgets.QLabel):
             if not isinstance(label, Title):
                 label.setFixedWidth(LEFT_CELL_WIDTH)
+
+        # TODO: set QPlainTextEdit widgets on language_changed signal only
+        # for Python
+        PythonHighlighter(self._lcommand.document())
+        PythonHighlighter(self._rcommand.document())
 
     def set_languages(self, languages):
         self.blockSignals(True)
