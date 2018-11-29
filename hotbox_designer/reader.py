@@ -10,12 +10,8 @@ class HotboxReader(QtWidgets.QWidget):
 
     def __init__(self, hotbox_data, parent=None):
         super(HotboxReader, self).__init__(parent)
-        flags = (
-            QtCore.Qt.Tool |
-            QtCore.Qt.WindowStaysOnTopHint |
-            QtCore.Qt.FramelessWindowHint)
-
-        self.setWindowFlags(flags)
+        f = (QtCore.Qt.WindowStaysOnTopHint | QtCore.Qt.FramelessWindowHint)
+        self.setWindowFlags(f)
         self.setAttribute(QtCore.Qt.WA_TranslucentBackground)
         self.setMouseTracking(True)
 
@@ -26,6 +22,7 @@ class HotboxReader(QtWidgets.QWidget):
         self.center = QtCore.QPoint(settings['centerx'], settings['centery'])
         self.setFixedSize(settings['width'], settings['height'])
         self.shapes = [Shape(data) for data in hotbox_data['shapes']]
+        self.close_on_leave = settings['leaveclose']
         self.interactive_shapes = [
             s for s in self.shapes if s.is_interactive()]
 
@@ -48,11 +45,21 @@ class HotboxReader(QtWidgets.QWidget):
                 self.center, get_cursor(self), shapes, get_cursor(self))
         else:
             set_shapes_hovered(shapes, get_cursor(self), self.clicked)
+        if self.close_on_leave is True:
+            self.hide()
         self.repaint()
 
     @property
     def clicked(self):
         return self.right_clicked or self.left_clicked
+
+    def keyPressEvent(self, event):
+        if event.key() == QtCore.Qt.Key_Escape:
+            self.hide()
+
+        parent = self.parent()
+        if parent is not None:
+            return parent.keyPressEvent(event)
 
     def mousePressEvent(self, event):
         if event.button() == QtCore.Qt.RightButton:
@@ -88,12 +95,12 @@ class HotboxReader(QtWidgets.QWidget):
         painter = QtGui.QPainter()
         painter.begin(self)
         painter.setRenderHint(QtGui.QPainter.Antialiasing)
-        if self.aiming:
-            # this is a workaround because a fully transparent widget doesn't
-            # execute the mouseMove event when the cursor is hover a
-            # transparent of the widget. This draw the reader rect has black
-            # rect with a 1/255 transparency value
-            draw_aiming_background(painter, self.rect())
+        # this is a workaround because a fully transparent widget doesn't
+        # execute the mouseMove event when the cursor is hover a
+        # transparent of the widget. This draw the reader rect has black
+        # rect with a 1/255 transparency value
+        draw_aiming_background(painter, self.rect())
+
         for shape in self.shapes:
             shape.draw(painter)
         if self.aiming:
@@ -103,6 +110,7 @@ class HotboxReader(QtWidgets.QWidget):
     def show(self):
         super(HotboxReader, self).show()
         self.move(QtGui.QCursor.pos() - self.center)
+        self.setFocus()
 
     def hide(self):
         if self.triggering == 'click or close':

@@ -174,3 +174,20 @@ class TouchEdit(QtWidgets.QLineEdit):
     def keyPressEvent(self, event):
         self.setText(QtGui.QKeySequence(event.key()).toString().lower())
         self.textEdited.emit(self.text())
+
+
+class CommandButton(QtWidgets.QWidget):
+    released = QtCore.Signal()
+    playReleased = QtCore.Signal()
+    def __init__(self, label, parent=None):
+        super(CommandButton, self).__init__(parent)
+        self.mainbutton = QtWidgets.QPushButton(label)
+        self.mainbutton.released.connect(self.released.emit)
+        self.playbutton = QtWidgets.QPushButton(icon('play.png'), '')
+        self.playbutton.released.connect(self.playReleased.emit)
+        self.playbutton.setFixedSize(22, 22)
+        self.layout = QtWidgets.QHBoxLayout(self)
+        self.layout.setContentsMargins(0, 0, 0, 0)
+        self.layout.setSpacing(2)
+        self.layout.addWidget(self.mainbutton)
+        self.layout.addWidget(self.playbutton)

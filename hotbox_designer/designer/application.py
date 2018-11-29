@@ -2,7 +2,7 @@
 from functools import partial
 from PySide2 import QtWidgets, QtCore
 
-from hotbox_designer import templates
+from hotbox_designer.templates import SQUARE_BUTTON, TEXT, BACKGROUND
 from hotbox_designer.interactive import Shape
 from hotbox_designer.geometry import get_combined_rects
 from hotbox_designer.qtutils import set_shortcut
@@ -48,11 +48,11 @@ class HotboxEditor(QtWidgets.QWidget):
         self.menu.set_center_values(x, y)
         self.menu.undoRequested.connect(self.undo)
         self.menu.redoRequested.connect(self.redo)
-        method = partial(self.create_shape, templates.SQUARE_BUTTON)
+        method = partial(self.create_shape, SQUARE_BUTTON)
         self.menu.addButtonRequested.connect(method)
-        method = partial(self.create_shape, templates.TEXT)
+        method = partial(self.create_shape, TEXT)
         self.menu.addTextRequested.connect(method)
-        method = partial(self.create_shape, templates.BACKGROUND, before=True)
+        method = partial(self.create_shape, BACKGROUND, before=True)
         self.menu.addBackgroundRequested.connect(method)
         method = self.set_selection_move_down
         self.menu.moveDownRequested.connect(method)

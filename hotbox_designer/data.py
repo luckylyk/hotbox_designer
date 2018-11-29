@@ -72,6 +72,11 @@ def ensure_old_data_compatible(data):
         data['general']['submenu']
     except KeyError:
         data['general']['submenu'] = False
+    try:
+        data['general']['leaveclose']
+    except KeyError:
+        data['general']['leaveclose'] = False
+
     return data
 
 

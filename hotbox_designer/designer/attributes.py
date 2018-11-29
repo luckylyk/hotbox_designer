@@ -5,13 +5,11 @@ from hotbox_designer.colorwheel import ColorDialog
 from hotbox_designer.qtutils import icon, VALIGNS, HALIGNS
 from hotbox_designer.widgets import (
     Title, BoolCombo, WidgetToggler, FloatEdit, BrowseEdit, ColorEdit)
-from hotbox_designer.designer.synthaxhighlighting import (
-    PythonHighlighter, NoHighlighter)
+from hotbox_designer.designer.highlighter import get_highlighter
 
 
 LEFT_CELL_WIDTH = 80
 SHAPE_TYPES = 'square', 'round'
-LANGUAGE_AVAILABLE = 'python', 'mel'
 
 
 class AttributeEditor(QtWidgets.QWidget):
@@ -390,15 +388,13 @@ class ActionSettings(QtWidgets.QWidget):
         self._rlanguage.addItems(languages)
         self.blockSignals(False)
 
-    def language_changed(self, side, *useless):
+    def language_changed(self, side, *_):
         option = 'action.' + side + '.language'
         combo = self._llanguage if side == 'left' else self._rlanguage
         text_edit = self._lcommand if side == 'left' else self._rcommand
         language = combo.currentText()
-        if language == 'python':
-            PythonHighlighter(text_edit.document())
-        else:
-            NoHighlighter(text_edit.document())
+        highlighter = get_highlighter(language)
+        highlighter(text_edit.document())
         self.optionSet.emit(option, language)
 
     def save_command(self, side):

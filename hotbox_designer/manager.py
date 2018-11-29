@@ -7,7 +7,7 @@ from PySide2 import QtWidgets, QtCore
 import hotbox_designer
 from hotbox_designer.commands import OPEN_COMMAND, CLOSE_COMMAND, SWITCH_COMMAND
 from hotbox_designer.designer.application import HotboxEditor
-from hotbox_designer.widgets import BoolCombo, Title
+from hotbox_designer.widgets import BoolCombo, Title, CommandButton
 from hotbox_designer.qtutils import icon
 from hotbox_designer.dialog import (
     import_hotbox, export_hotbox, import_hotbox_link, CreateHotboxDialog,
@@ -52,8 +52,14 @@ class HotboxManager(QtWidgets.QWidget):
         self.edit.optionSet.connect(self._call_option_set)
         self.edit.setEnabled(False)
         self.edit.open_command.released.connect(self._call_open_command)
+        method = self._call_play_open_command
+        self.edit.open_command.playReleased.connect(method)
         self.edit.close_command.released.connect(self._call_close_command)
+        method = self._call_play_close_command
+        self.edit.close_command.playReleased.connect(method)
         self.edit.switch_command.released.connect(self._call_switch_command)
+        method = self._call_play_switch_command
+        self.edit.switch_command.playReleased.connect(method)
 
         self.personnal = QtWidgets.QWidget()
         self.hlayout = QtWidgets.QHBoxLayout(self.personnal)
@@ -72,8 +78,14 @@ class HotboxManager(QtWidgets.QWidget):
         self.infos = HotboxGeneralInfosWidget()
         self.infos.setEnabled(False)
         self.infos.open_command.released.connect(self._call_open_command)
+        method = self._call_play_open_command
+        self.infos.open_command.playReleased.connect(method)
         self.infos.close_command.released.connect(self._call_close_command)
+        method = self._call_play_close_command
+        self.infos.close_command.playReleased.connect(method)
         self.infos.switch_command.released.connect(self._call_switch_command)
+        method = self._call_play_switch_command
+        self.infos.switch_command.playReleased.connect(method)
 
         self.shared = QtWidgets.QWidget()
         self.hlayout2 = QtWidgets.QHBoxLayout(self.shared)
@@ -137,30 +149,45 @@ class HotboxManager(QtWidgets.QWidget):
         else:
             self.infos.setEnabled(False)
 
-    def _call_open_command(self):
+    def _get_open_command(self):
         hotbox = self.get_selected_hotbox()
         if not hotbox:
             return warning('Hotbox designer', 'No hotbox selected')
-        command = OPEN_COMMAND.format(
+        return OPEN_COMMAND.format(
             application=self.application.name,
             name=hotbox['general']['name'])
-        CommandDisplayDialog(command, self).exec_()
+
+    def _call_open_command(self):
+        CommandDisplayDialog(self._get_open_command(), self).exec_()
+
+    def _call_play_open_command(self):
+        exec(self._get_open_command())
+
+    def _get_close_command(self):
+        hotbox = self.get_selected_hotbox()
+        if not hotbox:
+            return warning('Hotbox designer', 'No hotbox selected')
+        return CLOSE_COMMAND.format(name=hotbox['general']['name'])
 
     def _call_close_command(self):
-        hotbox = self.get_selected_hotbox()
-        if not hotbox:
-            return warning('Hotbox designer', 'No hotbox selected')
-        command = CLOSE_COMMAND.format(name=hotbox['general']['name'])
-        CommandDisplayDialog(command, self).exec_()
+        CommandDisplayDialog(self._get_close_command(), self).exec_()
 
-    def _call_switch_command(self):
+    def _call_play_close_command(self):
+        exec(self._get_close_command())
+
+    def _get_switch_command(self):
         hotbox = self.get_selected_hotbox()
         if not hotbox:
             return warning('Hotbox designer', 'No hotbox selected')
-        command = SWITCH_COMMAND.format(
+        return SWITCH_COMMAND.format(
             application=self.application.name,
             name=hotbox['general']['name'])
-        CommandDisplayDialog(command, self).exec_()
+
+    def _call_switch_command(self):
+        CommandDisplayDialog(self._get_switch_command(), self).exec_()
+
+    def _call_play_switch_command(self):
+        exec(self._get_switch_command())
 
     def _call_edit(self):
         if self.tabwidget.currentIndex():
@@ -441,9 +468,9 @@ class HotboxGeneralInfosWidget(QtWidgets.QWidget):
         super(HotboxGeneralInfosWidget, self).__init__(parent)
         self.setFixedWidth(200)
         self.label = QtWidgets.QLabel()
-        self.open_command = QtWidgets.QPushButton('show')
-        self.close_command = QtWidgets.QPushButton('hide')
-        self.switch_command = QtWidgets.QPushButton('switch')
+        self.open_command = CommandButton('show')
+        self.close_command = CommandButton('hide')
+        self.switch_command = CommandButton('switch')
 
         self.layout = QtWidgets.QVBoxLayout(self)
         self.layout.setContentsMargins(0, 0, 0, 0)
@@ -453,7 +480,7 @@ class HotboxGeneralInfosWidget(QtWidgets.QWidget):
         self.layout.addWidget(self.label)
         self.layout.addSpacing(8)
         self.layout.addStretch(1)
-        self.layout.addWidget(Title('Display commands'))
+        self.layout.addWidget(Title('Commands'))
         self.layout.addSpacing(8)
         self.layout.addWidget(self.open_command)
         self.layout.addWidget(self.close_command)
@@ -479,10 +506,13 @@ class HotboxGeneralSettingWidget(QtWidgets.QWidget):
         self.triggering.currentIndexChanged.connect(self._triggering_changed)
         self.aiming = BoolCombo(False)
         self.aiming.valueSet.connect(partial(self.optionSet.emit, 'aiming'))
+        self.leaveclose = BoolCombo(False)
+        method = partial(self.optionSet.emit, 'leaveclose')
+        self.leaveclose.valueSet.connect(method)
 
-        self.open_command = QtWidgets.QPushButton('show')
-        self.close_command = QtWidgets.QPushButton('hide')
-        self.switch_command = QtWidgets.QPushButton('switch')
+        self.open_command = CommandButton('show')
+        self.close_command = CommandButton('hide')
+        self.switch_command = CommandButton('switch')
 
         self.layout = QtWidgets.QFormLayout(self)
         self.layout.setContentsMargins(0, 0, 0, 0)
@@ -495,8 +525,9 @@ class HotboxGeneralSettingWidget(QtWidgets.QWidget):
         self.layout.addRow('is submenu', self.submenu)
         self.layout.addRow('triggering', self.triggering)
         self.layout.addRow('aiming', self.aiming)
+        self.layout.addRow('close on leave', self.leaveclose)
         self.layout.addItem(QtWidgets.QSpacerItem(0, 8))
-        self.layout.addRow(Title('Display commands'))
+        self.layout.addRow(Title('Commands'))
         self.layout.addItem(QtWidgets.QSpacerItem(0, 8))
         self.layout.addRow(self.open_command)
         self.layout.addRow(self.close_command)
@@ -509,7 +540,10 @@ class HotboxGeneralSettingWidget(QtWidgets.QWidget):
         self.optionSet.emit('touch', self.touch.text())
 
     def set_hotbox_settings(self, hotbox_settings):
+        self.blockSignals(True)
         self.submenu.setCurrentText(str(hotbox_settings['submenu']))
         self.name.setText(hotbox_settings['name'])
         self.triggering.setCurrentText(hotbox_settings['triggering'])
         self.aiming.setCurrentText(str(hotbox_settings['aiming']))
+        self.leaveclose.setCurrentText(str(hotbox_settings['leaveclose']))
+        self.blockSignals(False)
