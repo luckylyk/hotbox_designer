@@ -37,6 +37,7 @@
     - editor: Improve item selection ergonomy in editor
 
     TO FIX
+    - allow multiple key shortcut for maya
     - Undo stack
 
     FIXED
