@@ -5,6 +5,8 @@ from hotbox_designer.colorwheel import ColorDialog
 from hotbox_designer.qtutils import icon, VALIGNS, HALIGNS
 from hotbox_designer.widgets import (
     Title, BoolCombo, WidgetToggler, FloatEdit, BrowseEdit, ColorEdit)
+from hotbox_designer.designer.synthaxhighlighting import (
+    PythonHighlighter, NoHighlighter)
 
 
 LEFT_CELL_WIDTH = 80
@@ -277,7 +279,7 @@ class AppearenceSettings(QtWidgets.QWidget):
         values = list({option['border'] for option in options})
         value = str(values[0]) if len(values) == 1 else None
         self.border.setCurrentText(value)
-    
+
         values = list({option['borderwidth.normal'] for option in options})
         value = str(values[0]) if len(values) == 1 else None
         self.borderwidth_normal.setText(value)
@@ -340,7 +342,7 @@ class ActionSettings(QtWidgets.QWidget):
         self._llanguage = QtWidgets.QComboBox()
         method = partial(self.language_changed, 'left')
         self._llanguage.currentIndexChanged.connect(method)
-        self._lcommand = QtWidgets.QTextEdit()
+        self._lcommand = QtWidgets.QPlainTextEdit()
         self._lcommand.setFixedHeight(100)
         self._lsave = QtWidgets.QPushButton('save command')
         self._lsave.released.connect(partial(self.save_command, 'left'))
@@ -357,7 +359,7 @@ class ActionSettings(QtWidgets.QWidget):
         self._rlanguage = QtWidgets.QComboBox()
         method = partial(self.language_changed, 'right')
         self._rlanguage.currentIndexChanged.connect(method)
-        self._rcommand = QtWidgets.QTextEdit()
+        self._rcommand = QtWidgets.QPlainTextEdit()
         self._rcommand.setFixedHeight(100)
         self._rsave = QtWidgets.QPushButton('save command')
         self._rsave.released.connect(partial(self.save_command, 'right'))
@@ -391,7 +393,13 @@ class ActionSettings(QtWidgets.QWidget):
     def language_changed(self, side, *useless):
         option = 'action.' + side + '.language'
         combo = self._llanguage if side == 'left' else self._rlanguage
-        self.optionSet.emit(option, combo.currentText())
+        text_edit = self._lcommand if side == 'left' else self._rcommand
+        language = combo.currentText()
+        if language == 'python':
+            PythonHighlighter(text_edit.document())
+        else:
+            NoHighlighter(text_edit.document())
+        self.optionSet.emit(option, language)
 
     def save_command(self, side):
         text_edit = self._lcommand if side == 'left' else self._rcommand
