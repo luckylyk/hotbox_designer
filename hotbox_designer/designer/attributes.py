@@ -5,7 +5,8 @@ from hotbox_designer.colorwheel import ColorDialog
 from hotbox_designer.qtutils import icon, VALIGNS, HALIGNS
 from hotbox_designer.widgets import (
     Title, BoolCombo, WidgetToggler, FloatEdit, BrowseEdit, ColorEdit)
-from hotbox_designer.designer.synthaxhighlighting import PythonHighlighter
+from hotbox_designer.designer.synthaxhighlighting import (
+    PythonHighlighter, NoHighlighter)
 
 
 LEFT_CELL_WIDTH = 80
@@ -383,11 +384,6 @@ class ActionSettings(QtWidgets.QWidget):
             if not isinstance(label, Title):
                 label.setFixedWidth(LEFT_CELL_WIDTH)
 
-        # TODO: set QPlainTextEdit widgets on language_changed signal only
-        # for Python
-        PythonHighlighter(self._lcommand.document())
-        PythonHighlighter(self._rcommand.document())
-
     def set_languages(self, languages):
         self.blockSignals(True)
         self._llanguage.addItems(languages)
@@ -397,7 +393,13 @@ class ActionSettings(QtWidgets.QWidget):
     def language_changed(self, side, *useless):
         option = 'action.' + side + '.language'
         combo = self._llanguage if side == 'left' else self._rlanguage
-        self.optionSet.emit(option, combo.currentText())
+        text_edit = self._lcommand if side == 'left' else self._rcommand
+        language = combo.currentText()
+        if language == 'python':
+            PythonHighlighter(text_edit.document())
+        else:
+            NoHighlighter(text_edit.document())
+        self.optionSet.emit(option, language)
 
     def save_command(self, side):
         text_edit = self._lcommand if side == 'left' else self._rcommand

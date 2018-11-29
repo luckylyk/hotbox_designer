@@ -52,6 +52,14 @@ def create_textcharformat(color, bold=False, italic=False):
     return format
 
 
+class NoHighlighter(QtGui.QSyntaxHighlighter):
+    def __init__(self, parent=None):
+        super(NoHighlighter, self).__init__(parent)
+
+    def highlightBlock(self, text):
+        return
+
+
 class PythonHighlighter(QtGui.QSyntaxHighlighter):
     PATTERNS = {
         'keyword': r'\b|'.join(keyword.kwlist),
