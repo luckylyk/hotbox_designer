@@ -11,6 +11,7 @@ HOTBOX_REPRESENTATION = """\
 <b>Submenu </b>{submenu}<br>
 <b>Triggering </b>{triggering}<br>
 <b>Aiming </b>{aiming}<br>
+<b>Close on leave </b>{leaveclose}<br>
 """
 
 
@@ -96,4 +97,5 @@ def hotbox_data_to_html(data):
         name=data['general']['name'],
         submenu=data['general']['submenu'],
         triggering=data['general']['triggering'],
-        aiming=data['general']['aiming'])
+        aiming=data['general']['aiming'],
+        leaveclose=data['general']['leaveclose'])

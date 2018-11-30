@@ -210,7 +210,8 @@ class HotboxManager(QtWidgets.QWidget):
         self.hotbox_designer.show()
 
     def _call_create(self):
-        dialog = CreateHotboxDialog(self.personnal_model.hotboxes, self)
+        hotboxes = self.personnal_model.hotboxes + self.shared_model.hotboxes
+        dialog = CreateHotboxDialog(hotboxes, self)
         result = dialog.exec_()
         if result == QtWidgets.QDialog.Rejected:
             return

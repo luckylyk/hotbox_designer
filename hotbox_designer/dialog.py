@@ -45,7 +45,7 @@ def export_hotbox(hotbox):
     if not filename.lower().endswith('.json'):
         filename += '.json'
     with open(filename, 'w') as f:
-        json.dump(hotbox, f)
+        json.dump(hotbox, f, indent=2)
 
 
 class CreateHotboxDialog(QtWidgets.QDialog):
