@@ -5,7 +5,6 @@
     - manager: think about a solution for name clashes issues
     - manager: manage relative image path or mass repath image on import
     - misc: compatible with PySide 1 for old maya and natron
-    - api: add a reader widget for API usages
     - editor: put edit area in a qscrollarea
     - editor: Make color wheel bigger
     - editor: Add shape outliner (as listview)
@@ -17,10 +16,11 @@
     - misc: Create software context for Blender, 3dsMax and Houdini
 
     FEATURES DONE
+    - api: add a reader widget for API usages
     - reader: close on leave option added
     - reader: close with esc button
     - manager: play button added to command button
-    - editor: higlighting added for python
+    - editor: basic higlighting added for python and mel
     - manager: add a "no hotbox selected" dialog
     - manager: add a shortcut setter
     - editor: add ctrl + a to select all
@@ -37,10 +37,10 @@
     - editor: Improve item selection ergonomy in editor
 
     TO FIX
-    - allow multiple key shortcut for maya
     - Undo stack
 
     FIXED
+    - allow multiple key shortcut for maya
     - Debug delete
     - Fixe right clic issue
     - Fixe language selection

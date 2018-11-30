@@ -1,6 +1,6 @@
 import os
 import json
-from hotbox_designer.reader import HotboxReader
+from hotbox_designer.reader import HotboxReader, HotboxWidget
 from hotbox_designer.manager import HotboxManager
 from hotbox_designer.data import load_hotboxes_datas, load_json, ensure_old_data_compatible
 from hotbox_designer.applications import Nuke, Maya, Houdini

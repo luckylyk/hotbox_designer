@@ -7,7 +7,7 @@ from hotbox_designer.languages import (
 
 HOTBOXES_FILENAME = 'hotboxes.json'
 SHARED_HOTBOXES_FILENAME = 'shared_hotboxes.json'
-SETMODE_PRESS_RELEASE = 'open on press and close on release'
+SETMODE_PRESS_RELEASE = 'open on press | close on release'
 SETMODE_SWITCH_ON_PRESS = 'switch on press'
 
 
@@ -72,31 +72,35 @@ class Maya(AbstractApplication):
 
     @staticmethod
     def get_available_languages():
-        return MEL, PYTHON
+        return [MEL, PYTHON]
 
     @staticmethod
     def get_available_set_hotkey_modes():
-        return SETMODE_PRESS_RELEASE, SETMODE_SWITCH_ON_PRESS
+        return [SETMODE_PRESS_RELEASE, SETMODE_SWITCH_ON_PRESS]
 
-    def set_hotkey(self, mode, sequence, open_cmd, close_cmd, switch_cmd):
-        from maya import cmds
+    def set_hotkey(
+            self, name, mode, sequence, open_cmd, close_cmd, switch_cmd):
+        from maya import cmds, mel
         current_hotkey_set =  cmds.hotkeySet(current=True, query=True)
         if current_hotkey_set == 'Maya_Default':
-            msg = 'create a custom hotkey set, the current one is locked'
-            return warning('Hotbox designer', msg)
-            
+            msg = (
+                'The current hotkey set is locked,'
+                'change in the hotkey editor')
+            warning('Hotbox designer', msg)
+            return mel.eval("hotkeyEditorWindow;")
+
         use_alt = 'Alt' in sequence
         use_ctrl = 'Ctrl' in sequence
         use_shift = 'Shift' in sequence
         touch = sequence.split("+")[-1]
         if mode == SETMODE_PRESS_RELEASE:
             cmds.nameCommand(
-                'showHotbox',
+                'showHotbox_' + name,
                 annotation='show hotbox',
                 command=format_command_for_mel(open_cmd),
                 sourceType="python")
             cmds.nameCommand(
-                'closeHotbox',
+                'closeHotbox_' + name,
                 annotation='close hotbox',
                 command=format_command_for_mel(close_cmd),
                 sourceType="python")
@@ -109,7 +113,7 @@ class Maya(AbstractApplication):
                 releaseName='closeHotbox')
         else:
             cmds.nameCommand(
-                'switchHotbox',
+                'switchHotbox_' + name,
                 annotation='switch hotbox',
                 command=format_command_for_mel(switch_cmd),
                 sourceType="python")
@@ -180,7 +184,7 @@ class Houdini(AbstractApplication):
 
     @staticmethod
     def get_available_languages():
-        return PYTHON, HSCRIPT
+        return [PYTHON, HSCRIPT]
 
     @staticmethod
     def get_available_set_hotkey_modes():

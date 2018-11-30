@@ -5,6 +5,76 @@ from hotbox_designer.painting import draw_aiming, draw_aiming_background
 from hotbox_designer.geometry import distance, segment_cross_rect
 
 
+class HotboxWidget(QtWidgets.QWidget):
+    def __init__(self, *args, **kwargs):
+        super(HotboxWidget, self).__init__(*args, **kwargs)
+        self.setMouseTracking(True)
+        self.shapes = []
+        self.interactive_shapes = []
+        self.left_clicked = False
+        self.right_clicked = False
+
+    def set_shapes(self, shapes):
+        self.shapes = [Shape(data) for data in shapes]
+        self.interactive_shapes = [
+            s for s in self.shapes if s.is_interactive()]
+        self.repaint()
+
+    def clear(self):
+        self.shapes = []
+        self.interactive_shapes = []
+        self.repaint()
+
+    @property
+    def clicked(self):
+        return self.right_clicked or self.left_clicked
+
+    def mouseMoveEvent(self, _):
+        shapes = self.interactive_shapes
+        set_shapes_hovered(shapes, get_cursor(self), self.clicked)
+        self.repaint()
+
+    def leaveEvent(self, _):
+        shapes = self.interactive_shapes
+        set_shapes_hovered(shapes, get_cursor(self), self.clicked)
+        self.repaint()
+
+    def mousePressEvent(self, event):
+        if event.button() == QtCore.Qt.RightButton:
+            self.right_clicked = True
+        elif event.button() == QtCore.Qt.LeftButton:
+            self.left_clicked = True
+        for shape in self.shapes:
+            if shape.is_interactive():
+                if shape.hovered and self.clicked:
+                    shape.clicked = True
+                else:
+                    shape.clicked = False
+        self.repaint()
+
+    def mouseReleaseEvent(self, event):
+        execute_hovered_shape(
+            self.shapes, self.left_clicked, self.right_clicked)
+
+        if event.button() == QtCore.Qt.RightButton:
+            self.right_clicked = False
+        elif event.button() == QtCore.Qt.LeftButton:
+            self.left_clicked = False
+
+        for shape in self.shapes:
+            if shape.is_interactive():
+                shape.clicked = bool(shape.hovered and self.clicked)
+        self.repaint()
+
+    def paintEvent(self, _):
+        painter = QtGui.QPainter()
+        painter.begin(self)
+        painter.setRenderHint(QtGui.QPainter.Antialiasing)
+        for shape in self.shapes:
+            shape.draw(painter)
+        painter.end()
+
+
 class HotboxReader(QtWidgets.QWidget):
     hideSubmenusRequested = QtCore.Signal()
 

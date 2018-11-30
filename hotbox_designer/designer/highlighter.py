@@ -3,6 +3,11 @@ from PySide2 import QtGui, QtCore
 from hotbox_designer.languages import PYTHON, MEL
 
 
+
+MELKEYWORDS = [
+    'if', 'else', 'int', 'float', 'double', 'string', 'array'
+    'var', 'return', 'case', 'then', 'continue', 'break', 'global', 'proc']
+
 TEXT_STYLES = {
     'keyword': {
         'color': 'white',
@@ -38,7 +43,14 @@ PATTERNS = {
         'function': r'\b[A-Za-z0-9_]+(?=\()',
         'string': r'".*"|\'.*\'',
         'boolean': r'\bTrue\b|\bFalse\b'},
-    MEL: {}}  # TODO fill mel rules
+    MEL: {
+        'keyword': r'\b|'.join(MELKEYWORDS),
+        'number': r'\b[+-]?[0-9]+[lL]?\b',
+        'comment': r'//[^\n]*',
+        'function': r'\b[A-Za-z0-9_]+(?=\()',
+        'string': r'".*"|\'.*\'',
+        'boolean': r'\btrue\b|\bfalse\b'}
+}
 
 
 class Highlighter(QtGui.QSyntaxHighlighter):
@@ -82,7 +94,6 @@ HIGHLIGHTERS = {
 
 def get_highlighter(language):
     return HIGHLIGHTERS.get(language, Highlighter)
-
 
 
 def create_textcharformat(color, bold=False, italic=False):

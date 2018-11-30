@@ -15,11 +15,10 @@ It provide simple tools to create visually a hotbox menus, simply manage them an
 ### Implementation
 | Software       | Implementation state | Application as string | Hotkey setter   |
 | ------         | ------               | ------                | -----           |
-| Autodesk Maya  | done                 | 'maya'                | wip (to test)   |
+| Autodesk Maya  | done                 | 'maya'                | available       |
 | Foundry Nuke   | done                 | 'nuke'                | wip (to test)   |
 | Blender        | in progress          | undefined             | Not available   |
 | Autodesk 3dsMax| planned              | undefined             | Not available   |
-| Natron         | planned              | undefined             | Not available   |
 | SideFX Houdini | done                 | 'houdini'             | Not available   |
 
 For each software who provide python and support PySide2/PyQt5, the implementation should be easy.
