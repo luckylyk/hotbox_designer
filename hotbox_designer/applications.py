@@ -161,7 +161,8 @@ class Nuke(AbstractApplication):
     def get_available_set_hotkey_modes():
         return [SETMODE_SWITCH_ON_PRESS]
 
-    def set_hotkey(self, mode, sequence, open_cmd, close_cmd, switch_cmd):
+    def set_hotkey(
+            self, name, mode, sequence, open_cmd, close_cmd, switch_cmd):
         from hotbox_designer.qtutils import set_shortcut
         from functools import partial
         set_shortcut(sequence, self.main_window, partial(execute, switch_cmd))
@@ -190,7 +191,8 @@ class Houdini(AbstractApplication):
     def get_available_set_hotkey_modes():
         return [SETMODE_SWITCH_ON_PRESS]
 
-    def set_hotkey(self, mode, sequence, open_cmd, close_cmd, switch_cmd):
+    def set_hotkey(
+            self, name, mode, sequence, open_cmd, close_cmd, switch_cmd):
         from hotbox_designer.qtutils import set_shortcut
         from functools import partial
         set_shortcut(sequence, self.main_window, partial(execute, switch_cmd))
