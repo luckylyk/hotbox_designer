@@ -194,10 +194,7 @@ def set_shapes_hovered(shapes, cursor, clicked):
     for shape in shapes:
         if shape.is_interactive():
             shape.set_hovered(cursor)
-            if shape.hovered and clicked:
-                shape.clicked = True
-            else:
-                shape.clicked = False
+            shape.clicked = shape.hovered and clicked
 
 
 def set_crossed_shapes_hovered(point1, point2, shapes, cursor):

@@ -220,6 +220,7 @@ class HotboxManager(QtWidgets.QWidget):
         self.personnal_model.hotboxes.append(dialog.hotbox())
         self.personnal_model.layoutChanged.emit()
         self.save_hotboxes()
+        self.toolbar.reload.setEnabled(True)
 
     def _call_add_link(self):
         filename = import_hotbox_link()
@@ -256,6 +257,7 @@ class HotboxManager(QtWidgets.QWidget):
         self.personnal_model.hotboxes.remove(hotbox)
         self.personnal_model.layoutChanged.emit()
         self.save_hotboxes()
+        self.toolbar.reload.setEnabled(True)
 
     def _call_reload(self):
         hotbox_designer.load_hotboxes(self.application)
@@ -315,6 +317,7 @@ class HotboxManager(QtWidgets.QWidget):
         self.personnal_model.hotboxes.append(hotbox)
         self.personnal_model.layoutChanged.emit()
         self.save_hotboxes()
+        self.toolbar.reload.setEnabled(True)
 
 
 class HotboxManagerToolbar(QtWidgets.QToolBar):
