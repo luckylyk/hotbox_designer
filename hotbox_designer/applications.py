@@ -81,7 +81,7 @@ class Maya(AbstractApplication):
     def set_hotkey(
             self, name, mode, sequence, open_cmd, close_cmd, switch_cmd):
         from maya import cmds, mel
-        current_hotkey_set =  cmds.hotkeySet(current=True, query=True)
+        current_hotkey_set = cmds.hotkeySet(current=True, query=True)
         if current_hotkey_set == 'Maya_Default':
             msg = (
                 'The current hotkey set is locked,'
@@ -99,12 +99,12 @@ class Maya(AbstractApplication):
         if mode == SETMODE_PRESS_RELEASE:
             cmds.nameCommand(
                 show_name,
-                annotation='show hotbox',
+                annotation='show ' + name + ' hotbox',
                 command=format_command_for_mel(open_cmd),
                 sourceType="python")
             cmds.nameCommand(
                 hide_name,
-                annotation='close hotbox',
+                annotation='hide ' + name + ' hotbox',
                 command=format_command_for_mel(close_cmd),
                 sourceType="python")
             cmds.hotkey(
@@ -117,7 +117,7 @@ class Maya(AbstractApplication):
         else:
             cmds.nameCommand(
                 switch_name,
-                annotation='switch hotbox',
+                annotation='switch ' + name + ' hotbox',
                 command=format_command_for_mel(switch_cmd),
                 sourceType="python")
             cmds.hotkey(
