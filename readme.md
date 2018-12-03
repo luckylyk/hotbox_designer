@@ -1,17 +1,27 @@
-This tool is currently in development and not available in a stable version.
 
 # Hotbox Designer
+Python plug-in for CGI Softwares.  
+It provide simple tools to create visually a hotbox menus, simply manage them and use them in the main software.
 https://vimeo.com/299771986
+
+### Table of contents
+* [Credits](#credits)
+* [Implementation](#implementation)
+* [Installation](#installation)
+    * [Maya](#autodesk-maya)
+    * [Nuke](#nuke)
+    * [Houdini](#houdini)
+* [Tutorials](#tutorials)
+* [Launch command](#launch-command)
+* [Tools](#tools)
+    * [Designer](#designer)
+    * [Manager](#manager)
+    * [Reader](#reader)
 
 ### Credits 
 main coder: Lionel Brouyère  
 contributor: Vincent Girès  
-tester: David Vincze, Vincent Girès  
-
-### Description
-Python plug-in for CGI Softwares.  
-It provide simple tools to create visually a hotbox menus, simply manage them and use them in the main software.
-
+tester: David Vincze, Vincent Girès
 ### Implementation
 | Software       | Implementation state | Application as string | Hotkey setter   |
 | ------         | ------               | ------                | -----           |
@@ -39,7 +49,9 @@ Place the _"hotbox_designer"_ folder into _~/.nuke_<br />
 
 #### Houdini
 soon
-
+### Tutorials
+* ##### [My first hotbox](https://vimeo.com/304248049)
+* ##### [Create a submenu](https://vimeo.com/304252379)
 ### Launch command
 ```python
 import hotbox_designer
@@ -48,11 +60,11 @@ hotbox_designer.launch_manager('maya') # or any other available application name
 
 ### Tools
 The application is separated in three parts:
-- the manager
-its a simple ui who let manage multiple hotboxes and save them
-![N|Solid](https://raw.githubusercontent.com/luckylyk/hotbox_designer/master/documentation/manager2.jpg)
-- the editor
+- ##### Designer
 this is the hotbox design part. It look like a simple version of QtDesigner
 ![N|Solid](https://raw.githubusercontent.com/luckylyk/hotbox_designer/master/documentation/heditor.jpg)
-- the reader
+- ##### Manager
+its a simple ui who let manage multiple hotboxes and save them
+![N|Solid](https://raw.githubusercontent.com/luckylyk/hotbox_designer/master/documentation/manager2.jpg)
+- ##### Reader
 this contains the final hotbox widget. That's what is called when you use your menu as final product.
