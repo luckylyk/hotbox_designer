@@ -93,14 +93,17 @@ class Maya(AbstractApplication):
         use_ctrl = 'Ctrl' in sequence
         use_shift = 'Shift' in sequence
         touch = sequence.split("+")[-1]
+        show_name = 'showHotbox_' + name
+        hide_name = 'hideHotbox_' + name
+        switch_name = 'switchHotbox_' + name
         if mode == SETMODE_PRESS_RELEASE:
             cmds.nameCommand(
-                'showHotbox_' + name,
+                show_name,
                 annotation='show hotbox',
                 command=format_command_for_mel(open_cmd),
                 sourceType="python")
             cmds.nameCommand(
-                'closeHotbox_' + name,
+                hide_name,
                 annotation='close hotbox',
                 command=format_command_for_mel(close_cmd),
                 sourceType="python")
@@ -109,11 +112,11 @@ class Maya(AbstractApplication):
                 altModifier=use_alt,
                 ctrlModifier=use_ctrl,
                 shiftModifier=use_shift,
-                name='showHotbox',
-                releaseName='closeHotbox')
+                name=show_name,
+                releaseName=hide_name)
         else:
             cmds.nameCommand(
-                'switchHotbox_' + name,
+                switch_name,
                 annotation='switch hotbox',
                 command=format_command_for_mel(switch_cmd),
                 sourceType="python")
@@ -122,7 +125,7 @@ class Maya(AbstractApplication):
                 altModifier=use_alt,
                 ctrlModifier=use_ctrl,
                 shiftModifier=use_shift,
-                name='switchHotbox')
+                name=switch_name)
 
 
 def format_command_for_mel(command):
