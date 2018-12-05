@@ -61,7 +61,7 @@ import hotbox_designer
 hotbox_designer.launch_manager('maya') # or any other available application name as string
 ```
 #### Create custom widget
-this is a standard qwidget able to display the shapes drawn by a user
+##### Basic widget
 ```python
 from hotbox_designer import load_json, HotboxWidget
 # it can be integrated in a layout of an parent widget
@@ -70,6 +70,39 @@ widget = HotboxWidget()
 hotbox_data = load_json(r"your exported hotbox as json filepath")
 widget.set_hotbox_data(hotbox_data)
 ```
+#### Advanced widget
+Example of an template explorer
+
+from hotbox_designer import HotboxWidget, load_templates
+from PySide2 import QtWidgets, QtCore
+
+```python
+class HotboxTemplateNavigator(QtWidgets.QWidget):
+    def __init__(self, *args, **kwargs):
+        super(HotboxTemplateNavigator, self).__init__(*args, **kwargs)
+        self.templates = load_templates()
+        items = [d['general']['name'] for d in self.templates]
+        self.combo = QtWidgets.QComboBox()
+        self.combo.addItems(items)
+        self.combo.currentIndexChanged.connect(self.combo_index_changed)
+        self.hotbox_widget = HotboxWidget()
+        
+        self.layout = QtWidgets.QVBoxLayout(self)
+        self.layout.addWidget(self.combo)
+        self.layout.addWidget(self.hotbox_widget)
+        self.layout.addStretch(1)
+
+    def combo_index_changed(self):
+        index = self.combo.currentIndex()
+        data = self.templates[index]
+        self.hotbox_widget.set_hotbox_data(data)
+        size = QtCore.QSize(data["general"]["width"], data["general"]["height"])
+        self.hotbox_widget.setFixedSize(size)
+        self.adjustSize()
+```
+
+hotbox_template_navigator = HotboxTemplateNavigator(None, QtCore.Qt.Window)
+hotbox_template_navigator.show()
 
 ### Tools
 The application is separated in three parts:
