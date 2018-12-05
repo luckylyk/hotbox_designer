@@ -12,7 +12,9 @@ https://vimeo.com/299771986
     * [Nuke](#nuke)
     * [Houdini](#houdini)
 * [Tutorials](#tutorials)
-* [Launch command](#launch-command)
+* [Code samples](#code-samples)
+    * [Launch manager](#launch-manager)
+    * [Create custom widget](#create-custom-widget)
 * [Tools](#tools)
     * [Designer](#designer)
     * [Manager](#manager)
@@ -52,10 +54,21 @@ soon
 ### Tutorials
 * ##### [My first hotbox](https://vimeo.com/304248049)
 * ##### [Create a submenu](https://vimeo.com/304252379)
-### Launch command
+### Code Samples
+#### Launch the manager
 ```python
 import hotbox_designer
 hotbox_designer.launch_manager('maya') # or any other available application name as string
+```
+##### Create custom widget
+this is a standard qwidget able to display the shapes drawn by a user
+```python
+from hotbox_designer import load_json, HotboxWidget
+# create widget, it can be integrated in a layout of an parent widget
+widget = HotboxWidget()
+# That can be changed interactively
+hotbox_data = load_json(r"your exported hotbox as json filepath")
+widget.set_hotbox_data(hotbox_data)
 ```
 
 ### Tools

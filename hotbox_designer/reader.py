@@ -14,8 +14,8 @@ class HotboxWidget(QtWidgets.QWidget):
         self.left_clicked = False
         self.right_clicked = False
 
-    def set_shapes(self, shapes):
-        self.shapes = [Shape(data) for data in shapes]
+    def set_hotbox_data(self, hotbox_data):
+        self.shapes = [Shape(shape) for shape in hotbox_data['shapes']]
         self.interactive_shapes = [
             s for s in self.shapes if s.is_interactive()]
         self.repaint()
