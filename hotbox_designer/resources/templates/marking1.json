@@ -162,6 +162,7 @@
     "centery": 314, 
     "aiming": true, 
     "leaveclose": true, 
-    "triggering": "click only"
+    "triggering": "click only",
+    "leaveclose": false
   }
 }

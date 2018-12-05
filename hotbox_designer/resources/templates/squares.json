@@ -2444,6 +2444,7 @@
     "alt": true, 
     "aiming": false, 
     "triggering": "click", 
-    "submenu": false
+    "submenu": false,
+    "leaveclose": false
   }
 }

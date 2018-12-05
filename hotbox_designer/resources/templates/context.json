@@ -580,6 +580,7 @@
     "centery": 90, 
     "aiming": false, 
     "leaveclose": false, 
-    "triggering": "click only"
+    "triggering": "click only",
+    "leaveclose": false
   }
 }

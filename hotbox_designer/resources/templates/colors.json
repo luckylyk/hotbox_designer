@@ -3509,6 +3509,7 @@
     "alt": true, 
     "aiming": false, 
     "leaveclose": true, 
-    "triggering": "click only"
+    "triggering": "click only",
+    "leaveclose": false
   }
 }

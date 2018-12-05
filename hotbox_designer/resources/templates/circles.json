@@ -659,6 +659,7 @@
     "alt": true, 
     "aiming": false, 
     "triggering": "on click", 
-    "submenu": false
+    "submenu": false,
+    "leaveclose": false
     }
 }

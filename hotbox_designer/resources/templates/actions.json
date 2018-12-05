@@ -545,6 +545,7 @@
         "alt": true, 
         "aiming": false, 
         "triggering": "click",
-        "submenu": true
+        "submenu": true,
+        "leaveclose": false
     }
 }
