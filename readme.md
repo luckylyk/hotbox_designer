@@ -55,12 +55,12 @@ soon
 * ##### [My first hotbox](https://vimeo.com/304248049)
 * ##### [Create a submenu](https://vimeo.com/304252379)
 ### Code Samples
-#### Launch the manager
+#### Launch manager
 ```python
 import hotbox_designer
 hotbox_designer.launch_manager('maya') # or any other available application name as string
 ```
-##### Create custom widget
+#### Create custom widget
 this is a standard qwidget able to display the shapes drawn by a user
 ```python
 from hotbox_designer import load_json, HotboxWidget
