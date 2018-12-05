@@ -73,10 +73,10 @@ widget.set_hotbox_data(hotbox_data)
 #### Advanced widget
 Example of an template explorer
 
+```python
 from hotbox_designer import HotboxWidget, load_templates
 from PySide2 import QtWidgets, QtCore
 
-```python
 class HotboxTemplateNavigator(QtWidgets.QWidget):
     def __init__(self, *args, **kwargs):
         super(HotboxTemplateNavigator, self).__init__(*args, **kwargs)
@@ -86,7 +86,7 @@ class HotboxTemplateNavigator(QtWidgets.QWidget):
         self.combo.addItems(items)
         self.combo.currentIndexChanged.connect(self.combo_index_changed)
         self.hotbox_widget = HotboxWidget()
-        
+
         self.layout = QtWidgets.QVBoxLayout(self)
         self.layout.addWidget(self.combo)
         self.layout.addWidget(self.hotbox_widget)
@@ -99,10 +99,11 @@ class HotboxTemplateNavigator(QtWidgets.QWidget):
         size = QtCore.QSize(data["general"]["width"], data["general"]["height"])
         self.hotbox_widget.setFixedSize(size)
         self.adjustSize()
-```
+
 
 hotbox_template_navigator = HotboxTemplateNavigator(None, QtCore.Qt.Window)
 hotbox_template_navigator.show()
+```
 
 ### Tools
 The application is separated in three parts:
