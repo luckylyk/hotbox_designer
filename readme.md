@@ -52,8 +52,8 @@ Place the _"hotbox_designer"_ folder into _~/.nuke_<br />
 #### Houdini
 soon
 ### Tutorials
-* ##### [My first hotbox](https://vimeo.com/304248049)
-* ##### [Create a submenu](https://vimeo.com/304252379)
+* [My first hotbox](https://vimeo.com/304248049)
+* [Create a submenu](https://vimeo.com/304252379)
 ### Code Samples
 #### Launch manager
 ```python
