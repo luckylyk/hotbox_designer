@@ -15,6 +15,8 @@ https://vimeo.com/299771986
 * [Code samples](#code-samples)
     * [Launch manager](#launch-manager)
     * [Create custom widget](#create-custom-widget)
+        * [Basic widget](#basic-widget)
+        * [Advanced widget](#advanced-widget)
 * [Tools](#tools)
     * [Designer](#designer)
     * [Manager](#manager)
@@ -61,7 +63,7 @@ import hotbox_designer
 hotbox_designer.launch_manager('maya') # or any other available application name as string
 ```
 #### Create custom widget
-##### Basic widget
+*##### Basic widget
 ```python
 from hotbox_designer import load_json, HotboxWidget
 # it can be integrated in a layout of an parent widget
@@ -70,7 +72,7 @@ widget = HotboxWidget()
 hotbox_data = load_json(r"your exported hotbox as json filepath")
 widget.set_hotbox_data(hotbox_data)
 ```
-#### Advanced widget
+*##### Advanced widget
 Example of an template explorer
 
 ```python
