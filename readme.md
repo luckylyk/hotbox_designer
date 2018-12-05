@@ -64,7 +64,7 @@ hotbox_designer.launch_manager('maya') # or any other available application name
 this is a standard qwidget able to display the shapes drawn by a user
 ```python
 from hotbox_designer import load_json, HotboxWidget
-# create widget, it can be integrated in a layout of an parent widget
+# it can be integrated in a layout of an parent widget
 widget = HotboxWidget()
 # That can be changed interactively
 hotbox_data = load_json(r"your exported hotbox as json filepath")
