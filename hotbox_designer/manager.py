@@ -206,7 +206,6 @@ class HotboxManager(QtWidgets.QWidget):
             parent=self.application.main_window)
         method = self.hotbox_data_modified
         self.hotbox_designer.hotboxDataModified.connect(method)
-        self.hotbox_designer.set_hotbox_data(hotbox_data, reset_stacks=True)
         self.hotbox_designer.show()
 
     def _call_create(self):

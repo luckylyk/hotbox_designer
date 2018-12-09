@@ -28,6 +28,7 @@ class HotboxEditor(QtWidgets.QWidget):
         self.undo_manager = UndoManager(hotbox_data)
 
         self.shape_editor = ShapeEditArea(self.options)
+        self.set_hotbox_data(hotbox_data)
         self.shape_editor.selectedShapesChanged.connect(self.selection_changed)
         self.shape_editor.centerMoved.connect(self.move_center)
         method = self.set_data_modified
