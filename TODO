@@ -37,9 +37,10 @@
     - editor: Improve item selection ergonomy in editor
 
     TO FIX
-    - Undo stack
+    - nothing currently
 
     FIXED
+    - Undo stack
     - allow multiple key shortcut for maya
     - Debug delete
     - Fixe right clic issue
