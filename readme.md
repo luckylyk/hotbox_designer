@@ -36,7 +36,7 @@ tester: David Vincze, Vincent Girès
 | Autodesk 3dsMax| planned              | undefined             | Not available   |
 | SideFX Houdini | done                 | 'houdini'             | Not available   |
 
-For each software who provide python and support PySide2/PyQt5, the implementation should be easy.
+For each software who provide python and support Qt/PyQt5, the implementation should be easy.
 
 ### Installation
 #### Autodesk Maya
@@ -78,7 +78,7 @@ Example of an template explorer
 
 ```python
 from hotbox_designer import HotboxWidget, load_templates
-from PySide2 import QtWidgets, QtCore
+from Qt import QtWidgets, QtCore
 
 class HotboxTemplateNavigator(QtWidgets.QWidget):
     def __init__(self, *args, **kwargs):

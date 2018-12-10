@@ -1,5 +1,5 @@
 import os
-from PySide2 import QtGui, QtWidgets, QtCore
+from Qt import QtGui, QtWidgets, QtCore
 
 
 VALIGNS = {

@@ -1,5 +1,5 @@
 import math
-from PySide2 import QtCore
+from Qt import QtCore
 
 POINT_RADIUS = 8
 POINT_OFFSET = 4

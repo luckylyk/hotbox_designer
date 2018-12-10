@@ -1,4 +1,4 @@
-from PySide2 import QtWidgets, QtCore, QtGui
+from Qt import QtWidgets, QtCore, QtGui
 from hotbox_designer.interactive import Shape
 from hotbox_designer.qtutils import get_cursor
 from hotbox_designer.painting import draw_aiming, draw_aiming_background

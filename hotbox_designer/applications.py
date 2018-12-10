@@ -1,5 +1,5 @@
 import os
-from PySide2 import QtWidgets
+from Qt import QtWidgets
 from hotbox_designer.dialog import warning
 from hotbox_designer.languages import (
     MEL, PYTHON, NUKE_TCL, NUKE_EXPRESSION, HSCRIPT)

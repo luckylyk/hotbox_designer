@@ -1,4 +1,4 @@
-from PySide2 import QtCore, QtGui
+from Qt import QtCore, QtGui
 
 from hotbox_designer.geometry import (
     DIRECTIONS, get_topleft_rect, get_bottomleft_rect, get_topright_rect,
