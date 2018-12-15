@@ -178,8 +178,8 @@ class HotboxReader(QtWidgets.QWidget):
         painter.end()
 
     def show(self):
-        super(HotboxReader, self).show()
         self.move(QtGui.QCursor.pos() - self.center)
+        super(HotboxReader, self).show()
         self.setFocus()
 
     def hide(self):
