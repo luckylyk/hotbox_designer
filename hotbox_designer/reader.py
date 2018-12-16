@@ -100,13 +100,7 @@ class HotboxReader(QtWidgets.QWidget):
         self.right_clicked = False
 
     def mouseMoveEvent(self, _):
-        shapes = self.interactive_shapes
-        if self.aiming is True:
-            set_crossed_shapes_hovered(
-                self.center, get_cursor(self), shapes, get_cursor(self))
-        else:
-            set_shapes_hovered(shapes, get_cursor(self), self.clicked)
-        self.repaint()
+        self.set_hovered_shapes()
 
     def leaveEvent(self, _):
         shapes = self.interactive_shapes
@@ -180,6 +174,7 @@ class HotboxReader(QtWidgets.QWidget):
     def show(self):
         self.move(QtGui.QCursor.pos() - self.center)
         super(HotboxReader, self).show()
+        self.set_hovered_shapes()
         self.setFocus()
 
     def hide(self):
@@ -187,10 +182,42 @@ class HotboxReader(QtWidgets.QWidget):
             execute_hovered_shape(self.shapes, left=True)
         if self.is_submenu is False:
             self.hideSubmenusRequested.emit()
+
+        # the shape states for the next hotbox appearance
+        for shape in self.interactive_shapes:
+            shape.hovered = False
+            shape.clicked = False
+        # clean the aiming shape before close
+        self.clear_aiming()
         super(HotboxReader, self).hide()
 
+    def set_hovered_shapes(self):
+        shapes = self.interactive_shapes
+        if self.aiming is True:
+            set_crossed_shapes_hovered(
+                self.center, get_cursor(self), shapes, get_cursor(self))
+        else:
+            set_shapes_hovered(shapes, get_cursor(self), self.clicked)
+        self.repaint()
+
+    def clear_aiming(self):
+        '''
+        this method is a workaround because Qt seem optimize to keep a paint
+        when a widget is hidden. The aiming shape have to been cleaned before
+        the widget is hidden. In case of it's cleaned after, the shape can pop
+        on the next hotbox opening.
+        '''
+        if self.aiming is False:
+            return
+        self.aiming = False
+        self.repaint()
+        self.aiming = True
 
 def set_shapes_hovered(shapes, cursor, clicked):
+    """
+    this function all the given shapes.
+    It set hovered the shape if his rect contains the cursor.
+    """
     for shape in shapes:
         if shape.is_interactive():
             shape.set_hovered(cursor)
@@ -198,14 +225,29 @@ def set_shapes_hovered(shapes, cursor, clicked):
 
 
 def set_crossed_shapes_hovered(point1, point2, shapes, cursor):
+    """
+    this is the function to set the hovered shape using the aiming system.
+    It filter all shapes crossed by the given line and set the closest to the.
+    cursor hovered.
+    """
+    # reset hovered shape
+    for shape in shapes:
+        shape.hovered = False
+    # check first if a shape rect contain the cursor
+    for shape in shapes:
+        if shape.rect.contains(cursor):
+            shape.hovered = True
+            return
+    # filter all shapes crossed by a virtual line who joins the
+    # hotspot and the cursor
     cshapes = [s for s in shapes if segment_cross_rect(point1, point2, s.rect)]
     if not cshapes:
         return
+    # process distance between all shape crossed and
+    # set the closest to the cursor hovered
     shapedistances = {
         distance(shape.rect.center(), cursor): shape
         for shape in cshapes}
-    for shape in shapes:
-        shape.hovered = False
     shapedistances[min(shapedistances.keys())].hovered = True
 
 
