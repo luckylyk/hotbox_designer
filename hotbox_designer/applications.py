@@ -1,4 +1,5 @@
 import os
+import json
 from PySide2 import QtWidgets
 from hotbox_designer.dialog import warning
 from hotbox_designer.languages import (
@@ -166,9 +167,38 @@ class Nuke(AbstractApplication):
 
     def set_hotkey(
             self, name, mode, sequence, open_cmd, close_cmd, switch_cmd):
-        from hotbox_designer.qtutils import set_shortcut
-        from functools import partial
-        set_shortcut(sequence, self.main_window, partial(execute, switch_cmd))
+        self.save_hotkey(name, sequence, switch_cmd)
+        self.create_menus()
+
+    def get_hotkey_file(self):
+        hotkey_file = os.path.join(
+            self.get_data_folder(), 'hotbox_hotkey.json')
+        return hotkey_file
+
+    def load_hotkey(self):
+        hotkey_file = self.get_hotkey_file()
+        if not os.path.exists(hotkey_file):
+            return {}
+        with open(hotkey_file, 'r') as f:
+            return json.load(f)
+
+    def save_hotkey(self, name, sequence, command):
+        data = self.load_hotkey()
+        data[name] = {
+            'sequence': sequence,
+            'command': command}
+        with open(str(self.get_hotkey_file()), 'w+') as f:
+            json.dump(data, f, indent=2)
+
+    def create_menus(self):
+        import nuke
+        nuke_menu = nuke.menu('Nuke')
+        menu = nuke_menu.addMenu('Hotbox Designer')
+        hotkey_data = self.load_hotkey()
+        for name, value in hotkey_data.items():
+            menu.addCommand(
+                name='Hotboxes/{name}'.format(name=name),
+                command=str(value['command']), shortcut=value['sequence'])
 
 
 class Houdini(AbstractApplication):
