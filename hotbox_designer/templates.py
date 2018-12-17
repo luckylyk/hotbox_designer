@@ -123,6 +123,7 @@ HOTBOX = {
     'centery': 300,
     'width': 900,
     'height': 600,
-    'submenu': False
+    'submenu': False,
+    'leaveclose': False
 }
 

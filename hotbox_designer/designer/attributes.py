@@ -5,11 +5,11 @@ from hotbox_designer.colorwheel import ColorDialog
 from hotbox_designer.qtutils import icon, VALIGNS, HALIGNS
 from hotbox_designer.widgets import (
     Title, BoolCombo, WidgetToggler, FloatEdit, BrowseEdit, ColorEdit)
+from hotbox_designer.designer.highlighter import get_highlighter
 
 
 LEFT_CELL_WIDTH = 80
 SHAPE_TYPES = 'square', 'round'
-LANGUAGE_AVAILABLE = 'python', 'mel'
 
 
 class AttributeEditor(QtWidgets.QWidget):
@@ -17,9 +17,9 @@ class AttributeEditor(QtWidgets.QWidget):
     rectModified = QtCore.Signal(str, float)
     imageModified = QtCore.Signal()
 
-    def __init__(self, software, parent=None):
+    def __init__(self, application, parent=None):
         super(AttributeEditor, self).__init__(parent)
-        self.software = software
+        self.application = application
         self.widget = QtWidgets.QWidget()
 
         self.shape = ShapeSettings()
@@ -40,7 +40,7 @@ class AttributeEditor(QtWidgets.QWidget):
         self.text_toggler = WidgetToggler('Text', self.text)
 
         self.action = ActionSettings()
-        self.action.set_languages(self.software.available_languages)
+        self.action.set_languages(self.application.available_languages)
         self.action.optionSet.connect(self.optionSet.emit)
         self.action_toggler = WidgetToggler('Action', self.action)
 
@@ -277,7 +277,7 @@ class AppearenceSettings(QtWidgets.QWidget):
         values = list({option['border'] for option in options})
         value = str(values[0]) if len(values) == 1 else None
         self.border.setCurrentText(value)
-    
+
         values = list({option['borderwidth.normal'] for option in options})
         value = str(values[0]) if len(values) == 1 else None
         self.borderwidth_normal.setText(value)
@@ -340,7 +340,7 @@ class ActionSettings(QtWidgets.QWidget):
         self._llanguage = QtWidgets.QComboBox()
         method = partial(self.language_changed, 'left')
         self._llanguage.currentIndexChanged.connect(method)
-        self._lcommand = QtWidgets.QTextEdit()
+        self._lcommand = QtWidgets.QPlainTextEdit()
         self._lcommand.setFixedHeight(100)
         self._lsave = QtWidgets.QPushButton('save command')
         self._lsave.released.connect(partial(self.save_command, 'left'))
@@ -357,7 +357,7 @@ class ActionSettings(QtWidgets.QWidget):
         self._rlanguage = QtWidgets.QComboBox()
         method = partial(self.language_changed, 'right')
         self._rlanguage.currentIndexChanged.connect(method)
-        self._rcommand = QtWidgets.QTextEdit()
+        self._rcommand = QtWidgets.QPlainTextEdit()
         self._rcommand.setFixedHeight(100)
         self._rsave = QtWidgets.QPushButton('save command')
         self._rsave.released.connect(partial(self.save_command, 'right'))
@@ -388,10 +388,14 @@ class ActionSettings(QtWidgets.QWidget):
         self._rlanguage.addItems(languages)
         self.blockSignals(False)
 
-    def language_changed(self, side, *useless):
+    def language_changed(self, side, *_):
         option = 'action.' + side + '.language'
         combo = self._llanguage if side == 'left' else self._rlanguage
-        self.optionSet.emit(option, combo.currentText())
+        text_edit = self._lcommand if side == 'left' else self._rcommand
+        language = combo.currentText()
+        highlighter = get_highlighter(language)
+        highlighter(text_edit.document())
+        self.optionSet.emit(option, language)
 
     def save_command(self, side):
         text_edit = self._lcommand if side == 'left' else self._rcommand

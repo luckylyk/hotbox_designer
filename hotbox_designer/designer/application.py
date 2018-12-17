@@ -1,12 +1,8 @@
 
 from functools import partial
-from PySide2 import QtWidgets, QtCore, QtGui
+from PySide2 import QtWidgets, QtCore
 
-from .editarea import ShapeEditArea
-from .menu import MenuWidget
-from .attributes import AttributeEditor
-
-from hotbox_designer import templates
+from hotbox_designer.templates import SQUARE_BUTTON, TEXT, BACKGROUND
 from hotbox_designer.interactive import Shape
 from hotbox_designer.geometry import get_combined_rects
 from hotbox_designer.qtutils import set_shortcut
@@ -15,19 +11,24 @@ from hotbox_designer.arrayutils import (
     move_elements_to_array_end, move_elements_to_array_begin,
     move_up_array_elements, move_down_array_elements)
 
+from .editarea import ShapeEditArea
+from .menu import MenuWidget
+from .attributes import AttributeEditor
+
 
 class HotboxEditor(QtWidgets.QWidget):
     hotboxDataModified = QtCore.Signal(object)
 
-    def __init__(self, hotbox_data, software, parent=None):
+    def __init__(self, hotbox_data, application, parent=None):
         super(HotboxEditor, self).__init__(parent, QtCore.Qt.Window)
         self.setWindowTitle("Hotbox editor")
         self.options = hotbox_data['general']
-        self.software = software
+        self.application = application
         self.clipboard = []
         self.undo_manager = UndoManager(hotbox_data)
 
         self.shape_editor = ShapeEditArea(self.options)
+        self.set_hotbox_data(hotbox_data)
         self.shape_editor.selectedShapesChanged.connect(self.selection_changed)
         self.shape_editor.centerMoved.connect(self.move_center)
         method = self.set_data_modified
@@ -48,11 +49,11 @@ class HotboxEditor(QtWidgets.QWidget):
         self.menu.set_center_values(x, y)
         self.menu.undoRequested.connect(self.undo)
         self.menu.redoRequested.connect(self.redo)
-        method = partial(self.create_shape, templates.SQUARE_BUTTON)
+        method = partial(self.create_shape, SQUARE_BUTTON)
         self.menu.addButtonRequested.connect(method)
-        method = partial(self.create_shape, templates.TEXT)
+        method = partial(self.create_shape, TEXT)
         self.menu.addTextRequested.connect(method)
-        method = partial(self.create_shape, templates.BACKGROUND, before=True)
+        method = partial(self.create_shape, BACKGROUND, before=True)
         self.menu.addBackgroundRequested.connect(method)
         method = self.set_selection_move_down
         self.menu.moveDownRequested.connect(method)
@@ -69,8 +70,10 @@ class HotboxEditor(QtWidgets.QWidget):
         set_shortcut("Ctrl+V", self.shape_editor, self.paste)
         set_shortcut("del", self.shape_editor, self.delete_selection)
         set_shortcut("Ctrl+D", self.shape_editor, self.deselect_all)
+        set_shortcut("Ctrl+A", self.shape_editor, self.select_all)
+        set_shortcut("Ctrl+I", self.shape_editor, self.invert_selection)
 
-        self.attribute_editor = AttributeEditor(self.software)
+        self.attribute_editor = AttributeEditor(self.application)
         self.attribute_editor.optionSet.connect(self.option_set)
         self.attribute_editor.rectModified.connect(self.rect_modified)
         self.attribute_editor.imageModified.connect(self.image_modified)
@@ -123,6 +126,16 @@ class HotboxEditor(QtWidgets.QWidget):
 
     def deselect_all(self):
         self.shape_editor.selection.clear()
+        self.shape_editor.update_selection()
+        self.shape_editor.repaint()
+
+    def select_all(self):
+        self.shape_editor.selection.add(self.shape_editor.shapes)
+        self.shape_editor.update_selection()
+        self.shape_editor.repaint()
+
+    def invert_selection(self):
+        self.shape_editor.selection.invert(self.shape_editor.shapes)
         self.shape_editor.update_selection()
         self.shape_editor.repaint()
 

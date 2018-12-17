@@ -1,30 +1,48 @@
 
-    - Write documentation in modules
+    - Write documentation in modules and Api examples and TD Documentation
 
     FEATURES TODO
-    - Make color wheel bigger
-    - Add shape outliner (as listview)
-    - Put transparency value in % or between 0 and 1 instead of a 255 values
-    - Tool tip for buttons
-    - Improve item selection ergonomy in editor
-    - Switchable auto-save/manual-save
-    - Improve aiming system
-    - Create better icons
-    - Allow python command for the button dynamic label
-    - Create software context for
-        Nuke
-        Blender
+    - manager: think about a solution for name clashes issues
+    - manager: manage relative image path or mass repath image on import
+    - misc: compatible with PySide 1 for old maya and natron
+    - editor: put edit area in a qscrollarea
+    - editor: Make color wheel bigger
+    - editor: Add shape outliner (as listview)
+    - misc: Put transparency value in % or between 0 and 1 instead of a 255 values
+    - misc: Tool tip for buttons
+    - editor: Switchable auto-save/manual-save
+    - misc: Create better icons
+    - misc: Allow python command for the button dynamic label
+    - misc: Create software context for Blender, 3dsMax and Houdini
 
     FEATURES DONE
-    - Retro compatibility data implemented
-    - Submenu management
-    - Copy Paste in editor
-    - Export / Import System
+    - api: add a reader widget for API usages
+    - reader: close on leave option added
+    - reader: close with esc button
+    - manager: play button added to command button
+    - editor: basic higlighting added for python and mel
+    - manager: add a "no hotbox selected" dialog
+    - manager: add a shortcut setter
+    - editor: add ctrl + a to select all
+    - editor: add ctrl + i to invert selection
+    - editor: invert Ctrl and Shift for selection behavior
+    - manager: implement a hotbox referencing system for studio environment
+    - misc: Retro compatibility data implemented
+    - manager: Submenu management
+    - editor: Copy Paste in editor
+    - manager: Export / Import System
+    - reader: Improve aiming system
+    - misc: Create software context for Nuke
+    - editor: Ctrl + D in editor
+    - editor: Improve item selection ergonomy in editor
 
     TO FIX
-    - Undo stack
+    - nothing currently
 
     FIXED
+    - Aiming system improved and fixed (aiming pop too)
+    - Undo stack
+    - allow multiple key shortcut for maya
     - Debug delete
     - Fixe right clic issue
     - Fixe language selection
@@ -36,4 +54,3 @@
     - mel exec_
     - Remove the editor window modality
     - Image not shown
-    - Ctrl + D

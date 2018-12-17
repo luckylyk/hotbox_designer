@@ -27,6 +27,7 @@ class ShapeEditArea(QtWidgets.QWidget):
         self.clicked_shape = None
         self.clicked = False
         self.handeling = False
+        self.manipulator_moved = False
         self.edit_center_mode = False
         self.increase_undo_on_release = False
 
@@ -56,6 +57,7 @@ class ShapeEditArea(QtWidgets.QWidget):
         if self.handeling is False:
             return self.repaint()
 
+        self.manipulator_moved = True
         rect = self.manipulator.rect
         if self.transform.direction:
             self.transform.resize([s.rect for s in self.selection], cursor)
@@ -77,6 +79,7 @@ class ShapeEditArea(QtWidgets.QWidget):
         self.clicked = True
         self.transform.direction = direction
 
+        self.manipulator_moved = False
         rect = self.manipulator.rect
         if rect is not None:
             self.transform.set_rect(rect)
@@ -104,7 +107,11 @@ class ShapeEditArea(QtWidgets.QWidget):
             return
 
         shape = self.clicked_shape
-        if not self.handeling:
+        selection_update_conditions = (
+            self.handeling is False
+            or shape not in self.selection
+            and self.manipulator_moved is False)
+        if selection_update_conditions:
             self.selection.set([shape] if shape else None)
             self.update_selection()
 
@@ -207,7 +214,7 @@ class Selection():
         self.shapes = shapes
 
     def add(self, shapes):
-        self.shapes.extend(shapes)
+        self.shapes.extend([s for s in shapes if s not in self])
 
     def remove(self, shape):
         self.shapes.remove(shape)
@@ -231,8 +238,7 @@ def get_selection_mode(ctrl, shift):
         return 'replace'
     elif ctrl and shift:
         return 'invert'
-    elif ctrl and not shift:
+    elif shift and not ctrl:
         return 'add'
-    elif not ctrl and shift:
+    elif ctrl and not shift:
         return 'remove'
-

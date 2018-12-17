@@ -1,8 +1,8 @@
 
 OPEN_COMMAND = """\
 import hotbox_designer
-from hotbox_designer import softwares
-hotbox_designer.initialize(softwares.{software}())
+from hotbox_designer import applications
+hotbox_designer.initialize(applications.{application}())
 hotbox_designer.show('{name}')
 """
 
@@ -13,7 +13,7 @@ hotbox_designer.hide('{name}')
 
 SWITCH_COMMAND = """\
 import hotbox_designer
-from hotbox_designer import softwares
-hotbox_designer.initialize(softwares.{software}())
+from hotbox_designer import applications
+hotbox_designer.initialize(applications.{application}())
 hotbox_designer.switch('{name}')
 """
