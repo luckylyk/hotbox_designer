@@ -6,7 +6,9 @@ from PySide2 import QtWidgets, QtCore
 
 import hotbox_designer
 from hotbox_designer.commands import OPEN_COMMAND, CLOSE_COMMAND, SWITCH_COMMAND
+from hotbox_designer.reader import HotboxReader
 from hotbox_designer.designer.application import HotboxEditor
+from hotbox_designer.applications import Nuke, Maya, Houdini
 from hotbox_designer.widgets import BoolCombo, Title, CommandButton
 from hotbox_designer.qtutils import icon
 from hotbox_designer.dialog import (
@@ -14,7 +16,58 @@ from hotbox_designer.dialog import (
     CommandDisplayDialog, HotkeySetter, warning)
 from hotbox_designer.data import (
     get_valid_name, TRIGGERING_TYPES, save_datas, load_hotboxes_datas,
-    hotbox_data_to_html, load_json)
+    hotbox_data_to_html, load_json, ensure_old_data_compatible)
+
+
+hotboxes = {}
+hotbox_manager = None
+APPLICATIONS = {'maya': Maya, 'nuke': Nuke, 'houdini': Houdini}
+
+
+def launch_manager(application):
+    if hotbox_manager is None:
+        global hotbox_manager
+        hotbox_manager = HotboxManager(APPLICATIONS[application]())
+    hotbox_manager.show()
+
+
+def initialize(application):
+    if hotboxes:
+        return
+    load_hotboxes(application)
+
+
+def load_hotboxes(application):
+    hotboxes_datas = load_hotboxes_datas(application.local_file)
+    file_ = application.shared_file
+    hotboxes_datas += [
+        ensure_old_data_compatible(load_json(f)) for f in load_json(file_)]
+
+    for hotboxes_data in hotboxes_datas:
+        name = hotboxes_data['general']['name']
+        reader = HotboxReader(hotboxes_data, parent=None)
+        reader.hideSubmenusRequested.connect(hide_submenus)
+        hotboxes[name] = reader
+
+
+def show(name):
+    hotboxes[name].show()
+
+
+def hide(name):
+    hotboxes[name].hide()
+
+
+def switch(name):
+    if hotboxes[name].isVisible():
+        return hide(name)
+    return show(name)
+
+
+def hide_submenus():
+    for name in hotboxes:
+        if hotboxes[name].is_submenu:
+            hide(name)
 
 
 class HotboxManager(QtWidgets.QWidget):
