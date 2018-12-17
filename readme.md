@@ -1,6 +1,6 @@
 
 # Hotbox Designer
-Python plug-in for CGI Softwares.  
+Python plug-in for CGI Softwares.
 It provide simple tools to create visually a hotbox menus, simply manage them and use them in the main software.
 
 <img src="https://raw.githubusercontent.com/luckylyk/hotbox_designer/master/documentation/hotbox.gif" alt="drawing" align="center" width="500"/>
@@ -23,16 +23,15 @@ It provide simple tools to create visually a hotbox menus, simply manage them an
     * [Manager](#manager)
     * [Reader](#reader)
 
-### Credits 
-main coder: Lionel Brouyère  
-contributor: Vincent Girès  
+### Credits
+main coder: Lionel Brouyère
+contributor: Vincent Girès
 tester: David Vincze, Vincent Girès
 ### Implementation
 | Software       | Implementation state | Application as string | Hotkey setter   |
 | ------         | ------               | ------                | -----           |
 | Autodesk Maya  | done                 | 'maya'                | available       |
-| Foundry Nuke   | done                 | 'nuke'                | wip (to test)   |
-| Blender        | in progress          | undefined             | Not available   |
+| Foundry Nuke   | done                 | 'nuke'                | available       |
 | Autodesk 3dsMax| planned              | undefined             | Not available   |
 | SideFX Houdini | done                 | 'houdini'             | Not available   |
 
@@ -50,7 +49,26 @@ place the "hotbox_designer" folder into the maya script folder
 | mac os x | ~<username>/Library/Preferences/Autodesk/maya |
 
 #### Nuke
-Place the _"hotbox_designer"_ folder into _~/.nuke_<br />
+Place the _"hotbox_designer"_ folder into _~/.nuke_ or make it available in PYTHONPATH<br />
+Add this script to menu.py or make it available in NUKE_PATH:
+```python
+import nuke
+import hotbox_designer
+from hotbox_designer.applications import Nuke
+from hotbox_designer.manager import HotboxManager
+
+nuke_app = Nuke()
+hotbox_manager = HotboxManager(nuke_app)
+
+nuke_menu = nuke.menu('Nuke')
+menu = nuke_menu.addMenu('Hotbox Designer')
+menu.addCommand(
+    name='Manager',
+    command=hotbox_manager.show)
+nuke_app.create_menus()
+```
+Hotkeys are saved in _~/.nuke/hotbox_hotkey.json_.<br />
+To delete it, right now, the only way is to delete it in the file.
 
 #### Houdini
 soon
