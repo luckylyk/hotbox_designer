@@ -1,6 +1,6 @@
 
 # Hotbox Designer
-Python plug-in for CGI Softwares.
+Python plug-in for CGI Softwares.  
 It provide simple tools to create visually a hotbox menus, simply manage them and use them in the main software.
 
 <img src="https://raw.githubusercontent.com/luckylyk/hotbox_designer/master/documentation/hotbox.gif" alt="drawing" align="center" width="500"/>
@@ -24,8 +24,8 @@ It provide simple tools to create visually a hotbox menus, simply manage them an
     * [Reader](#reader)
 
 ### Credits
-main coder: Lionel Brouyère
-contributor: Vincent Girès
+main coder: Lionel Brouyère  
+contributor: Vincent Girès  
 tester: David Vincze, Vincent Girès
 ### Implementation
 | Software       | Implementation state | Application as string | Hotkey setter   |
