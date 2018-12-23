@@ -50,6 +50,11 @@ def load_hotboxes(application):
         hotboxes[name] = reader
 
 
+def clear_loaded_hotboxes():
+    global hotboxes
+    hotboxes = {}
+
+
 def show(name):
     hotboxes[name].show()
 
@@ -86,7 +91,6 @@ class HotboxManager(QtWidgets.QWidget):
         self.personnal_view.selectedRowChanged.connect(method)
 
         self.toolbar = HotboxManagerToolbar()
-        self.toolbar.reload.setEnabled(False)
         self.toolbar.link.setEnabled(False)
         self.toolbar.unlink.setEnabled(False)
         self.toolbar.newRequested.connect(self._call_create)
@@ -96,7 +100,6 @@ class HotboxManager(QtWidgets.QWidget):
         self.toolbar.deleteRequested.connect(self._call_remove)
         self.toolbar.importRequested.connect(self._call_import)
         self.toolbar.exportRequested.connect(self._call_export)
-        self.toolbar.reloadRequested.connect(self._call_reload)
         self.toolbar.setHotkeyRequested.connect(self._call_set_hotkey)
         setter_enabled = bool(application.available_set_hotkey_modes)
         self.toolbar.hotkeyset.setEnabled(setter_enabled)
@@ -190,7 +193,7 @@ class HotboxManager(QtWidgets.QWidget):
     def hotbox_data_modified(self, hotbox_data):
         row = self.personnal_view.get_selected_row()
         self.personnal_model.set_hotbox(row, hotbox_data)
-        self.toolbar.reload.setEnabled(True)
+        clear_loaded_hotboxes()
         self.save_hotboxes()
 
     def _shared_selected_row_changed(self):
@@ -262,8 +265,8 @@ class HotboxManager(QtWidgets.QWidget):
         self.hotbox_designer.show()
 
     def _call_create(self):
-        hotboxes = self.personnal_model.hotboxes + self.shared_model.hotboxes
-        dialog = CreateHotboxDialog(hotboxes, self)
+        hotboxes_ = self.personnal_model.hotboxes + self.shared_model.hotboxes
+        dialog = CreateHotboxDialog(hotboxes_, self)
         result = dialog.exec_()
         if result == QtWidgets.QDialog.Rejected:
             return
@@ -271,16 +274,26 @@ class HotboxManager(QtWidgets.QWidget):
         self.personnal_model.layoutAboutToBeChanged.emit()
         self.personnal_model.hotboxes.append(dialog.hotbox())
         self.personnal_model.layoutChanged.emit()
+        # retrieve and selected last hotbox in the list (who's the new one)
+        hotbox_count = len(self.personnal_model.hotboxes) - 1
+        if hotbox_count > -1:
+            self.personnal_view.selectRow(hotbox_count)
+
         self.save_hotboxes()
-        self.toolbar.reload.setEnabled(True)
+        clear_loaded_hotboxes()
 
     def _call_add_link(self):
         filename = import_hotbox_link()
         if not filename:
             return
         self.shared_model.add_link(filename)
+
+        # retrieve and selected last hotbox in the list (who's the new one)
+        hotbox_count = len(self.shared_model.hotboxes) - 1
+        if hotbox_count > -1:
+            self.shared_view.selectRow(hotbox_count)
         self.save_hotboxes()
-        self.toolbar.reload.setEnabled(True)
+        clear_loaded_hotboxes()
 
     def _call_unlink(self):
         index = self.shared_view.get_selected_row()
@@ -288,7 +301,7 @@ class HotboxManager(QtWidgets.QWidget):
             return warning('Hotbox designer', 'No hotbox selected')
         self.shared_model.remove_link(index)
         self.save_hotboxes()
-        self.toolbar.reload.setEnabled(True)
+        clear_loaded_hotboxes()
 
     def _call_remove(self):
         hotbox = self.get_selected_hotbox()
@@ -309,11 +322,7 @@ class HotboxManager(QtWidgets.QWidget):
         self.personnal_model.hotboxes.remove(hotbox)
         self.personnal_model.layoutChanged.emit()
         self.save_hotboxes()
-        self.toolbar.reload.setEnabled(True)
-
-    def _call_reload(self):
-        hotbox_designer.load_hotboxes(self.application)
-        self.toolbar.reload.setEnabled(False)
+        clear_loaded_hotboxes()
 
     def _call_option_set(self, option, value):
         self.personnal_model.layoutAboutToBeChanged.emit()
@@ -324,8 +333,8 @@ class HotboxManager(QtWidgets.QWidget):
         if hotbox is not None:
             hotbox['general'][option] = value
         self.personnal_model.layoutChanged.emit()
-        self.toolbar.reload.setEnabled(True)
         self.save_hotboxes()
+        clear_loaded_hotboxes()
 
     def _call_set_hotkey(self):
         hotbox = self.get_selected_hotbox()
@@ -369,7 +378,7 @@ class HotboxManager(QtWidgets.QWidget):
         self.personnal_model.hotboxes.append(hotbox)
         self.personnal_model.layoutChanged.emit()
         self.save_hotboxes()
-        self.toolbar.reload.setEnabled(True)
+        clear_loaded_hotboxes()
 
 
 class HotboxManagerToolbar(QtWidgets.QToolBar):
@@ -381,7 +390,6 @@ class HotboxManagerToolbar(QtWidgets.QToolBar):
     importRequested = QtCore.Signal()
     exportRequested = QtCore.Signal()
     setHotkeyRequested = QtCore.Signal()
-    reloadRequested = QtCore.Signal()
 
     def __init__(self, parent=None):
         super(HotboxManagerToolbar, self).__init__(parent)
@@ -410,9 +418,6 @@ class HotboxManagerToolbar(QtWidgets.QToolBar):
         self.hotkeyset = QtWidgets.QAction(icon('touch.png'), '', self)
         self.hotkeyset.setToolTip('Set hotkey')
         self.hotkeyset.triggered.connect(self.setHotkeyRequested.emit)
-        self.reload = QtWidgets.QAction(icon('reload.png'), '', self)
-        self.reload.setToolTip('Reload hotboxes')
-        self.reload.triggered.connect(self.reloadRequested.emit)
 
         self.addAction(self.new)
         self.addAction(self.edit)
@@ -425,8 +430,6 @@ class HotboxManagerToolbar(QtWidgets.QToolBar):
         self.addAction(self.export)
         self.addSeparator()
         self.addAction(self.hotkeyset)
-        self.addSeparator()
-        self.addAction(self.reload)
 
 
 class HotboxTableView(QtWidgets.QTableView):
