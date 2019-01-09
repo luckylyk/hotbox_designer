@@ -15,6 +15,14 @@ DIRECTIONS = [
 
 
 def get_topleft_rect(rect):
+    """
+    this function return a manipulator rect for the transform
+    handler.
+      *__________________________
+       |                        |
+       |                        |
+       |________________________|
+    """
     if not rect:
         return None
     point = rect.topLeft()
@@ -25,6 +33,15 @@ def get_topleft_rect(rect):
 
 
 def get_bottomleft_rect(rect):
+    """
+    this function return a manipulator rect for the transform
+    handler.
+       __________________________
+       |                        |
+       |                        |
+       |________________________|
+      *
+    """
     if not rect:
         return None
     point = rect.bottomLeft()
@@ -35,6 +52,14 @@ def get_bottomleft_rect(rect):
 
 
 def get_topright_rect(rect):
+    """
+    this function return a manipulator rect for the transform
+    handler.
+       __________________________*
+       |                        |
+       |                        |
+       |________________________|
+    """
     if not rect:
         return None
     point = rect.topRight()
@@ -45,6 +70,15 @@ def get_topright_rect(rect):
 
 
 def get_bottomright_rect(rect):
+    """
+    this function return a manipulator rect for the transform
+    handler.
+       __________________________
+       |                        |
+       |                        |
+       |________________________|
+                                 *
+    """
     if not rect:
         return None
     point = rect.bottomRight()
@@ -55,6 +89,14 @@ def get_bottomright_rect(rect):
 
 
 def get_left_side_rect(rect):
+    """
+    this function return a manipulator rect for the transform
+    handler.
+       __________________________
+       |                        |
+      *|                        |
+       |________________________|
+    """
     if not rect:
         return None
     top = rect.top() + (rect.height() / 2.0)
@@ -65,6 +107,14 @@ def get_left_side_rect(rect):
 
 
 def get_right_side_rect(rect):
+    """
+    this function return a manipulator rect for the transform
+    handler.
+       __________________________
+       |                        |
+       |                        |*
+       |________________________|
+    """
     if not rect:
         return None
     top = rect.top() + (rect.height() / 2.0)
@@ -75,6 +125,14 @@ def get_right_side_rect(rect):
 
 
 def get_top_side_rect(rect):
+    """
+    this function return a manipulator rect for the transform
+    handler.        
+       _____________*____________
+       |                        |
+       |                        |
+       |________________________|
+    """
     if not rect:
         return None
     return QtCore.QRectF(
@@ -84,6 +142,15 @@ def get_top_side_rect(rect):
 
 
 def get_bottom_side_rect(rect):
+    """
+    this function return a manipulator rect for the transform
+    handler.
+       __________________________
+       |                        |
+       |                        |
+       |________________________|
+                    *
+    """
     if not rect:
         return None
     return QtCore.QRectF(
@@ -103,12 +170,23 @@ def grow_rect(rect, value):
 
 
 def relative(value, in_min, in_max, out_min, out_max):
+    """
+    this function resolve simple equation and return the unknown value
+    in between two values.
+    a, a" = in_min, out_min
+    b, b " = out_max, out_max
+    c = value
+    ? is the unknown processed by function.
+    a --------- c --------- b
+    a" --------------- ? ---------------- b"
+    """
     factor = (value - in_min) / (in_max - in_min)
     width = out_max - out_min
     return out_min + (width * (factor))
 
 
 def distance(a, b):
+    """ return distance between two points """
     x = (b.x() - a.x())**2
     y = (b.y() - a.y())**2
     return math.sqrt(abs(x + y))
@@ -187,6 +265,7 @@ def segment_cross_segment(p1, p2, p3, p4):
 
 
 def proportional_rect(rect, percent=None):
+    """ return a scaled rect with a percentage """
     factor = float(percent) / 100
     width = rect.width() * factor
     height = rect.height() * factor
@@ -196,6 +275,24 @@ def proportional_rect(rect, percent=None):
 
 
 def resize_rect_with_reference(rect, in_reference_rect, out_reference_rect):
+    """
+    __________________________________  B
+    |    ________________  A         |
+    |    |               |           |
+    |    |_______________|           |
+    |                                |
+    |________________________________|
+    __________________________  C
+    |    ?                   |
+    |                        |
+    |________________________|
+    A = rect given
+    B = in_reference_rect
+    C = out_reference_rect
+    the function process the fourth rect,
+    it scale the A rect using the B, C scales as reference
+    """
+    
     left = relative(
         value=rect.left(),
         in_min=in_reference_rect.left(),
@@ -337,6 +434,16 @@ def snap(x, y, snap):
 
 
 def get_combined_rects(rects):
+    """
+    this function analyse list of rects and return
+    a rect with the smaller top and left and highest right and bottom
+    __________________________________ ?
+    |              | A               |
+    |              |                 |
+    |______________|      ___________| B
+    |                     |          |
+    |_____________________|__________|
+    """
     if not rects:
         return None
     left = min([rect.left() for rect in rects])
