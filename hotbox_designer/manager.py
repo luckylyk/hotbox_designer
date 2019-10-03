@@ -25,8 +25,8 @@ APPLICATIONS = {'maya': Maya, 'nuke': Nuke, 'houdini': Houdini}
 
 
 def launch_manager(application):
+    global hotbox_manager
     if hotbox_manager is None:
-        global hotbox_manager
         hotbox_manager = HotboxManager(APPLICATIONS[application]())
     hotbox_manager.show()
 
