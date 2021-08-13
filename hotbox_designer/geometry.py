@@ -247,6 +247,13 @@ def segment_cross_rect(p1, p2, rect):
 
 
 def segment_cross_segment(p1, p2, p3, p4):
+    """ first is True and second is False
+       \ p1                          \  p1
+        \                             \
+  p3-----------p4       p3 ------- p4  \
+          \                             \
+           \ p2                          \ p2
+    """
     dx1, dy1 = p2.x() - p1.x(), p2.y() - p1.y()
     dx2, dy2 = p4.x() - p3.x(), p4.y() - p3.y()
     dx3, dy3 = p1.x() - p3.x(), p1.y() - p3.y()

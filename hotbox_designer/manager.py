@@ -25,8 +25,8 @@ APPLICATIONS = {'maya': Maya, 'nuke': Nuke, 'houdini': Houdini}
 
 
 def launch_manager(application):
+    global hotbox_manager
     if hotbox_manager is None:
-        global hotbox_manager
         hotbox_manager = HotboxManager(APPLICATIONS[application]())
     hotbox_manager.show()
 
@@ -287,11 +287,11 @@ class HotboxManager(QtWidgets.QWidget):
         if not filename:
             return
         self.shared_model.add_link(filename)
-
         # retrieve and selected last hotbox in the list (who's the new one)
         hotbox_count = len(self.shared_model.hotboxes) - 1
         if hotbox_count > -1:
             self.shared_view.selectRow(hotbox_count)
+
         self.save_hotboxes()
         clear_loaded_hotboxes()
 
