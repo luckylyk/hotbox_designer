@@ -70,6 +70,10 @@ nuke_app.create_menus()
 Hotkeys are saved in _~/.nuke/hotbox_hotkey.json_.<br />
 To delete it, right now, the only way is to delete it in the file.
 
+Important: 
+A bug appear on some windows version. Nuke execute the init file before to create his guy, which fail the hotbox designer execution. This initialization has to be delayed later. Then read this page to find the actual solution found:
+https://github.com/luckylyk/hotbox_designer/issues/10
+
 #### Houdini
 soon
 ### Tutorials

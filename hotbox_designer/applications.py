@@ -149,7 +149,7 @@ class Nuke(AbstractApplication):
 
     @staticmethod
     def get_main_window():
-        for widget in QtWidgets.qApp.topLevelWidgets():
+        for widget in QtWidgets.QApplication.instance().topLevelWidgets():
             if widget.inherits('QMainWindow'):
                 return widget
 

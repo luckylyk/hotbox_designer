@@ -2,6 +2,7 @@
     - Write documentation in modules and Api examples and TD Documentation
 
     FEATURES TODO
+    - editor: set attribute editor disabled when no item is selected
     - manager: think about a solution for name clashes issues
     - manager: manage relative image path or mass repath image on import
     - misc: compatible with PySide 1 for old maya and natron
