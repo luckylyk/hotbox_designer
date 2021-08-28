@@ -178,6 +178,9 @@ class HotboxReader(QtWidgets.QWidget):
         self.setFocus()
 
     def hide(self):
+        if not self.isVisible():
+            return
+
         if self.triggering == 'click or close':
             execute_hovered_shape(self.shapes, left=True)
         if self.is_submenu is False:
