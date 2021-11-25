@@ -63,8 +63,11 @@ class Maya(AbstractApplication):
     def get_main_window():
         import maya.OpenMayaUI as omui
         import shiboken2
+        import sys
         main_window = omui.MQtUtil.mainWindow()
         if main_window is not None:
+            PY2 = sys.version_info[0] == 2
+            long = long if PY2 else int
             return shiboken2.wrapInstance(long(main_window), QtWidgets.QWidget)
 
     @staticmethod
