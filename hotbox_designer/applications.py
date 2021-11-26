@@ -61,14 +61,17 @@ class Maya(AbstractApplication):
 
     @staticmethod
     def get_main_window():
-        import maya.OpenMayaUI as omui
-        import shiboken2
-        import sys
-        main_window = omui.MQtUtil.mainWindow()
-        if main_window is not None:
-            PY2 = sys.version_info[0] == 2
-            long = long if PY2 else int
-            return shiboken2.wrapInstance(long(main_window), QtWidgets.QWidget)
+        """Get the main window for maya.
+
+        Returns:
+            shiboken2.wrapInstance: The pointer to the maya main window.
+
+        References:
+            https://help.autodesk.com/cloudhelp/2018/JPN/Maya-Tech-Docs/PyMel/generated/functions/pymel.core.uitypes/pymel.core.uitypes.toPySideObject.html
+
+        """
+        import pymel.core as pm
+        return pm.uitypes.toPySideObject("MayaWindow")
 
     @staticmethod
     def get_reader_parent():
