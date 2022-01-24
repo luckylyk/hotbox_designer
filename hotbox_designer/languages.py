@@ -11,7 +11,7 @@ def execute_code(language, code):
 
 
 def execute_python(code):
-    exec(code)
+    exec(code, globals())
 
 
 def execute_mel(code):
