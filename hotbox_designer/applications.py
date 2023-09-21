@@ -65,13 +65,14 @@ class Maya(AbstractApplication):
 
         Returns:
             shiboken2.wrapInstance: The pointer to the maya main window.
-
-        References:
-            https://help.autodesk.com/cloudhelp/2018/JPN/Maya-Tech-Docs/PyMel/generated/functions/pymel.core.uitypes/pymel.core.uitypes.toPySideObject.html
-
         """
-        import pymel.core as pm
-        return pm.uitypes.toPySideObject("MayaWindow")
+        import maya.OpenMayaUI as omui
+        import shiboken2
+        if os.name == 'posix':
+            return None
+        ptr = omui.MQtUtil.mainWindow()
+        if ptr is not None:
+            return shiboken2.wrapInstance(int(ptr), QtWidgets.QWidget)
 
     @staticmethod
     def get_reader_parent():
