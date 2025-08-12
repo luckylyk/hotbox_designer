@@ -12,6 +12,7 @@ It provide simple tools to create visually a hotbox menus, simply manage them an
     * [Maya](#autodesk-maya)
     * [Nuke](#nuke)
     * [Houdini](#houdini)
+    * [Rumba](#rumba)
 * [Tutorials](#tutorials)
 * [Code samples](#code-samples)
     * [Launch manager](#launch-manager)
@@ -34,6 +35,7 @@ tester: David Vincze, Vincent Girès
 | Foundry Nuke   | done                 | 'nuke'                | available       |
 | Autodesk 3dsMax| planned              | undefined             | Not available   |
 | SideFX Houdini | done                 | 'houdini'             | Not available   |
+| Rumba Animation| done                 | 'rumba'               | available       |
 
 For each software who provide python and support PySide2/PyQt5, the implementation should be easy.
 
@@ -76,6 +78,10 @@ https://github.com/luckylyk/hotbox_designer/issues/10
 
 #### Houdini
 soon
+#### Rumba
+Place the _"hotbox_designer"_ folder into _~/.nuke_ or make it available in RUMBA_USER_PLUGINS<br />
+
+
 ### Tutorials
 * [My first hotbox](https://vimeo.com/304248049)
 * [Create a submenu](https://vimeo.com/304252379)
