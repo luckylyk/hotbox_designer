@@ -482,10 +482,10 @@ class TextSettings(QtWidgets.QWidget):
         self.color.valueSet.connect(partial(self.optionSet.emit, 'text.color'))
 
         self.halignement = QtWidgets.QComboBox()
-        self.halignement.addItems(HALIGNS.keys())
+        self.halignement.addItems(list(HALIGNS.keys()))
         self.halignement.currentIndexChanged.connect(self.halign_changed)
         self.valignement = QtWidgets.QComboBox()
-        self.valignement.addItems(VALIGNS.keys())
+        self.valignement.addItems(list(VALIGNS.keys()))
         self.valignement.currentIndexChanged.connect(self.valign_changed)
 
         self.layout = QtWidgets.QFormLayout(self)
