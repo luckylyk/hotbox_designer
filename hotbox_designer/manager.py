@@ -2,7 +2,7 @@
 import json
 import os
 from functools import partial
-from PySide2 import QtWidgets, QtCore
+from hotbox_designer.vendor.Qt import QtWidgets, QtCore
 
 import hotbox_designer
 from hotbox_designer.commands import OPEN_COMMAND, CLOSE_COMMAND, SWITCH_COMMAND

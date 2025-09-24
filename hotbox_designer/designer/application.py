@@ -1,6 +1,6 @@
 
 from functools import partial
-from PySide2 import QtWidgets, QtCore
+from hotbox_designer.vendor.Qt import QtWidgets, QtCore
 
 from hotbox_designer.templates import SQUARE_BUTTON, TEXT, BACKGROUND
 from hotbox_designer.interactive import Shape

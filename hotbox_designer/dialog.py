@@ -1,6 +1,6 @@
 import os
 import json
-from PySide2 import QtWidgets
+from hotbox_designer.vendor.Qt import QtWidgets
 from hotbox_designer.data import (
     get_new_hotbox, get_valid_name, copy_hotbox_data, load_templates,
     ensure_old_data_compatible)
