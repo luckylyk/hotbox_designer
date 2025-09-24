@@ -267,7 +267,7 @@ class Rumba(AbstractApplication):
     def set_hotkey(
             self, name, mode, sequence, open_cmd, close_cmd, switch_cmd):
         self.save_hotkey(name, sequence, switch_cmd)
-        self.create_menus()
+        self.create_menus(reload=True)
 
     def update_hotkeys(self):
         hotkey_file = self.get_hotkey_file()
@@ -317,7 +317,7 @@ class Rumba(AbstractApplication):
             if menu.menu() and menu.text() == menu_title:
                 menu_bar.removeAction(menu)
 
-    def create_menus(self):
+    def create_menus(self, reload=False):
         """Create the Hotbox Designer menu in Rumba's menu bar."""
         import rumbapy
         from functools import partial
@@ -326,7 +326,8 @@ class Rumba(AbstractApplication):
         menu_bar = main_window.menubar
         menu_title = "&Hotbox Designer"
 
-        self.delete_menu(menu_bar, menu_title)
+        if reload:
+            self.delete_menu(menu_bar, menu_title)
 
         hotbox_menu = menu_bar.addMenu(menu_title)
 
