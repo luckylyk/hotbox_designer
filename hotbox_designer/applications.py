@@ -48,6 +48,10 @@ class AbstractApplication(object):
     def get_available_set_hotkey_modes():
         raise NotImplementedError
 
+    @staticmethod
+    def update_hotkeys():
+        raise NotImplementedError
+
     def set_hotkey(self, mode, sequence, open_cmd, close_cmd, switch_cmd):
         raise NotImplementedError
 
@@ -265,11 +269,19 @@ class Rumba(AbstractApplication):
         self.save_hotkey(name, sequence, switch_cmd)
         self.create_menus()
 
+    def update_hotkeys(self):
+        hotkey_file = self.get_hotkey_file()
+        updated_hotkeys = self.remove_hotbox_item(
+            self.load_hotboxes(), self.load_hotkey()
+        )
+        with open(hotkey_file, 'w') as f:
+            json.dump(updated_hotkeys, f, indent=2)
+
     def get_hotboxes_file(self):
         hotboxes_file = os.path.join(
             self.get_data_folder(), HOTBOXES_FILENAME)
         return hotboxes_file
-    
+
     def get_hotkey_file(self):
         hotkey_file = os.path.join(
             self.get_data_folder(), 'hotbox_hotkey.json')

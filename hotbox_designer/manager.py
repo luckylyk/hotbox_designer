@@ -174,6 +174,10 @@ class HotboxManager(QtWidgets.QWidget):
         save_datas(self.application.local_file, self.personnal_model.hotboxes)
         datas = self.shared_model.hotboxes_links
         save_datas(self.application.shared_file, datas)
+        try:
+            self.application.update_hotkeys()
+        except Exception as e:
+            raise e
 
     def _personnal_selected_row_changed(self):
         hotbox = self.get_selected_hotbox()
