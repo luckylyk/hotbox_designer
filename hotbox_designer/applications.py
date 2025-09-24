@@ -3,7 +3,7 @@ import json
 from hotbox_designer.vendor.Qt import QtWidgets
 from hotbox_designer.dialog import warning
 from hotbox_designer.languages import (
-    MEL, PYTHON, NUKE_TCL, NUKE_EXPRESSION, HSCRIPT)
+    MEL, PYTHON, NUKE_TCL, NUKE_EXPRESSION, HSCRIPT, RUMBA_SCRIPT)
 
 
 HOTBOXES_FILENAME = 'hotboxes.json'
@@ -258,7 +258,7 @@ class Rumba(AbstractApplication):
 
     @staticmethod
     def get_available_languages():
-        return [PYTHON]
+        return [RUMBA_SCRIPT, PYTHON]
 
     @staticmethod
     def get_available_set_hotkey_modes():
