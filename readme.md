@@ -79,8 +79,31 @@ https://github.com/luckylyk/hotbox_designer/issues/10
 #### Houdini
 soon
 #### Rumba
-Place the _"hotbox_designer"_ folder into _~/.nuke_ or make it available in RUMBA_USER_PLUGINS<br />
+Locate the _"hotbox_designer"_ folder and make it available in 
+RUMBA_USER_PLUGINS environment variable.<br /> 
+Add this script in a python file _menu.py_ and make it available in 
+RUMBA_USER_PLUGINS environment variable.
+```python
+"""Hotbox Designer integration for Rumba."""
 
+import rumbapy
+from PySide2 import QtCore
+from rumbapy.WidgetPlugins import register_ui, UIPluginOptions
+
+
+class HotboxDesigner(QtCore.QObject):
+
+    def __init__(self, parent=None):
+        super(HotboxDesigner, self).__init__(parent)
+        from hotbox_designer.applications import Rumba
+        rumba_app = Rumba()
+        rumba_app.create_menus()
+
+
+register_ui(HotboxDesigner, "Hotbox Designer", UIPluginOptions(
+    auto_create=True))
+```
+Hotkeys are saved in ~/.rumba/hotbox_hotkey.json.
 
 ### Tutorials
 * [My first hotbox](https://vimeo.com/304248049)
