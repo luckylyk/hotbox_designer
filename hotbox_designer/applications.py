@@ -254,7 +254,7 @@ class Rumba(AbstractApplication):
 
     @staticmethod
     def get_available_languages():
-        return PYTHON
+        return [PYTHON]
 
     @staticmethod
     def get_available_set_hotkey_modes():
@@ -262,15 +262,26 @@ class Rumba(AbstractApplication):
 
     def set_hotkey(
             self, name, mode, sequence, open_cmd, close_cmd, switch_cmd):
-        from hotbox_designer.qtutils import set_shortcut
-        from functools import partial
-        set_shortcut(sequence, self.main_window, partial(execute, switch_cmd))
+        self.save_hotkey(name, sequence, switch_cmd)
+        self.create_menus()
 
+    def get_hotboxes_file(self):
+        hotboxes_file = os.path.join(
+            self.get_data_folder(), HOTBOXES_FILENAME)
+        return hotboxes_file
+    
     def get_hotkey_file(self):
         hotkey_file = os.path.join(
             self.get_data_folder(), 'hotbox_hotkey.json')
         return hotkey_file
 
+    def load_hotboxes(self):
+        hotboxes_file = self.get_hotboxes_file()
+        if not os.path.exists(hotboxes_file):
+            return []
+        with open(hotboxes_file, 'r') as f:
+            return json.load(f)
+        
     def load_hotkey(self):
         hotkey_file = self.get_hotkey_file()
         if not os.path.exists(hotkey_file):
@@ -279,9 +290,55 @@ class Rumba(AbstractApplication):
             return json.load(f)
 
     def save_hotkey(self, name, sequence, command):
-        data = self.load_hotkey()
-        data[name] = {
+        hotkey_data = self.load_hotkey()
+        updated_hotkey_data = self.remove_hotbox_item(self.load_hotboxes(), hotkey_data)
+        updated_hotkey_data[name] = {
             'sequence': sequence,
             'command': command}
-        with open(str(self.get_hotkey_file()), 'w+') as f:
-            json.dump(data, f, indent=2)
+        with open(str(self.get_hotkey_file()), 'w') as f:
+            json.dump(updated_hotkey_data, f, indent=2)
+
+    def delete_menu(self, menu_bar: QtWidgets.QMenuBar, menu_title: str):
+        """Find and delete a menu with a specific title from the menu bar."""
+        menus = menu_bar.actions()
+        for menu in menus:
+            if menu.menu() and menu.text() == menu_title:
+                menu_bar.removeAction(menu)
+
+    def create_menus(self):
+        """Create the Hotbox Designer menu in Rumba's menu bar."""
+        import rumbapy
+        from functools import partial
+
+        main_window = rumbapy.widget("MainWindow")
+        menu_bar = main_window.menubar
+        menu_title = "&Hotbox Designer"
+
+        self.delete_menu(menu_bar, menu_title)
+
+        hotbox_menu = menu_bar.addMenu(menu_title)
+
+        hotkey_data = self.load_hotkey()
+
+        for name, value in hotkey_data.items():
+            action = rumbapy.action.new(
+                name=name,
+                widget=main_window,
+                trigger=partial(lambda cmd: exec(cmd), value['command']),
+                icon=None,
+                shortcut=value["sequence"]
+            )
+            hotbox_menu.addAction(action)
+
+    def remove_hotbox_item(self, hotboxes, hotbox_hotkey):
+        """
+        Remove hotbox items that are not present in the current hotboxes
+        """
+        hotbox_items = {item.get("general", {}).get("name") for item in hotboxes}
+        
+        updated_hotkey = {
+            key: value for key, value in hotbox_hotkey.items()
+            if key in hotbox_items
+        }
+        
+        return updated_hotkey
