@@ -71,12 +71,15 @@ class Maya(AbstractApplication):
             shiboken2.wrapInstance: The pointer to the maya main window.
         """
         import maya.OpenMayaUI as omui
-        import shiboken2
+        try:
+            import shiboken2 as shiboken
+        except ImportError:
+            import shiboken6 as shiboken
         if os.name == 'posix':
             return None
         ptr = omui.MQtUtil.mainWindow()
         if ptr is not None:
-            return shiboken2.wrapInstance(int(ptr), QtWidgets.QWidget)
+            return shiboken.wrapInstance(int(ptr), QtWidgets.QWidget)
 
     @staticmethod
     def get_reader_parent():

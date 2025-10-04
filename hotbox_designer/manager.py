@@ -444,7 +444,7 @@ class HotboxTableView(QtWidgets.QTableView):
         self.selection_model = None
         vheader = self.verticalHeader()
         vheader.hide()
-        vheader.setSectionResizeMode(vheader.ResizeToContents)
+        vheader.setSectionResizeMode(QtWidgets.QHeaderView.ResizeToContents)
         hheader = self.horizontalHeader()
         hheader.setStretchLastSection(True)
         hheader.hide()

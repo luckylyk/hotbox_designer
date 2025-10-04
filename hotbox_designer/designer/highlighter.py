@@ -71,12 +71,21 @@ class Highlighter(QtGui.QSyntaxHighlighter):
 
     def highlightBlock(self, text):
         for pattern, format_ in self.rules:
-            expression = QtCore.QRegExp(pattern)
-            index = expression.indexIn(text)
-            while index >= 0:
-                length = expression.matchedLength()
-                self.setFormat(index, length, format_)
-                index = expression.indexIn(text, index + length)
+            if hasattr(pattern, 'globalMatch'):
+                # PySide6 with QRegularExpression
+                match_iter = pattern.globalMatch(text)
+                while match_iter.hasNext():
+                    match = match_iter.next()
+                    start = match.capturedStart()
+                    length = match.capturedLength()
+                    self.setFormat(start, length, format_)
+            else:
+                # PySide2 with QRegExp
+                index = pattern.indexIn(text)
+                while index >= 0:
+                    length = pattern.matchedLength()
+                    self.setFormat(index, length, format_)
+                    index = pattern.indexIn(text, index + length)
 
 
 class PythonHighlighter(Highlighter):
