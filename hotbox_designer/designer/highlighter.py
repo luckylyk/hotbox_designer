@@ -1,6 +1,6 @@
 import keyword
 from hotbox_designer.vendor.Qt import QtGui, QtCore
-from hotbox_designer.languages import PYTHON, MEL
+from hotbox_designer.languages import PYTHON, MEL, RUMBA_SCRIPT
 
 
 
@@ -49,7 +49,14 @@ PATTERNS = {
         'comment': r'//[^\n]*',
         'function': r'\b[A-Za-z0-9_]+(?=\()',
         'string': r'".*"|\'.*\'',
-        'boolean': r'\btrue\b|\bfalse\b'}
+        'boolean': r'\btrue\b|\bfalse\b'},
+    RUMBA_SCRIPT: {
+        'keyword': r'\b|'.join(keyword.kwlist),
+        'number': r'\b[+-]?[0-9]+[lL]?\b',
+        'comment': r'#[^\n]*',
+        'function': r'\b[A-Za-z0-9_]+(?=\()',
+        'string': r'".*"|\'.*\'',
+        'boolean': r'\bTrue\b|\bFalse\b'},
 }
 
 
@@ -95,10 +102,14 @@ class PythonHighlighter(Highlighter):
 class MelHighlighter(Highlighter):
     PATTERNS = PATTERNS[MEL]
 
+class RumbaScriptHighlighter(Highlighter):
+    PATTERNS = PATTERNS[RUMBA_SCRIPT]
 
 HIGHLIGHTERS = {
     PYTHON: PythonHighlighter,
-    MEL: MelHighlighter}
+    MEL: MelHighlighter,
+    RUMBA_SCRIPT: RumbaScriptHighlighter
+}
 
 
 def get_highlighter(language):
