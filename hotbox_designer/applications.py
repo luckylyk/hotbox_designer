@@ -50,7 +50,9 @@ class AbstractApplication(object):
 
     @staticmethod
     def update_hotkeys():
-        raise NotImplementedError
+        # Do not use 'raise NotImplementedError' in case other DCCs don't
+        # have that feature
+        pass
 
     def set_hotkey(self, mode, sequence, open_cmd, close_cmd, switch_cmd):
         raise NotImplementedError
