@@ -25,7 +25,7 @@ It provide simple tools to create visually a hotbox menus, simply manage them an
     * [Reader](#reader)
 
 ### Credits
-main coder: Lionel Brouyère  
+main coder: Lionel Brouyère, Herizo Ran 
 contributor: Vincent Girès  
 tester: David Vincze, Vincent Girès
 ### Implementation
