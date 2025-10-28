@@ -1,5 +1,5 @@
 import math
-from PySide2 import QtCore
+from hotbox_designer.vendor.Qt import QtCore
 
 POINT_RADIUS = 8
 POINT_OFFSET = 4

@@ -12,6 +12,7 @@ It provide simple tools to create visually a hotbox menus, simply manage them an
     * [Maya](#autodesk-maya)
     * [Nuke](#nuke)
     * [Houdini](#houdini)
+    * [Rumba](#rumba)
 * [Tutorials](#tutorials)
 * [Code samples](#code-samples)
     * [Launch manager](#launch-manager)
@@ -34,6 +35,7 @@ tester: David Vincze, Vincent Girès
 | Foundry Nuke   | done                 | 'nuke'                | available       |
 | Autodesk 3dsMax| planned              | undefined             | Not available   |
 | SideFX Houdini | done                 | 'houdini'             | Not available   |
+| Rumba Animation| done                 | 'rumba'               | available       |
 
 For each software who provide python and support PySide2/PyQt5, the implementation should be easy.
 
@@ -76,6 +78,33 @@ https://github.com/luckylyk/hotbox_designer/issues/10
 
 #### Houdini
 soon
+#### Rumba
+Locate the _"hotbox_designer"_ folder and make it available in 
+RUMBA_USER_PLUGINS environment variable.<br /> 
+Add this script in a python file _menu.py_ and make it available in 
+RUMBA_USER_PLUGINS environment variable.
+```python
+"""Hotbox Designer integration for Rumba."""
+
+import rumbapy
+from PySide2 import QtCore
+from rumbapy.WidgetPlugins import register_ui, UIPluginOptions
+
+
+class HotboxDesigner(QtCore.QObject):
+
+    def __init__(self, parent=None):
+        super(HotboxDesigner, self).__init__(parent)
+        from hotbox_designer.applications import Rumba
+        rumba_app = Rumba()
+        rumba_app.create_menus()
+
+
+register_ui(HotboxDesigner, "Hotbox Designer", UIPluginOptions(
+    auto_create=True))
+```
+Hotkeys are saved in ~/.rumba/hotbox_hotkey.json.
+
 ### Tutorials
 * [My first hotbox](https://vimeo.com/304248049)
 * [Create a submenu](https://vimeo.com/304252379)

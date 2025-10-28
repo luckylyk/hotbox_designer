@@ -1,6 +1,6 @@
 import keyword
-from PySide2 import QtGui, QtCore
-from hotbox_designer.languages import PYTHON, MEL
+from hotbox_designer.vendor.Qt import QtGui, QtCore
+from hotbox_designer.languages import PYTHON, MEL, RUMBA_SCRIPT
 
 
 
@@ -49,7 +49,14 @@ PATTERNS = {
         'comment': r'//[^\n]*',
         'function': r'\b[A-Za-z0-9_]+(?=\()',
         'string': r'".*"|\'.*\'',
-        'boolean': r'\btrue\b|\bfalse\b'}
+        'boolean': r'\btrue\b|\bfalse\b'},
+    RUMBA_SCRIPT: {
+        'keyword': r'\b|'.join(keyword.kwlist),
+        'number': r'\b[+-]?[0-9]+[lL]?\b',
+        'comment': r'#[^\n]*',
+        'function': r'\b[A-Za-z0-9_]+(?=\()',
+        'string': r'".*"|\'.*\'',
+        'boolean': r'\bTrue\b|\bFalse\b'},
 }
 
 
@@ -71,12 +78,21 @@ class Highlighter(QtGui.QSyntaxHighlighter):
 
     def highlightBlock(self, text):
         for pattern, format_ in self.rules:
-            expression = QtCore.QRegExp(pattern)
-            index = expression.indexIn(text)
-            while index >= 0:
-                length = expression.matchedLength()
-                self.setFormat(index, length, format_)
-                index = expression.indexIn(text, index + length)
+            if hasattr(pattern, 'globalMatch'):
+                # PySide6 with QRegularExpression
+                match_iter = pattern.globalMatch(text)
+                while match_iter.hasNext():
+                    match = match_iter.next()
+                    start = match.capturedStart()
+                    length = match.capturedLength()
+                    self.setFormat(start, length, format_)
+            else:
+                # PySide2 with QRegExp
+                index = pattern.indexIn(text)
+                while index >= 0:
+                    length = pattern.matchedLength()
+                    self.setFormat(index, length, format_)
+                    index = pattern.indexIn(text, index + length)
 
 
 class PythonHighlighter(Highlighter):
@@ -86,10 +102,14 @@ class PythonHighlighter(Highlighter):
 class MelHighlighter(Highlighter):
     PATTERNS = PATTERNS[MEL]
 
+class RumbaScriptHighlighter(Highlighter):
+    PATTERNS = PATTERNS[RUMBA_SCRIPT]
 
 HIGHLIGHTERS = {
     PYTHON: PythonHighlighter,
-    MEL: MelHighlighter}
+    MEL: MelHighlighter,
+    RUMBA_SCRIPT: RumbaScriptHighlighter
+}
 
 
 def get_highlighter(language):

@@ -1,5 +1,5 @@
 import os
-from PySide2 import QtGui, QtWidgets, QtCore
+from hotbox_designer.vendor.Qt import QtGui, QtWidgets, QtCore
 
 
 VALIGNS = {
